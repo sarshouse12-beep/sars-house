@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SAR'S HOUSE — খাঁটি মধু, ঘি ও অর্গানিক খাবার</title>
+<meta name="description" content="SAR'S HOUSE — নিরাপদ ও সুস্বাদু খাদ্য সরবরাহের অঙ্গীকার। খাঁটি মধু, ঘি, তেল, খেজুর, বাদাম ও মসলা।">
+<meta name="theme-color" content="#041f1e">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{--c-primary:#041f1e;--c-secondary:#C89B4B;--c-bg:#FBF9F5;--c-accent:#f48721}
+  html{scroll-behavior:smooth}
+  body{font-family:'Hind Siliguri',system-ui,sans-serif;background:var(--c-bg);color:#1f2937;-webkit-tap-highlight-color:transparent}
+  .brand-font{font-family:'Playfair Display','Hind Siliguri',serif}
+  .bg-brand{background-color:var(--c-primary)}.text-brand{color:var(--c-primary)}.border-brand{border-color:var(--c-primary)}
+  .bg-gold{background-color:var(--c-secondary)}.text-gold{color:var(--c-secondary)}.border-gold{border-color:var(--c-secondary)}
+  .bg-cta{background-color:var(--c-accent)}.text-cta{color:var(--c-accent)}
+  .bg-cream{background-color:var(--c-bg)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;font-weight:600;border-radius:.6rem;padding:.55rem 1rem;transition:filter .15s,transform .05s;cursor:pointer;line-height:1.3}
+  .btn:hover{filter:brightness(.93)}.btn:active{transform:scale(.98)}.btn:disabled{opacity:.55;cursor:not-allowed}
+  .btn-cta{background:var(--c-accent);color:#fff}
+  .btn-brand{background:var(--c-primary);color:#fff}
+  .btn-gold{background:var(--c-secondary);color:#fff}
+  .btn-ghost{border:1px solid #d1d5db;background:#fff;color:#374151}
+  .btn-danger{background:#dc2626;color:#fff}
+  .btn-sm{padding:.3rem .65rem;font-size:.8rem;border-radius:.5rem}
+  .inp{width:100%;border:1px solid #d1d5db;border-radius:.6rem;padding:.55rem .75rem;background:#fff;font-size:.95rem;outline:none;font-family:inherit}
+  .inp:focus{border-color:var(--c-secondary);box-shadow:0 0 0 3px rgba(200,155,75,.25)}
+  textarea.inp{resize:vertical;min-height:80px}
+  .lbl{display:block;font-size:.8rem;font-weight:600;color:#4b5563;margin-bottom:.25rem}
+  .card{box-shadow:0 1px 3px rgba(0,0,0,.06);transition:box-shadow .2s,transform .2s}
+  .card:hover{box-shadow:0 8px 22px rgba(0,0,0,.1);transform:translateY(-2px)}
+  .no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{scrollbar-width:none}
+  #cartDrawer{visibility:hidden;pointer-events:none;transition:visibility 0s linear .3s}
+  #cartDrawer.open{visibility:visible;pointer-events:auto;transition-delay:0s}
+  .drawer-overlay{opacity:0;transition:opacity .3s}
+  #cartDrawer.open .drawer-overlay{opacity:1}
+  .drawer-panel{transform:translateX(100%);transition:transform .3s ease}
+  #cartDrawer.open .drawer-panel{transform:none}
+  .line-clamp-2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .toggle{position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0}
+  .toggle input{opacity:0;width:0;height:0}
+  .toggle span{position:absolute;inset:0;background:#d1d5db;border-radius:24px;transition:.2s;cursor:pointer}
+  .toggle span:before{content:"";position:absolute;height:18px;width:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+  .toggle input:checked + span{background:var(--c-accent)}
+  .toggle input:checked + span:before{transform:translateX(20px)}
+</style>
+</head>
+<body>
+
+<!-- ===================== STOREFRONT ===================== -->
+<div id="store" class="pb-16 md:pb-0">
+  <div id="announce"></div>
+  <header id="hdr" class="sticky top-0 z-40"></header>
+  <main>
+    <section id="hero" class="max-w-7xl mx-auto px-3 pt-4"></section>
+    <section id="cats" class="max-w-7xl mx-auto px-3"></section>
+    <section id="adbanner" class="max-w-7xl mx-auto px-3"></section>
+    <section id="products" class="max-w-7xl mx-auto px-3 py-6 scroll-mt-28"></section>
+    <section id="testi"></section>
+  </main>
+  <footer id="footer"></footer>
+  <nav id="mnav" class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t shadow-[0_-2px_10px_rgba(0,0,0,.08)]"></nav>
+  <a id="waFloat" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"
+     class="fixed right-4 bottom-20 md:bottom-6 z-40 w-14 h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center text-3xl shadow-xl hover:scale-105 transition">
+    <i class="fa-brands fa-whatsapp"></i>
+  </a>
+</div>
+
+<!-- ===================== ADMIN ===================== -->
+<div id="admin" class="hidden min-h-screen bg-gray-100"></div>
+
+<!-- ===================== CART DRAWER ===================== -->
+<div id="cartDrawer" class="fixed inset-0 z-50">
+  <div class="drawer-overlay absolute inset-0 bg-black/50" data-action="closeCart"></div>
+  <aside class="drawer-panel absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl flex flex-col">
+    <div class="flex items-center justify-between px-4 py-3 bg-brand text-white">
+      <h2 class="font-bold text-lg"><i class="fa-solid fa-bag-shopping mr-2 text-gold"></i>আপনার কার্ট</h2>
+      <button data-action="closeCart" class="w-9 h-9 rounded-full hover:bg-white/10" aria-label="বন্ধ করুন"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="flex-1 overflow-y-auto">
+      <div id="cartItems" class="p-4 space-y-3"></div>
+      <form id="checkoutForm" data-form="checkout" class="px-4 pb-4 space-y-3 hidden" novalidate>
+        <h3 class="font-bold text-brand border-t pt-4">ডেলিভারির তথ্য</h3>
+        <label class="block"><span class="lbl">আপনার নাম *</span><input id="c_name" class="inp" autocomplete="name" placeholder="পূর্ণ নাম"></label>
+        <label class="block"><span class="lbl">মোবাইল নম্বর *</span><input id="c_phone" class="inp" type="tel" inputmode="tel" autocomplete="tel" placeholder="01XXXXXXXXX"></label>
+        <label class="block"><span class="lbl">সম্পূর্ণ ঠিকানা *</span><textarea id="c_address" class="inp" rows="2" autocomplete="street-address" placeholder="বাসা/রোড, থানা, জেলা"></textarea></label>
+        <div>
+          <span class="lbl">ডেলিভারি এলাকা</span>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="flex items-center gap-2 border rounded-lg px-3 py-2 cursor-pointer has-[:checked]:border-gold has-[:checked]:bg-amber-50">
+              <input type="radio" name="area" value="dhaka" checked class="accent-[#C89B4B]"><span class="text-sm">ঢাকার ভেতরে<br><b id="chgDhaka"></b></span></label>
+            <label class="flex items-center gap-2 border rounded-lg px-3 py-2 cursor-pointer has-[:checked]:border-gold has-[:checked]:bg-amber-50">
+              <input type="radio" name="area" value="outside" class="accent-[#C89B4B]"><span class="text-sm">ঢাকার বাইরে<br><b id="chgOut"></b></span></label>
+          </div>
+        </div>
+        <label class="block"><span class="lbl">অতিরিক্ত নোট (ঐচ্ছিক)</span><input id="c_note" class="inp" placeholder="কোনো বিশেষ নির্দেশনা থাকলে লিখুন"></label>
+      </form>
+    </div>
+    <div id="cartFooter" class="border-t p-4 bg-gray-50 space-y-3 hidden">
+      <div id="cartSummary" class="text-sm space-y-1"></div>
+      <button type="submit" form="checkoutForm" id="placeBtn" class="btn btn-cta w-full text-base py-3"><i class="fa-brands fa-whatsapp text-lg"></i> অর্ডার নিশ্চিত করুন (WhatsApp)</button>
+      <p class="text-[11px] text-gray-500 text-center">অর্ডার সেভ হওয়ার পর WhatsApp-এ অর্ডার বিবরণ খুলবে — শুধু "Send" চাপুন।</p>
+    </div>
+  </aside>
+</div>
+
+<!-- ===================== MODAL ===================== -->
+<div id="modal" class="hidden fixed inset-0 z-[60] bg-black/50 items-end sm:items-center justify-center sm:p-4">
+  <div id="modalBox"></div>
+</div>
+
+<div id="toast" style="display:none"></div>
+
+<script>
+(function(){
+'use strict';
+
+/* =====================================================================
+   CONFIG — paste your Supabase project values here
+   (Supabase Dashboard → Project Settings → API)
+   ===================================================================== */
+const SUPABASE_URL      = 'https://gfiebfhfqfusxoxgcpln.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdmaWViZmhmcWZ1c3hveGdjcGxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUxNjM3NTAsImV4cCI6MjExMDczOTc1MH0.L4lK5QFbuveN-gA4M868W69pFwrtsth5pxrwQz_dwu4';
+/* ===================================================================== */
+
+const CONFIGURED = !/YOUR-/.test(SUPABASE_URL) && !/YOUR-/.test(SUPABASE_ANON_KEY);
+const sb = (CONFIGURED && window.supabase) ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+const BUCKET = 'shop-images';
+
+/* ---------------------------- helpers ---------------------------- */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const bn = n => String(n).replace(/\d/g, d => '০১২৩৪৫৬৭৮৯'[d]);
+const money = n => '৳' + bn(Math.round(Number(n) || 0).toLocaleString('en-US'));
+const digits = s => String(s || '').replace(/\D/g, '');
+const clone = o => JSON.parse(JSON.stringify(o));
+const safeUrl = u => { u = String(u || '').trim(); return /^(https?:\/\/|\/|\.\/|#)/i.test(u) ? u : ''; };
+const safeColor = (c, f) => /^#[0-9a-f]{3,8}$/i.test(String(c || '').trim()) ? String(c).trim() : f;
+const uuid = () => (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16); });
+const getPath = (o, p) => p.split('.').reduce((a, k) => a == null ? undefined : a[k], o);
+function setPath(o, p, v) {
+  const ks = p.split('.'); let a = o;
+  for (let i = 0; i < ks.length - 1; i++) { if (a[ks[i]] == null) a[ks[i]] = /^\d+$/.test(ks[i + 1]) ? [] : {}; a = a[ks[i]]; }
+  a[ks[ks.length - 1]] = v;
+}
+function deepMerge(base, over) {
+  if (Array.isArray(base)) return Array.isArray(over) ? over : base;
+  if (base && typeof base === 'object') {
+    const out = { ...base };
+    if (over && typeof over === 'object') for (const k of Object.keys(over)) out[k] = (k in base) ? deepMerge(base[k], over[k]) : over[k];
+    return out;
+  }
+  return (over === undefined || over === null) ? base : over;
+}
+const fmtDate = d => { try { return new Date(d).toLocaleString('bn-BD', { dateStyle: 'medium', timeStyle: 'short' }); } catch { return String(d); } };
+const normPhone = p => { let d = digits(p); if (d.startsWith('880')) d = '0' + d.slice(3); return d; };
+const validPhone = p => /^01[3-9]\d{8}$/.test(p);
+
+let toastT;
+function toast(msg, type = 'ok') {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.className = 'fixed z-[100] left-1/2 -translate-x-1/2 top-4 px-4 py-2 rounded-lg shadow-lg text-white text-sm max-w-[92vw] text-center ' + (type === 'err' ? 'bg-red-600' : 'bg-gray-900');
+  t.style.display = 'block';
+  clearTimeout(toastT);
+  toastT = setTimeout(() => { t.style.display = 'none'; }, 3500);
+}
+
+/* ---------------------------- defaults ---------------------------- */
+const CATEGORIES = [
+  { name: 'মধু', icon: 'fa-droplet' },
+  { name: 'ঘি ও তেল', icon: 'fa-bottle-droplet' },
+  { name: 'খেজুর ও বাদাম', icon: 'fa-seedling' },
+  { name: 'মসলা ও অন্যান্য', icon: 'fa-pepper-hot' }
+];
+const DEFAULT_COLORS = { primary: '#041f1e', secondary: '#C89B4B', background: '#FBF9F5', accent: '#f48721' };
+const DEFAULT_DESIGN = {
+  brand_name: "SAR'S HOUSE",
+  tagline: 'নিরাপদ ও সুস্বাদু খাদ্য সরবরাহের অঙ্গীকার',
+  sub_tagline: 'Symbol of Purity • Made with Love',
+  logo_url: '',
+  colors: { ...DEFAULT_COLORS },
+  announcement_show: true,
+  announcement_text: 'সারা বাংলাদেশে হোম ডেলিভারি • অর্ডার করতে কল/WhatsApp: +8801729470904',
+  hero_image: '',
+  hero_show_text: true,
+  hero_badge: '১০০% খাঁটি ও প্রাকৃতিক',
+  hero_title: 'খাঁটি মধু, ঘি ও অর্গানিক খাবার — সরাসরি আপনার দরজায়',
+  hero_subtitle: 'নিরাপদ ও সুস্বাদু খাদ্য সরবরাহের অঙ্গীকার',
+  hero_cta: 'এখনই অর্ডার করুন',
+  side_banner_show: true,
+  side_banner_image: '',
+  side_title: 'কাঁচা মধু',
+  side_text: 'মৌচাক থেকে সরাসরি সংগৃহীত, ভেজালমুক্ত',
+  delivery_dhaka: 60,
+  delivery_outside: 120,
+  show_categories: true,
+  show_testimonials: false,
+  testimonials: [
+    { name: '', text: '' },
+    { name: '', text: '' },
+    { name: '', text: '' }
+  ],
+  phone: '+8801729470904',
+  whatsapp: '8801729470904',
+  email: 'farukahmedsujon112@gmail.com',
+  address: 'বাংলাদেশ',
+  footer_about: "SAR'S HOUSE — খাঁটি মধু, ঘি, সরিষার তেল, খেজুর, বাদাম ও মসলাসহ নিরাপদ ও সুস্বাদু খাদ্যপণ্য সরবরাহের অঙ্গীকার।"
+};
+const DEFAULT_ADS = {
+  enabled: false, mode: 'text', image_url: '',
+  text: '🎉 বিশেষ অফার! আজই অর্ডার করুন', link: '',
+  bg_color: '#C89B4B', text_color: '#041f1e'
+};
+const DEMO_PRODUCTS = [
+  ['খাঁটি সরিষা ফুলের মধু', 'মধু', 850, 950, '১ কেজি', 'Best Selling', true],
+  ['সুন্দরবনের খলিসা ফুলের মধু', 'মধু', 1200, 1350, '১ কেজি', '', true],
+  ['গাওয়া ঘি', 'ঘি ও তেল', 1100, null, '৫০০ গ্রাম', 'Best Selling', true],
+  ['ঘানি ভাঙা সরিষার তেল', 'ঘি ও তেল', 380, 420, '১ লিটার', '', true],
+  ['আজওয়া খেজুর', 'খেজুর ও বাদাম', 1500, 1650, '১ কেজি', '', true],
+  ['কাজুবাদাম', 'খেজুর ও বাদাম', 900, null, '৫০০ গ্রাম', '', false],
+  ['কালোজিরা', 'মসলা ও অন্যান্য', 260, 300, '২৫০ গ্রাম', '', true]
+].map((r, i) => ({ id: 'demo-' + i, name: r[0], category: r[1], description: 'ডেমো পণ্য — Supabase সংযোগ করলে আপনার আসল পণ্য এখানে দেখাবে।', price: r[2], old_price: r[3], weight: r[4], tag: r[5], in_stock: r[6], image_url: '', sort_order: i }));
+
+const STATUS = {
+  pending:   { l: 'অপেক্ষমাণ (Pending)',     c: 'bg-yellow-100 text-yellow-800' },
+  confirmed: { l: 'নিশ্চিত (Confirmed)',      c: 'bg-blue-100 text-blue-800' },
+  delivered: { l: 'ডেলিভারি সম্পন্ন (Delivered)', c: 'bg-green-100 text-green-800' },
+  cancelled: { l: 'বাতিল (Cancelled)',        c: 'bg-red-100 text-red-800' }
+};
+const ROLE_L = { customer: 'গ্রাহক', admin: 'অ্যাডমিন', super_admin: 'সুপার অ্যাডমিন' };
+const PERM_L = { products: 'পণ্য', orders: 'অর্ডার', design: 'ডিজাইন', ads: 'বিজ্ঞাপন' };
+
+/* ---------------------------- state ---------------------------- */
+const state = {
+  design: clone(DEFAULT_DESIGN), ads: clone(DEFAULT_ADS),
+  products: [], cart: loadCart(),
+  user: null, profile: null, myOrders: [],
+  cat: 'all', search: '',
+  ready: false, modal: null, accTab: 'profile', viewId: null,
+  adminTab: null, adminOrders: [], adminUsers: [], orderFilter: 'all',
+  pfId: null, pfImage: ''
+};
+let adminDraft = null;
+
+function loadCart() { try { const c = JSON.parse(localStorage.getItem('sh_cart') || '[]'); return Array.isArray(c) ? c.filter(x => x && x.id && x.qty > 0) : []; } catch { return []; } }
+function saveCart() { try { localStorage.setItem('sh_cart', JSON.stringify(state.cart)); } catch {} }
+const cartQty = id => (state.cart.find(c => c.id === id) || {}).qty || 0;
+const cartLines = () => state.cart.map(c => { const p = state.products.find(p => p.id === c.id); return (p && p.in_stock) ? { p, qty: c.qty } : null; }).filter(Boolean);
+const cartCount = () => cartLines().reduce((s, l) => s + l.qty, 0);
+const isStaff = () => !!state.profile && (state.profile.role === 'admin' || state.profile.role === 'super_admin');
+const isSuper = () => !!state.profile && state.profile.role === 'super_admin';
+const can = k => isSuper() || (!!state.profile && state.profile.role === 'admin' && (state.profile.permissions || []).includes(k));
+const deliveryFor = area => Number(area === 'outside' ? state.design.delivery_outside : state.design.delivery_dhaka) || 0;
+
+/* ---------------------------- theme ---------------------------- */
+function applyTheme(c) {
+  const col = c || state.design.colors || {};
+  const r = document.documentElement.style;
+  r.setProperty('--c-primary', safeColor(col.primary, DEFAULT_COLORS.primary));
+  r.setProperty('--c-secondary', safeColor(col.secondary, DEFAULT_COLORS.secondary));
+  r.setProperty('--c-bg', safeColor(col.background, DEFAULT_COLORS.background));
+  r.setProperty('--c-accent', safeColor(col.accent, DEFAULT_COLORS.accent));
+  const m = $('meta[name="theme-color"]'); if (m) m.content = safeColor(col.primary, DEFAULT_COLORS.primary);
+}
+
+/* ---------------------------- data loading ---------------------------- */
+async function loadSettings() {
+  const { data, error } = await sb.from('store_settings').select('key,value');
+  if (error) { console.warn(error); return; }
+  (data || []).forEach(r => {
+    if (r.key === 'design') state.design = clone(deepMerge(DEFAULT_DESIGN, r.value || {}));
+    if (r.key === 'ads') state.ads = clone(deepMerge(DEFAULT_ADS, r.value || {}));
+  });
+  const t = state.design.testimonials = Array.isArray(state.design.testimonials) ? state.design.testimonials : [];
+  while (t.length < 3) t.push({ name: '', text: '' });
+}
+async function loadProducts() {
+  if (!sb) { state.products = DEMO_PRODUCTS; return; }
+  const { data, error } = await sb.from('products').select('*').order('sort_order', { ascending: true }).order('created_at', { ascending: false });
+  if (error) { console.warn(error); toast('পণ্য লোড করা যায়নি', 'err'); return; }
+  state.products = data || [];
+}
+async function loadProfile() {
+  if (!state.user) { state.profile = null; return; }
+  const { data } = await sb.from('profiles').select('*').eq('id', state.user.id).maybeSingle();
+  state.profile = data || { id: state.user.id, email: state.user.email, full_name: '', phone: '', address: '', role: 'customer', permissions: [] };
+}
+async function loadMyOrders() {
+  if (!state.user) { state.myOrders = []; return; }
+  const { data } = await sb.from('orders').select('*').eq('user_id', state.user.id).order('created_at', { ascending: false }).limit(50);
+  state.myOrders = data || [];
+}
+
+/* ---------------------------- logo ---------------------------- */
+function logoHtml(cls = 'w-11 h-11') {
+  const u = safeUrl(state.design.logo_url);
+  if (u) return `<img src="${esc(u)}" alt="${esc(state.design.brand_name)}" class="${cls} rounded-full object-cover bg-white">`;
+  return `<span class="${cls} rounded-full bg-brand flex items-center justify-center border-2 border-gold shrink-0">
+    <svg viewBox="0 0 64 64" class="w-3/4 h-3/4" fill="none" stroke="#C89B4B" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M19 38c-6-2-8-9-4-13 2-3 6-4 9-3 1-5 6-8 11-7 3-3 9-3 12 0 5-1 9 3 9 8 0 4-2 7-6 9"/>
+      <path d="M22 38h28v12H22z"/></svg></span>`;
+}
+
+/* ---------------------------- STOREFRONT RENDER ---------------------------- */
+function renderStore() {
+  applyTheme();
+  document.title = `${state.design.brand_name} — খাঁটি মধু, ঘি ও অর্গানিক খাবার`;
+  renderHeader(); renderHero(); renderCats(); renderAd(); renderProducts(); renderTesti(); renderFooter(); renderMobileNav();
+  updateBadges(); renderCart();
+}
+
+function renderHeader() {
+  const d = state.design;
+  $('#announce').innerHTML = (d.announcement_show && d.announcement_text)
+    ? `<div class="bg-gold text-brand font-semibold text-center text-xs sm:text-sm py-1.5 px-3">${esc(d.announcement_text)}</div>` : '';
+  const wa = 'https://wa.me/' + digits(d.whatsapp);
+  const navBtn = (cat, label) => `<button data-action="cat" data-cat="${esc(cat)}" class="whitespace-nowrap px-4 py-2.5 text-sm font-medium hover:text-gold transition ${state.cat === cat ? 'text-gold border-b-2 border-gold' : 'text-white'}">${esc(label)}</button>`;
+  const search = id => `<div class="relative w-full"><i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i><input id="${id}" class="search-inp inp !pl-9 !rounded-full" type="search" placeholder="পণ্য খুঁজুন..." value="${esc(state.search)}"></div>`;
+  $('#hdr').innerHTML = `
+    <div class="bg-white shadow-sm">
+      <div class="max-w-7xl mx-auto px-3 py-2 flex items-center gap-3">
+        <a href="#" data-action="home" class="flex items-center gap-2 shrink-0">
+          ${logoHtml('w-11 h-11')}
+          <div class="leading-tight"><div class="brand-font font-bold text-lg text-brand">${esc(d.brand_name)}</div>
+          <div class="hidden sm:block text-[10px] text-gold font-semibold tracking-wide">${esc(d.sub_tagline)}</div></div>
+        </a>
+        <div class="hidden md:flex flex-1 max-w-2xl mx-auto">${search('searchD')}</div>
+        <div class="ml-auto flex items-center gap-1">
+          <a href="${esc(wa)}" target="_blank" rel="noopener noreferrer" class="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold text-green-700 hover:bg-green-50"><i class="fa-brands fa-whatsapp text-xl"></i><span class="hidden lg:inline">${esc(bn(d.phone))}</span></a>
+          <button data-action="account" class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold text-brand hover:bg-gray-100" aria-label="অ্যাকাউন্ট"><i class="fa-regular fa-user text-lg"></i><span class="hidden sm:inline">${state.user ? 'আমার অ্যাকাউন্ট' : 'লগইন'}</span></button>
+          <button data-action="openCart" class="relative flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold text-brand hover:bg-gray-100" aria-label="কার্ট"><i class="fa-solid fa-bag-shopping text-lg"></i><span class="hidden sm:inline">কার্ট</span>
+            <span class="cart-badge absolute -top-0.5 right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-cta text-white text-[11px] font-bold flex items-center justify-center">0</span></button>
+        </div>
+      </div>
+      <div class="md:hidden px-3 pb-2">${search('searchM')}</div>
+    </div>
+    <nav class="bg-brand"><div class="max-w-7xl mx-auto px-2 flex overflow-x-auto no-scrollbar">
+      ${navBtn('all', 'সব পণ্য')}${CATEGORIES.map(c => navBtn(c.name, c.name)).join('')}
+    </div></nav>`;
+  const w = $('#waFloat'); w.href = wa + '?text=' + encodeURIComponent('আসসালামু আলাইকুম, আমি ' + d.brand_name + ' সম্পর্কে জানতে চাই।');
+}
+
+function renderHero() {
+  const d = state.design;
+  const img = safeUrl(d.hero_image);
+  const sideImg = safeUrl(d.side_banner_image);
+  const main = `
+    <div class="${d.side_banner_show ? 'lg:col-span-8' : 'lg:col-span-12'} relative rounded-2xl overflow-hidden min-h-[210px] sm:min-h-[300px] lg:min-h-[360px] flex items-center" style="background:linear-gradient(135deg,var(--c-primary),#0B3948)">
+      ${img ? `<img src="${esc(img)}" alt="${esc(d.brand_name)}" class="absolute inset-0 w-full h-full object-cover">` : `<div class="absolute -right-10 -bottom-10 w-72 h-72 rounded-full opacity-20" style="background:var(--c-secondary)"></div><div class="absolute right-16 top-6 text-7xl opacity-20 text-gold"><i class="fa-solid fa-jar-wheat"></i></div>`}
+      ${(d.hero_show_text) ? `${img ? '<div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/35 to-transparent"></div>' : ''}
+      <div class="relative p-5 sm:p-10 max-w-xl text-white">
+        ${d.hero_badge ? `<span class="inline-block bg-gold text-brand text-xs sm:text-sm font-bold px-3 py-1 rounded-full mb-3">${esc(d.hero_badge)}</span>` : ''}
+        <h1 class="text-2xl sm:text-4xl font-bold leading-snug">${esc(d.hero_title)}</h1>
+        <p class="mt-2 text-sm sm:text-base text-white/85">${esc(d.hero_subtitle)}</p>
+        ${d.hero_cta ? `<button data-action="shop" class="btn btn-cta mt-5 text-base px-6 py-3">${esc(d.hero_cta)} <i class="fa-solid fa-arrow-right"></i></button>` : ''}
+      </div>` : ''}
+    </div>`;
+  const side = d.side_banner_show ? `
+    <div class="lg:col-span-4 relative rounded-2xl overflow-hidden min-h-[150px] sm:min-h-[180px] lg:min-h-[360px] flex items-end cursor-pointer" data-action="shop" style="background:linear-gradient(160deg,var(--c-secondary),var(--c-accent))">
+      ${sideImg ? `<img src="${esc(sideImg)}" alt="${esc(d.side_title)}" class="absolute inset-0 w-full h-full object-cover">` : '<div class="absolute right-4 top-4 text-6xl text-white/30"><i class="fa-solid fa-droplet"></i></div>'}
+      ${(!sideImg || d.side_title || d.side_text) ? `<div class="relative p-5 w-full ${sideImg ? 'bg-gradient-to-t from-black/70 to-transparent' : ''} text-white">
+        <h2 class="text-2xl font-bold">${esc(d.side_title)}</h2><p class="text-sm mt-1 text-white/90">${esc(d.side_text)}</p>
+        <span class="inline-block mt-3 text-sm font-bold underline">দেখুন <i class="fa-solid fa-arrow-right text-xs"></i></span></div>` : ''}
+    </div>` : '';
+  $('#hero').innerHTML = `<div class="grid grid-cols-1 lg:grid-cols-12 gap-3">${main}${side}</div>`;
+}
+
+function renderCats() {
+  const el = $('#cats');
+  if (!state.design.show_categories) { el.innerHTML = ''; return; }
+  el.innerHTML = `<div class="pt-6"><h2 class="text-lg sm:text-xl font-bold text-brand text-center mb-4">ক্যাটেগরি অনুযায়ী কিনুন</h2>
+    <div class="flex justify-center gap-4 sm:gap-8 overflow-x-auto no-scrollbar pb-1">
+    ${CATEGORIES.map(c => `<button data-action="cat" data-cat="${esc(c.name)}" class="group flex flex-col items-center gap-2 shrink-0 w-20 sm:w-24">
+      <span class="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center text-2xl sm:text-3xl border-2 transition group-hover:scale-105 ${state.cat === c.name ? 'bg-brand text-gold border-gold' : 'bg-white text-brand border-gray-200 group-hover:border-gold'}"><i class="fa-solid ${c.icon}"></i></span>
+      <span class="text-xs sm:text-sm font-medium text-center leading-tight">${esc(c.name)}</span></button>`).join('')}
+    </div></div>`;
+}
+
+function renderAd() {
+  const a = state.ads, el = $('#adbanner');
+  if (!a.enabled) { el.innerHTML = ''; return; }
+  const link = safeUrl(a.link);
+  const wrapA = inner => link ? `<a href="${esc(link)}" target="_blank" rel="noopener noreferrer" class="block">${inner}</a>` : inner;
+  if (a.mode === 'image' && safeUrl(a.image_url)) {
+    el.innerHTML = `<div class="mt-6 rounded-xl overflow-hidden shadow-sm">${wrapA(`<img src="${esc(safeUrl(a.image_url))}" alt="বিজ্ঞাপন" class="w-full h-auto block" loading="lazy">`)}</div>`;
+  } else if (a.text) {
+    el.innerHTML = `<div class="mt-6">${wrapA(`<div class="rounded-xl text-center font-bold text-base sm:text-xl py-5 px-4 shadow-sm" style="background:${safeColor(a.bg_color, '#C89B4B')};color:${safeColor(a.text_color, '#041f1e')}">${esc(a.text)}</div>`)}</div>`;
+  } else el.innerHTML = '';
+}
+
+function filteredProducts() {
+  const q = state.search.trim().toLowerCase();
+  return state.products.filter(p => (state.cat === 'all' || p.category === state.cat) &&
+    (!q || (p.name + ' ' + (p.description || '') + ' ' + p.category + ' ' + (p.tag || '')).toLowerCase().includes(q)));
+}
+
+function productCard(p) {
+  const q = cartQty(p.id), disc = (p.old_price && Number(p.old_price) > Number(p.price)) ? Number(p.old_price) - Number(p.price) : 0;
+  const img = safeUrl(p.image_url);
+  return `<div class="card bg-white rounded-xl overflow-hidden border border-gray-100 flex flex-col">
+    <div class="relative aspect-square bg-gray-50 cursor-pointer" data-action="view" data-id="${esc(p.id)}">
+      ${img ? `<img src="${esc(img)}" alt="${esc(p.name)}" loading="lazy" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-5xl text-gold/50"><i class="fa-solid fa-jar-wheat"></i></div>`}
+      ${disc ? `<span class="absolute top-2 left-2 bg-cta text-white text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded">Save ${money(disc)}</span>` : ''}
+      ${p.tag ? `<span class="absolute bottom-2 left-2 bg-brand text-gold text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded">${esc(p.tag)}</span>` : ''}
+      ${!p.in_stock ? `<div class="absolute inset-0 bg-white/70 flex items-center justify-center"><span class="bg-gray-800 text-white px-3 py-1 rounded-full text-sm font-semibold">স্টক শেষ</span></div>` : ''}
+    </div>
+    <div class="p-3 flex flex-col flex-1">
+      <h3 class="font-semibold text-sm sm:text-base leading-snug line-clamp-2 cursor-pointer min-h-[2.5rem]" data-action="view" data-id="${esc(p.id)}">${esc(p.name)}</h3>
+      ${p.weight ? `<div class="text-xs text-gray-500 mt-0.5">${esc(p.weight)}</div>` : ''}
+      <div class="mt-1.5 flex items-baseline gap-2 flex-wrap">
+        <span class="text-base sm:text-lg font-bold text-brand">${money(p.price)}</span>
+        ${disc ? `<span class="text-xs text-gray-400 line-through">${money(p.old_price)}</span>` : ''}
+      </div>
+      <div class="mt-auto pt-3">${cartControl(p, q)}</div>
+    </div></div>`;
+}
+
+function cartControl(p, q) {
+  if (!p.in_stock) return `<button disabled class="btn btn-ghost w-full text-sm">স্টক শেষ</button>`;
+  if (q > 0) return `<div class="flex items-center justify-between border-2 border-gold rounded-lg overflow-hidden">
+    <button data-action="dec" data-id="${esc(p.id)}" class="w-10 h-9 text-brand font-bold hover:bg-amber-50" aria-label="কমান"><i class="fa-solid fa-minus"></i></button>
+    <span class="font-bold">${bn(q)}</span>
+    <button data-action="inc" data-id="${esc(p.id)}" class="w-10 h-9 text-brand font-bold hover:bg-amber-50" aria-label="বাড়ান"><i class="fa-solid fa-plus"></i></button></div>`;
+  return `<button data-action="add" data-id="${esc(p.id)}" class="btn btn-cta w-full text-sm"><i class="fa-solid fa-plus text-xs"></i> কার্টে যোগ করুন</button>`;
+}
+
+function renderProducts() {
+  const list = filteredProducts();
+  const title = state.cat === 'all' ? 'সব পণ্য' : state.cat;
+  $('#products').innerHTML = `
+    <div class="flex items-center justify-between mb-4 gap-2">
+      <h2 class="text-xl sm:text-2xl font-bold text-brand border-l-4 border-gold pl-3">${esc(title)}${state.search ? ` <span class="text-sm font-normal text-gray-500">— "${esc(state.search)}"</span>` : ''}</h2>
+      <span class="text-sm text-gray-500">${bn(list.length)}টি পণ্য</span>
+    </div>
+    ${list.length ? `<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">${list.map(productCard).join('')}</div>`
+      : `<div class="text-center py-16 text-gray-500"><i class="fa-regular fa-face-frown text-4xl mb-3"></i><p>${state.products.length ? 'কোনো পণ্য পাওয়া যায়নি' : 'এখনো কোনো পণ্য যোগ করা হয়নি'}</p></div>`}`;
+}
+
+function renderTesti() {
+  const d = state.design, el = $('#testi');
+  const list = (d.testimonials || []).filter(t => t && t.name && t.text);
+  if (!d.show_testimonials || !list.length) { el.innerHTML = ''; return; }
+  el.innerHTML = `<div class="bg-white py-10 mt-4"><div class="max-w-7xl mx-auto px-3">
+    <h2 class="text-xl sm:text-2xl font-bold text-brand text-center mb-6">আমাদের গ্রাহকদের মতামত</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    ${list.map(t => `<div class="rounded-xl border border-gray-100 bg-cream p-5 shadow-sm">
+      <div class="text-gold text-sm mb-2">${'<i class="fa-solid fa-star"></i>'.repeat(5)}</div>
+      <p class="text-gray-700 text-sm leading-relaxed">“${esc(t.text)}”</p>
+      <div class="mt-3 flex items-center gap-2"><span class="w-8 h-8 rounded-full bg-brand text-gold flex items-center justify-center font-bold text-sm">${esc(String(t.name).charAt(0))}</span><span class="font-semibold text-sm">${esc(t.name)}</span></div></div>`).join('')}
+    </div></div></div>`;
+}
+
+function renderFooter() {
+  const d = state.design;
+  $('#footer').innerHTML = `<div class="bg-brand text-white mt-8"><div class="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+    <div class="lg:col-span-2"><div class="flex items-center gap-3 mb-3">${logoHtml('w-12 h-12')}<div><div class="brand-font font-bold text-xl">${esc(d.brand_name)}</div><div class="text-xs text-gold">${esc(d.sub_tagline)}</div></div></div>
+      <p class="text-sm text-white/75 max-w-md leading-relaxed">${esc(d.footer_about)}</p></div>
+    <div><h4 class="font-bold text-gold mb-3">ক্যাটেগরি</h4><ul class="space-y-2 text-sm text-white/80">
+      ${CATEGORIES.map(c => `<li><button data-action="cat" data-cat="${esc(c.name)}" class="hover:text-gold">${esc(c.name)}</button></li>`).join('')}</ul></div>
+    <div><h4 class="font-bold text-gold mb-3">যোগাযোগ</h4><ul class="space-y-2 text-sm text-white/80">
+      <li><i class="fa-solid fa-phone w-5 text-gold"></i><a href="tel:${esc(d.phone)}" class="hover:text-gold">${esc(bn(d.phone))}</a></li>
+      <li><i class="fa-brands fa-whatsapp w-5 text-gold"></i><a href="https://wa.me/${esc(digits(d.whatsapp))}" target="_blank" rel="noopener noreferrer" class="hover:text-gold">WhatsApp করুন</a></li>
+      <li class="break-all"><i class="fa-solid fa-envelope w-5 text-gold"></i><a href="mailto:${esc(d.email)}" class="hover:text-gold">${esc(d.email)}</a></li>
+      <li><i class="fa-solid fa-location-dot w-5 text-gold"></i>${esc(d.address)}</li></ul></div>
+    </div>
+    <div class="border-t border-white/10 py-4 text-center text-xs text-white/60">© ${bn(new Date().getFullYear())} ${esc(d.brand_name)}। সর্বস্বত্ব সংরক্ষিত।</div></div>`;
+}
+
+function renderMobileNav() {
+  const b = (a, i, l, extra = '') => `<button data-action="${a}" class="relative flex-1 flex flex-col items-center py-2 text-brand text-[11px] font-medium"><i class="${i} text-lg mb-0.5"></i>${l}${extra}</button>`;
+  $('#mnav').innerHTML = `<div class="flex">
+    ${b('home', 'fa-solid fa-house', 'হোম')}
+    ${b('shop', 'fa-solid fa-store', 'পণ্য')}
+    ${b('openCart', 'fa-solid fa-bag-shopping', 'কার্ট', '<span class="cart-badge absolute top-1 left-1/2 ml-1 min-w-[16px] h-4 px-1 rounded-full bg-cta text-white text-[10px] font-bold flex items-center justify-center">0</span>')}
+    ${b('account', 'fa-regular fa-user', state.user ? 'অ্যাকাউন্ট' : 'লগইন')}</div>`;
+}
+
+function updateBadges() {
+  const n = bn(cartCount());
+  $$('.cart-badge').forEach(b => { b.textContent = n; b.style.display = cartCount() ? 'flex' : 'none'; });
+}
+
+/* ---------------------------- CART ---------------------------- */
+function refreshCartUI() {
+  saveCart(); updateBadges(); renderProducts(); renderCart();
+  if (state.modal === 'product' && state.viewId) renderProductModal();
+}
+function addToCart(id) {
+  const p = state.products.find(x => x.id === id); if (!p || !p.in_stock) return;
+  const c = state.cart.find(x => x.id === id);
+  if (c) c.qty = Math.min(50, c.qty + 1); else state.cart.push({ id, qty: 1 });
+  refreshCartUI();
+}
+function decCart(id) {
+  const c = state.cart.find(x => x.id === id); if (!c) return;
+  c.qty -= 1; if (c.qty <= 0) state.cart = state.cart.filter(x => x.id !== id);
+  refreshCartUI();
+}
+function removeCart(id) { state.cart = state.cart.filter(x => x.id !== id); refreshCartUI(); }
+
+function renderCart() {
+  const lines = cartLines();
+  const items = $('#cartItems'), form = $('#checkoutForm'), foot = $('#cartFooter');
+  $('#chgDhaka').textContent = money(state.design.delivery_dhaka);
+  $('#chgOut').textContent = money(state.design.delivery_outside);
+  if (!lines.length) {
+    items.innerHTML = `<div class="text-center py-16 text-gray-500"><i class="fa-solid fa-bag-shopping text-5xl text-gray-300 mb-3"></i><p>আপনার কার্ট খালি</p>
+      <button data-action="closeCartShop" class="btn btn-cta mt-4">কেনাকাটা শুরু করুন</button></div>`;
+    form.classList.add('hidden'); foot.classList.add('hidden'); return;
+  }
+  form.classList.remove('hidden'); foot.classList.remove('hidden');
+  items.innerHTML = lines.map(({ p, qty }) => {
+    const img = safeUrl(p.image_url);
+    return `<div class="flex gap-3 border rounded-xl p-2">
+      <div class="w-16 h-16 rounded-lg bg-gray-50 overflow-hidden shrink-0 flex items-center justify-center">${img ? `<img src="${esc(img)}" alt="" class="w-full h-full object-cover">` : '<i class="fa-solid fa-jar-wheat text-gold/50 text-xl"></i>'}</div>
+      <div class="flex-1 min-w-0"><div class="text-sm font-semibold leading-snug line-clamp-2">${esc(p.name)}</div>
+        <div class="text-xs text-gray-500">${esc(p.weight || '')}</div>
+        <div class="flex items-center justify-between mt-1">
+          <div class="flex items-center border rounded-lg overflow-hidden"><button data-action="dec" data-id="${esc(p.id)}" class="w-8 h-7 hover:bg-gray-100" aria-label="কমান"><i class="fa-solid fa-minus text-xs"></i></button><span class="w-8 text-center text-sm font-bold">${bn(qty)}</span><button data-action="inc" data-id="${esc(p.id)}" class="w-8 h-7 hover:bg-gray-100" aria-label="বাড়ান"><i class="fa-solid fa-plus text-xs"></i></button></div>
+          <span class="font-bold text-brand text-sm">${money(p.price * qty)}</span></div></div>
+      <button data-action="remove" data-id="${esc(p.id)}" class="self-start text-gray-400 hover:text-red-600 p-1" aria-label="মুছুন"><i class="fa-solid fa-trash-can text-sm"></i></button></div>`;
+  }).join('');
+  updateSummary();
+}
+function currentArea() { const r = $('input[name="area"]:checked'); return r ? r.value : 'dhaka'; }
+function updateSummary() {
+  const sub = cartLines().reduce((s, l) => s + l.p.price * l.qty, 0), del = deliveryFor(currentArea());
+  $('#cartSummary').innerHTML = `<div class="flex justify-between"><span>সাবটোটাল</span><span>${money(sub)}</span></div>
+    <div class="flex justify-between"><span>ডেলিভারি চার্জ</span><span>${money(del)}</span></div>
+    <div class="flex justify-between font-bold text-base border-t pt-2 mt-1"><span>সর্বমোট</span><span class="text-brand">${money(sub + del)}</span></div>`;
+}
+function openCart() {
+  if (state.profile) {
+    if (!$('#c_name').value) $('#c_name').value = state.profile.full_name || '';
+    if (!$('#c_phone').value) $('#c_phone').value = state.profile.phone || '';
+    if (!$('#c_address').value) $('#c_address').value = state.profile.address || '';
+  }
+  renderCart(); $('#cartDrawer').classList.add('open'); lockScroll();
+}
+function closeCart() { $('#cartDrawer').classList.remove('open'); lockScroll(); }
+function lockScroll() { document.body.style.overflow = ($('#cartDrawer').classList.contains('open') || state.modal) ? 'hidden' : ''; }
+
+function waMessage(o) {
+  const L = [`🛍️ *নতুন অর্ডার — ${state.design.brand_name}*`, `অর্ডার নং: ${o.order_no}`, '',
+    `👤 নাম: ${o.customer_name}`, `📞 ফোন: ${o.phone}`, `📍 ঠিকানা: ${o.address}`,
+    `🚚 এলাকা: ${o.area === 'dhaka' ? 'ঢাকার ভেতরে' : 'ঢাকার বাইরে'}`, '', '*পণ্যের তালিকা:*'];
+  o.items.forEach((it, i) => L.push(`${bn(i + 1)}. ${it.name}${it.weight ? ' (' + it.weight + ')' : ''} × ${bn(it.qty)} = ${money(it.price * it.qty)}`));
+  L.push('', `সাবটোটাল: ${money(o.subtotal)}`, `ডেলিভারি চার্জ: ${money(o.delivery_charge)}`, `*সর্বমোট: ${money(o.total)}*`);
+  if (o.note) L.push('', `📝 নোট: ${o.note}`);
+  L.push('', 'অনুগ্রহ করে আমার অর্ডারটি নিশ্চিত করুন। ধন্যবাদ!');
+  return L.join('\n');
+}
+
+async function placeOrder() {
+  const lines = cartLines();
+  if (!lines.length) return toast('আপনার কার্ট খালি', 'err');
+  const name = $('#c_name').value.trim(), phone = normPhone($('#c_phone').value), address = $('#c_address').value.trim(), note = $('#c_note').value.trim();
+  if (!name) return toast('অনুগ্রহ করে আপনার নাম লিখুন', 'err');
+  if (!validPhone(phone)) return toast('সঠিক মোবাইল নম্বর দিন (যেমন: 01712345678)', 'err');
+  if (address.length < 8) return toast('সম্পূর্ণ ঠিকানা লিখুন', 'err');
+  const area = currentArea();
+  const items = lines.map(({ p, qty }) => ({ id: p.id, name: p.name, price: Number(p.price), qty, weight: p.weight || '' }));
+  const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0), delivery = deliveryFor(area);
+  const d = new Date(), pad = n => String(n).padStart(2, '0');
+  const order = {
+    id: uuid(), order_no: `SH${String(d.getFullYear()).slice(2)}${pad(d.getMonth() + 1)}${pad(d.getDate())}-${Math.floor(1000 + Math.random() * 9000)}`,
+    user_id: state.user ? state.user.id : null, customer_name: name, phone, address, area, items,
+    subtotal, delivery_charge: delivery, total: subtotal + delivery, status: 'pending', note
+  };
+  const btn = $('#placeBtn'); btn.disabled = true;
+  const w = window.open('about:blank', '_blank');   // opened synchronously so mobile browsers don't block it
+  if (sb) {
+    const { error } = await sb.from('orders').insert(order);
+    if (error) { if (w) w.close(); btn.disabled = false; console.warn(error); return toast('অর্ডার সেভ করা যায়নি, আবার চেষ্টা করুন', 'err'); }
+  }
+  const url = `https://wa.me/${digits(state.design.whatsapp)}?text=${encodeURIComponent(waMessage(order))}`;
+  state.cart = []; saveCart(); btn.disabled = false;
+  $('#c_note').value = '';
+  closeCart(); refreshCartUI();
+  toast('✅ অর্ডার গ্রহণ করা হয়েছে! WhatsApp-এ নিশ্চিত করুন।');
+  if (state.user) loadMyOrders();
+  if (w) w.location.href = url; else location.href = url;
+}
+
+/* ---------------------------- MODAL ---------------------------- */
+function openModal(html, wide) {
+  const box = $('#modalBox');
+  box.className = 'bg-white w-full rounded-t-2xl sm:rounded-2xl shadow-2xl max-h-[92vh] overflow-y-auto ' + (wide ? 'sm:max-w-2xl' : 'sm:max-w-md');
+  box.innerHTML = html;
+  const m = $('#modal'); m.classList.remove('hidden'); m.classList.add('flex'); lockScroll();
+}
+function closeModal() {
+  const m = $('#modal'); m.classList.add('hidden'); m.classList.remove('flex');
+  state.modal = null; state.viewId = null; lockScroll();
+}
+const modalHead = t => `<div class="sticky top-0 bg-brand text-white px-4 py-3 flex items-center justify-between z-10"><h3 class="font-bold">${t}</h3><button data-action="closeModal" class="w-8 h-8 rounded-full hover:bg-white/10" aria-label="বন্ধ করুন"><i class="fa-solid fa-xmark"></i></button></div>`;
+
+/* product detail */
+function renderProductModal() {
+  const p = state.products.find(x => x.id === state.viewId); if (!p) return closeModal();
+  const img = safeUrl(p.image_url), disc = (p.old_price && Number(p.old_price) > Number(p.price)) ? Number(p.old_price) - Number(p.price) : 0;
+  openModal(`${modalHead(esc(p.name))}
+    <div class="p-4 space-y-3">
+      <div class="relative aspect-square max-h-72 w-full bg-gray-50 rounded-xl overflow-hidden flex items-center justify-center">
+        ${img ? `<img src="${esc(img)}" alt="${esc(p.name)}" class="w-full h-full object-contain">` : '<i class="fa-solid fa-jar-wheat text-6xl text-gold/50"></i>'}
+        ${!p.in_stock ? '<div class="absolute inset-0 bg-white/70 flex items-center justify-center"><span class="bg-gray-800 text-white px-4 py-1 rounded-full font-semibold">স্টক শেষ</span></div>' : ''}</div>
+      <div class="flex items-center gap-2 flex-wrap"><span class="text-2xl font-bold text-brand">${money(p.price)}</span>
+        ${disc ? `<span class="text-gray-400 line-through">${money(p.old_price)}</span><span class="bg-cta text-white text-xs font-bold px-2 py-0.5 rounded">Save ${money(disc)}</span>` : ''}
+        ${p.weight ? `<span class="ml-auto text-sm text-gray-500">${esc(p.weight)}</span>` : ''}</div>
+      ${p.description ? `<p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">${esc(p.description)}</p>` : ''}
+      ${cartControl(p, cartQty(p.id))}
+    </div>`);
+  state.modal = 'product';
+}
+
+/* auth */
+function authHtml(tab) {
+  const tabs = `<div class="grid grid-cols-2 border-b">
+    <button data-action="authTab" data-tab="signin" class="py-3 font-semibold ${tab === 'signin' ? 'text-brand border-b-2 border-gold' : 'text-gray-500'}">সাইন ইন</button>
+    <button data-action="authTab" data-tab="signup" class="py-3 font-semibold ${tab === 'signup' ? 'text-brand border-b-2 border-gold' : 'text-gray-500'}">সাইন আপ</button></div>`;
+  const form = tab === 'signin' ? `
+    <form data-form="signin" class="p-5 space-y-3">
+      <label class="block"><span class="lbl">ইমেইল</span><input name="email" type="email" required class="inp" autocomplete="email" placeholder="you@example.com"></label>
+      <label class="block"><span class="lbl">পাসওয়ার্ড</span><input name="password" type="password" required class="inp" autocomplete="current-password"></label>
+      <button class="btn btn-brand w-full py-3" type="submit">সাইন ইন করুন</button>
+      <p class="text-center text-sm text-gray-500">অ্যাকাউন্ট নেই? <button type="button" data-action="authTab" data-tab="signup" class="text-cta font-semibold">সাইন আপ করুন</button></p>
+    </form>` : `
+    <form data-form="signup" class="p-5 space-y-3">
+      <label class="block"><span class="lbl">আপনার নাম *</span><input name="name" required class="inp" autocomplete="name"></label>
+      <label class="block"><span class="lbl">মোবাইল নম্বর *</span><input name="phone" type="tel" required class="inp" autocomplete="tel" placeholder="01XXXXXXXXX"></label>
+      <label class="block"><span class="lbl">ইমেইল *</span><input name="email" type="email" required class="inp" autocomplete="email"></label>
+      <label class="block"><span class="lbl">পাসওয়ার্ড * (কমপক্ষে ৬ অক্ষর)</span><input name="password" type="password" required minlength="6" class="inp" autocomplete="new-password"></label>
+      <button class="btn btn-brand w-full py-3" type="submit">অ্যাকাউন্ট তৈরি করুন</button>
+      <p class="text-center text-sm text-gray-500">আগে থেকেই অ্যাকাউন্ট আছে? <button type="button" data-action="authTab" data-tab="signin" class="text-cta font-semibold">সাইন ইন করুন</button></p>
+    </form>`;
+  return modalHead('আপনার অ্যাকাউন্ট') + tabs + form;
+}
+function openAuth(tab = 'signin') {
+  if (!sb) return toast('ডেমো মোড: লগইন চালু করতে Supabase URL ও Key বসান', 'err');
+  state.modal = 'auth'; openModal(authHtml(tab));
+}
+
+/* account */
+function renderAccount() {
+  const pr = state.profile || {}, tab = state.accTab;
+  const tabBtn = (k, l) => `<button data-action="accTab" data-tab="${k}" class="flex-1 py-3 font-semibold ${tab === k ? 'text-brand border-b-2 border-gold' : 'text-gray-500'}">${l}</button>`;
+  let body;
+  if (tab === 'profile') {
+    body = `<form data-form="profile" class="p-5 space-y-3">
+      <label class="block"><span class="lbl">নাম</span><input name="name" class="inp" value="${esc(pr.full_name)}" autocomplete="name"></label>
+      <label class="block"><span class="lbl">মোবাইল নম্বর</span><input name="phone" type="tel" class="inp" value="${esc(pr.phone)}" autocomplete="tel"></label>
+      <label class="block"><span class="lbl">ঠিকানা</span><textarea name="address" rows="2" class="inp" autocomplete="street-address">${esc(pr.address)}</textarea></label>
+      <button class="btn btn-brand w-full" type="submit"><i class="fa-solid fa-floppy-disk"></i> সংরক্ষণ করুন</button></form>`;
+  } else {
+    body = `<div class="p-4 space-y-3">${state.myOrders.length ? state.myOrders.map(o => {
+      const st = STATUS[o.status] || STATUS.pending;
+      return `<div class="border rounded-xl p-3 text-sm">
+        <div class="flex items-center justify-between gap-2"><b>${esc(o.order_no)}</b><span class="px-2 py-0.5 rounded-full text-xs font-semibold ${st.c}">${esc(st.l)}</span></div>
+        <div class="text-xs text-gray-500 mt-0.5">${esc(fmtDate(o.created_at))}</div>
+        <ul class="mt-2 space-y-0.5 text-gray-700">${(Array.isArray(o.items) ? o.items : []).map(i => `<li>• ${esc(i.name)} × ${bn(Number(i.qty) || 0)}</li>`).join('')}</ul>
+        <div class="mt-2 flex justify-between border-t pt-2"><span>ডেলিভারি: ${money(o.delivery_charge)}</span><b class="text-brand">মোট: ${money(o.total)}</b></div></div>`;
+    }).join('') : '<div class="text-center text-gray-500 py-10"><i class="fa-solid fa-box-open text-4xl text-gray-300 mb-2"></i><p>এখনো কোনো অর্ডার নেই</p></div>'}</div>`;
+  }
+  openModal(`${modalHead('আমার অ্যাকাউন্ট')}
+    <div class="px-5 pt-4 pb-3 flex items-center gap-3"><span class="w-12 h-12 rounded-full bg-brand text-gold flex items-center justify-center font-bold text-lg">${esc((pr.full_name || pr.email || '?').charAt(0).toUpperCase())}</span>
+      <div class="min-w-0"><div class="font-bold truncate">${esc(pr.full_name || 'গ্রাহক')}</div><div class="text-xs text-gray-500 truncate">${esc(pr.email || (state.user && state.user.email) || '')}</div></div></div>
+    ${isStaff() ? `<div class="px-5 pb-3"><button data-action="goAdmin" class="btn btn-gold w-full"><i class="fa-solid fa-gauge-high"></i> কন্ট্রোল প্যানেল</button></div>` : ''}
+    <div class="flex border-b">${tabBtn('profile', 'প্রোফাইল')}${tabBtn('orders', 'আমার অর্ডার')}</div>
+    ${body}
+    <div class="px-5 pb-5"><button data-action="logout" class="btn btn-ghost w-full"><i class="fa-solid fa-right-from-bracket"></i> লগআউট</button></div>`);
+  state.modal = 'account';
+}
+async function openAccount() {
+  if (!state.user) return openAuth('signin');
+  state.accTab = 'profile'; renderAccount();
+  loadMyOrders().then(() => { if (state.modal === 'account' && state.accTab === 'orders') renderAccount(); });
+}
+
+/* ---------------------------- AUTH ACTIONS ---------------------------- */
+async function handleSignin(f) {
+  const fd = new FormData(f), btn = $('button[type=submit]', f); btn.disabled = true;
+  const { error } = await sb.auth.signInWithPassword({ email: fd.get('email').trim(), password: fd.get('password') });
+  btn.disabled = false;
+  if (error) return toast(/invalid login/i.test(error.message) ? 'ইমেইল বা পাসওয়ার্ড সঠিক নয়' : /confirm/i.test(error.message) ? 'আগে ইমেইল ভেরিফাই করুন' : 'লগইন ব্যর্থ হয়েছে: ' + error.message, 'err');
+  toast('স্বাগতম! লগইন সফল হয়েছে'); closeModal();
+}
+async function handleSignup(f) {
+  const fd = new FormData(f), phone = normPhone(fd.get('phone')), name = fd.get('name').trim();
+  if (!name) return toast('নাম লিখুন', 'err');
+  if (!validPhone(phone)) return toast('সঠিক মোবাইল নম্বর দিন', 'err');
+  const btn = $('button[type=submit]', f); btn.disabled = true;
+  const { data, error } = await sb.auth.signUp({ email: fd.get('email').trim(), password: fd.get('password'), options: { data: { full_name: name, phone } } });
+  btn.disabled = false;
+  if (error) return toast(/registered/i.test(error.message) ? 'এই ইমেইল দিয়ে আগেই অ্যাকাউন্ট আছে' : 'সাইন আপ ব্যর্থ: ' + error.message, 'err');
+  if (data.session) { toast('অ্যাকাউন্ট তৈরি হয়েছে! স্বাগতম'); closeModal(); }
+  else { toast('ইমেইলে পাঠানো লিংকে ক্লিক করে অ্যাকাউন্ট ভেরিফাই করুন, তারপর সাইন ইন করুন'); openModal(authHtml('signin')); }
+}
+async function handleProfile(f) {
+  const fd = new FormData(f), phone = normPhone(fd.get('phone'));
+  if (phone && !validPhone(phone)) return toast('সঠিক মোবাইল নম্বর দিন', 'err');
+  const upd = { full_name: fd.get('name').trim(), phone: phone || '', address: fd.get('address').trim() };
+  const { error } = await sb.from('profiles').update(upd).eq('id', state.user.id);
+  if (error) return toast('সংরক্ষণ করা যায়নি', 'err');
+  Object.assign(state.profile, upd); toast('প্রোফাইল আপডেট হয়েছে'); renderAccount();
+}
+async function logout() {
+  await sb.auth.signOut(); closeModal();
+  if (location.hash === '#admin') location.hash = '';
+  toast('লগআউট হয়েছে');
+}
+
+let myCh = null, adminCh = null;
+function subscribeMine() {
+  if (!sb) return;
+  if (myCh) { sb.removeChannel(myCh); myCh = null; }
+  if (!state.user) return;
+  myCh = sb.channel('my-orders-' + state.user.id)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'orders', filter: 'user_id=eq.' + state.user.id }, () => {
+      loadMyOrders().then(() => { if (state.modal === 'account' && state.accTab === 'orders') renderAccount(); });
+    }).subscribe();
+}
+function subscribeAdmin() {
+  if (!sb) return;
+  if (adminCh) { sb.removeChannel(adminCh); adminCh = null; }
+  if (!state.user || !can('orders')) return;
+  adminCh = sb.channel('admin-orders')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, payload => {
+      if (payload.eventType === 'INSERT') toast('🔔 নতুন অর্ডার এসেছে!');
+      if (state.adminTab === 'orders' && !$('#admin').classList.contains('hidden')) loadAdminOrders().then(renderAdminTab);
+    }).subscribe();
+}
+function afterAuth() {
+  renderHeader(); renderMobileNav(); updateBadges();
+  subscribeMine(); subscribeAdmin(); route();
+  if (state.modal === 'account') (state.user ? renderAccount() : closeModal());
+}
+
+/* ---------------------------- ROUTER ---------------------------- */
+function showStore() { $('#admin').classList.add('hidden'); $('#store').classList.remove('hidden'); applyTheme(); }
+function showAdmin() { $('#store').classList.add('hidden'); $('#admin').classList.remove('hidden'); window.scrollTo(0, 0); }
+function route() {
+  if (location.hash !== '#admin') { showStore(); return; }
+  if (!state.ready) return;
+  if (!state.user) { showStore(); if (state.modal !== 'auth') openAuth('signin'); return; }
+  if (!isStaff()) { showStore(); history.replaceState(null, '', location.pathname + location.search); return; }
+  if (state.modal === 'auth') closeModal();
+  showAdmin(); enterAdmin();
+}
+
+/* ---------------------------- IMAGE UPLOAD ---------------------------- */
+async function prepareImage(file, maxW) {
+  const okTypes = ['image/jpeg', 'image/png', 'image/webp'];
+  if (file.type === 'image/gif') { if (file.size > 5 * 1048576) throw new Error('ছবি ৫MB-এর কম হতে হবে'); return { blob: file, ext: 'gif', type: 'image/gif' }; }
+  if (!okTypes.includes(file.type)) throw new Error('শুধু JPG, PNG, WEBP বা GIF ছবি দিন');
+  const img = await new Promise((res, rej) => {
+    const i = new Image(), u = URL.createObjectURL(file);
+    i.onload = () => { URL.revokeObjectURL(u); res(i); };
+    i.onerror = () => { URL.revokeObjectURL(u); rej(new Error('ছবি পড়া যায়নি')); };
+    i.src = u;
+  });
+  const sc = Math.min(1, maxW / Math.max(img.width, img.height));
+  const cv = document.createElement('canvas'); cv.width = Math.round(img.width * sc); cv.height = Math.round(img.height * sc);
+  cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+  const blob = await new Promise(r => cv.toBlob(r, file.type, 0.86));
+  if (!blob) throw new Error('ছবি প্রসেস করা যায়নি');
+  if (blob.size > 5 * 1048576) throw new Error('ছবি ৫MB-এর কম হতে হবে');
+  return { blob, ext: file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg', type: file.type };
+}
+async function uploadImage(file, folder, maxW) {
+  if (!sb) throw new Error('Supabase সংযোগ করা নেই');
+  const { blob, ext, type } = await prepareImage(file, maxW || 1200);
+  const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+  const { error } = await sb.storage.from(BUCKET).upload(path, blob, { contentType: type, cacheControl: '31536000' });
+  if (error) throw error;
+  return sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+}
+async function deleteImage(url) {
+  try {
+    const part = String(url || '').split('/object/public/' + BUCKET + '/')[1];
+    if (part && sb) await sb.storage.from(BUCKET).remove([decodeURIComponent(part.split('?')[0])]);
+  } catch (e) { console.warn(e); }
+}
+
+async function handleUpload(input) {
+  const file = input.files && input.files[0]; if (!file) return;
+  const target = input.dataset.upload, maxW = Number(input.dataset.maxw) || 1200;
+  toast('ছবি আপলোড হচ্ছে...'); input.disabled = true;
+  try {
+    if (target === '@product') {
+      state.pfImage = await uploadImage(file, 'products', maxW);
+      const pv = $('#pf_prev'); if (pv) pv.innerHTML = prevImg(state.pfImage);
+    } else {
+      const folder = target.startsWith('ads') ? 'ads' : 'design';
+      setPath(adminDraft, target, await uploadImage(file, folder, maxW));
+      renderAdminTab();
+    }
+    toast('✅ ছবি আপলোড হয়েছে' + (target === '@product' ? '' : ' — "সংরক্ষণ করুন" চাপুন'));
+  } catch (e) { console.warn(e); toast(e.message || 'আপলোড ব্যর্থ হয়েছে', 'err'); }
+  input.disabled = false; input.value = '';
+}
+const prevImg = u => safeUrl(u) ? `<img src="${esc(safeUrl(u))}" alt="" class="w-full h-full object-cover">` : '<i class="fa-regular fa-image text-2xl text-gray-300"></i>';
+
+/* ---------------------------- ADMIN ---------------------------- */
+const ADMIN_TABS = [
+  { k: 'products', l: 'পণ্য', i: 'fa-box' },
+  { k: 'orders', l: 'অর্ডার', i: 'fa-receipt' },
+  { k: 'design', l: 'ডিজাইন ও থিম', i: 'fa-palette' },
+  { k: 'ads', l: 'বিজ্ঞাপন', i: 'fa-bullhorn' },
+  { k: 'users', l: 'ইউজার ও রোল', i: 'fa-users-gear' }
+];
+const visibleTabs = () => ADMIN_TABS.filter(t => t.k === 'users' ? isSuper() : can(t.k));
+
+function enterAdmin() {
+  const tabs = visibleTabs();
+  if (!tabs.length) { toast('আপনাকে কোনো পারমিশন দেওয়া হয়নি। সুপার অ্যাডমিনের সাথে যোগাযোগ করুন।', 'err'); location.hash = ''; return; }
+  if (!tabs.find(t => t.k === state.adminTab)) state.adminTab = tabs[0].k;
+  adminDraft = { design: clone(state.design), ads: clone(state.ads) };
+  subscribeAdmin();
+  renderAdmin();
+}
+function renderAdmin() {
+  const tabs = visibleTabs(), pr = state.profile || {};
+  $('#admin').innerHTML = `
+    <header class="bg-brand text-white sticky top-0 z-30 shadow">
+      <div class="max-w-6xl mx-auto px-3 py-2.5 flex items-center gap-3">
+        ${logoHtml('w-9 h-9')}
+        <div class="leading-tight"><div class="font-bold">কন্ট্রোল প্যানেল</div><div class="text-[11px] text-gold">${esc(ROLE_L[pr.role] || '')} • ${esc(pr.full_name || pr.email || '')}</div></div>
+        <div class="ml-auto flex gap-2">
+          <button data-action="a-home" class="btn btn-gold btn-sm"><i class="fa-solid fa-store"></i><span class="hidden sm:inline"> দোকান দেখুন</span></button>
+          <button data-action="logout" class="btn btn-sm bg-white/10 text-white"><i class="fa-solid fa-right-from-bracket"></i><span class="hidden sm:inline"> লগআউট</span></button>
+        </div></div>
+      <nav class="max-w-6xl mx-auto px-2 flex overflow-x-auto no-scrollbar">
+        ${tabs.map(t => `<button data-action="a-tab" data-tab="${t.k}" class="whitespace-nowrap px-4 py-2.5 text-sm font-medium ${state.adminTab === t.k ? 'text-gold border-b-2 border-gold' : 'text-white/80 hover:text-white'}"><i class="fa-solid ${t.i} mr-1.5"></i>${t.l}</button>`).join('')}
+      </nav></header>
+    <div id="adminBody" class="max-w-6xl mx-auto p-3 sm:p-5"></div>`;
+  renderAdminTab(); loadForTab();
+}
+async function loadForTab() {
+  const t = state.adminTab;
+  if (t === 'orders') { await loadAdminOrders(); }
+  if (t === 'users') { await loadAdminUsers(); }
+  if (state.adminTab === t) renderAdminTab();
+}
+async function loadAdminOrders() {
+  if (!sb) return;
+  const { data, error } = await sb.from('orders').select('*').order('created_at', { ascending: false }).limit(300);
+  if (error) { console.warn(error); toast('অর্ডার লোড করা যায়নি', 'err'); return; }
+  state.adminOrders = data || [];
+}
+async function loadAdminUsers() {
+  if (!sb) return;
+  const { data, error } = await sb.from('profiles').select('*').order('created_at', { ascending: false });
+  if (error) { console.warn(error); toast('ইউজার লোড করা যায়নি', 'err'); return; }
+  state.adminUsers = data || [];
+}
+function renderAdminTab() {
+  const body = $('#adminBody'); if (!body) return;
+  const t = state.adminTab;
+  // keep focus-free re-render; draft is always the source of truth
+  body.innerHTML = t === 'products' ? tabProducts() : t === 'orders' ? tabOrders() : t === 'design' ? tabDesign() : t === 'ads' ? tabAds() : tabUsers();
+}
+
+/* ---- form field helpers (bound to adminDraft by data-path) ---- */
+const FLD = {
+  text: (l, p, ph = '') => `<label class="block"><span class="lbl">${l}</span><input class="inp" data-path="${p}" value="${esc(getPath(adminDraft, p))}" placeholder="${esc(ph)}"></label>`,
+  area: (l, p, rows = 2) => `<label class="block"><span class="lbl">${l}</span><textarea class="inp" rows="${rows}" data-path="${p}">${esc(getPath(adminDraft, p))}</textarea></label>`,
+  num: (l, p) => `<label class="block"><span class="lbl">${l}</span><input class="inp" type="number" min="0" step="1" data-path="${p}" value="${esc(getPath(adminDraft, p))}"></label>`,
+  color: (l, p) => `<label class="block"><span class="lbl">${l}</span><div class="flex items-center gap-2"><input type="color" class="w-12 h-10 rounded border cursor-pointer p-0.5 bg-white" data-path="${p}" value="${esc(safeColor(getPath(adminDraft, p), '#000000').slice(0, 7))}"><code class="text-xs text-gray-500">${esc(getPath(adminDraft, p))}</code></div></label>`,
+  toggle: (l, p) => `<label class="flex items-center justify-between gap-3 py-1 cursor-pointer"><span class="text-sm font-medium">${l}</span><span class="toggle"><input type="checkbox" data-path="${p}" ${getPath(adminDraft, p) ? 'checked' : ''}><span></span></span></label>`,
+  img: (l, p, maxw) => { const u = getPath(adminDraft, p); return `<div><span class="lbl">${l}</span><div class="flex items-center gap-3">
+      <div class="w-24 h-16 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center border shrink-0">${prevImg(u)}</div>
+      <div class="flex flex-col gap-1.5"><label class="btn btn-ghost btn-sm cursor-pointer"><i class="fa-solid fa-upload"></i> ছবি আপলোড<input type="file" accept="image/*" class="hidden" data-upload="${p}" data-maxw="${maxw}"></label>
+      ${u ? `<button type="button" data-action="a-rmimg" data-path="${p}" class="btn btn-sm text-red-600 border border-red-200 bg-white"><i class="fa-solid fa-trash-can"></i> মুছুন</button>` : ''}</div></div></div>`; }
+};
+const sect = (title, icon, inner) => `<section class="bg-white rounded-xl shadow-sm p-4 sm:p-5"><h3 class="font-bold text-brand mb-4 flex items-center gap-2"><i class="fa-solid ${icon} text-gold"></i>${title}</h3><div class="space-y-3">${inner}</div></section>`;
+
+/* ---- PRODUCTS TAB ---- */
+function tabProducts() {
+  if (!can('products')) return noPerm();
+  return `<div class="flex items-center justify-between mb-4 gap-2"><h2 class="text-lg font-bold text-brand">পণ্য তালিকা (${bn(state.products.length)})</h2>
+    <button data-action="a-newProduct" class="btn btn-cta"><i class="fa-solid fa-plus"></i> নতুন পণ্য</button></div>
+    <div class="space-y-2">${state.products.length ? state.products.map(p => `
+      <div class="bg-white rounded-xl shadow-sm p-3 flex gap-3 items-center">
+        <div class="w-16 h-16 rounded-lg bg-gray-50 overflow-hidden shrink-0 flex items-center justify-center">${prevImg(p.image_url)}</div>
+        <div class="flex-1 min-w-0"><div class="font-semibold truncate">${esc(p.name)}</div>
+          <div class="text-xs text-gray-500">${esc(p.category)} ${p.weight ? '• ' + esc(p.weight) : ''}</div>
+          <div class="text-sm"><b class="text-brand">${money(p.price)}</b>${p.old_price ? ` <span class="text-gray-400 line-through text-xs">${money(p.old_price)}</span>` : ''}</div></div>
+        <div class="flex flex-col sm:flex-row gap-1.5 shrink-0">
+          <button data-action="a-stock" data-id="${esc(p.id)}" class="btn btn-sm ${p.in_stock ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">${p.in_stock ? 'স্টকে আছে' : 'স্টক শেষ'}</button>
+          <button data-action="a-editProduct" data-id="${esc(p.id)}" class="btn btn-sm btn-ghost"><i class="fa-solid fa-pen"></i></button>
+          <button data-action="a-delProduct" data-id="${esc(p.id)}" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash-can"></i></button></div></div>`).join('')
+      : '<div class="bg-white rounded-xl p-10 text-center text-gray-500">কোনো পণ্য নেই। "নতুন পণ্য" বাটনে ক্লিক করুন।</div>'}</div>`;
+}
+const noPerm = () => '<div class="bg-white rounded-xl p-10 text-center text-gray-500">এই সেকশনে প্রবেশের অনুমতি নেই।</div>';
+
+function openProductForm(id) {
+  const p = id ? state.products.find(x => x.id === id) : null;
+  state.pfId = id || null; state.pfImage = p ? (p.image_url || '') : '';
+  state.modal = 'pform';
+  openModal(`${modalHead(p ? 'পণ্য সম্পাদনা' : 'নতুন পণ্য যোগ করুন')}
+    <form data-form="product" class="p-5 space-y-3">
+      <label class="block"><span class="lbl">পণ্যের নাম *</span><input name="name" required class="inp" value="${esc(p ? p.name : '')}"></label>
+      <div class="grid grid-cols-2 gap-3">
+        <label class="block"><span class="lbl">ক্যাটেগরি *</span><select name="category" class="inp">${CATEGORIES.map(c => `<option ${p && p.category === c.name ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select></label>
+        <label class="block"><span class="lbl">ওজন/পরিমাণ</span><input name="weight" class="inp" placeholder="যেমন: ১ কেজি" value="${esc(p ? p.weight : '')}"></label>
+        <label class="block"><span class="lbl">বিক্রয় মূল্য (৳) *</span><input name="price" type="number" min="0" step="1" required class="inp" value="${esc(p ? p.price : '')}"></label>
+        <label class="block"><span class="lbl">পুরনো মূল্য (৳)</span><input name="old_price" type="number" min="0" step="1" class="inp" value="${esc(p && p.old_price ? p.old_price : '')}"></label>
+        <label class="block"><span class="lbl">ট্যাগ</span><input name="tag" class="inp" placeholder="Best Selling" value="${esc(p ? p.tag : '')}"></label>
+        <label class="block"><span class="lbl">ক্রম (ছোট আগে)</span><input name="sort_order" type="number" step="1" class="inp" value="${esc(p ? p.sort_order : 0)}"></label>
+      </div>
+      <label class="block"><span class="lbl">বিবরণ</span><textarea name="description" rows="3" class="inp">${esc(p ? p.description : '')}</textarea></label>
+      <div><span class="lbl">পণ্যের ছবি</span><div class="flex items-center gap-3">
+        <div id="pf_prev" class="w-24 h-24 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center border shrink-0">${prevImg(state.pfImage)}</div>
+        <div class="flex flex-col gap-1.5"><label class="btn btn-ghost btn-sm cursor-pointer"><i class="fa-solid fa-upload"></i> ছবি আপলোড<input type="file" accept="image/*" class="hidden" data-upload="@product" data-maxw="1000"></label>
+        <button type="button" data-action="a-pfRemoveImg" class="btn btn-sm text-red-600 border border-red-200 bg-white"><i class="fa-solid fa-trash-can"></i> ছবি মুছুন</button></div></div></div>
+      <label class="flex items-center justify-between py-1 cursor-pointer"><span class="text-sm font-medium">স্টকে আছে</span><span class="toggle"><input type="checkbox" name="in_stock" ${!p || p.in_stock ? 'checked' : ''}><span></span></span></label>
+      <div class="flex gap-2 pt-2"><button type="button" data-action="closeModal" class="btn btn-ghost flex-1">বাতিল</button><button type="submit" class="btn btn-brand flex-1"><i class="fa-solid fa-floppy-disk"></i> সংরক্ষণ</button></div>
+    </form>`, true);
+}
+async function saveProduct(f) {
+  const fd = new FormData(f), name = fd.get('name').trim(), price = Number(fd.get('price'));
+  if (!name || !(price >= 0)) return toast('নাম ও সঠিক মূল্য দিন', 'err');
+  const old = fd.get('old_price') === '' ? null : Number(fd.get('old_price'));
+  const row = {
+    name, category: fd.get('category'), weight: fd.get('weight').trim(), price, old_price: old, tag: fd.get('tag').trim(),
+    sort_order: parseInt(fd.get('sort_order'), 10) || 0, description: fd.get('description').trim(),
+    in_stock: fd.get('in_stock') === 'on', image_url: state.pfImage || null
+  };
+  const btn = $('button[type=submit]', f); btn.disabled = true;
+  const q = state.pfId ? sb.from('products').update(row).eq('id', state.pfId) : sb.from('products').insert(row);
+  const { error } = await q; btn.disabled = false;
+  if (error) { console.warn(error); return toast('সংরক্ষণ ব্যর্থ: ' + error.message, 'err'); }
+  toast('✅ পণ্য সংরক্ষিত হয়েছে'); closeModal();
+  await loadProducts(); renderProducts(); updateBadges(); renderAdminTab();
+}
+
+/* ---- ORDERS TAB ---- */
+function tabOrders() {
+  if (!can('orders')) return noPerm();
+  const all = state.adminOrders, f = state.orderFilter;
+  const list = f === 'all' ? all : all.filter(o => o.status === f);
+  const count = s => all.filter(o => o.status === s).length;
+  const revenue = all.filter(o => o.status === 'delivered').reduce((s, o) => s + Number(o.total), 0);
+  const chip = (k, l) => `<button data-action="a-orderFilter" data-f="${k}" class="btn btn-sm whitespace-nowrap ${f === k ? 'btn-brand' : 'btn-ghost'}">${l}</button>`;
+  return `<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+      ${[['মোট অর্ডার', bn(all.length), 'fa-receipt'], ['অপেক্ষমাণ', bn(count('pending')), 'fa-hourglass-half'], ['ডেলিভারি সম্পন্ন', bn(count('delivered')), 'fa-circle-check'], ['আয় (ডেলিভারি)', money(revenue), 'fa-sack-dollar']]
+        .map(c => `<div class="bg-white rounded-xl shadow-sm p-3"><i class="fa-solid ${c[2]} text-gold"></i><div class="text-xl font-bold text-brand mt-1">${c[1]}</div><div class="text-xs text-gray-500">${c[0]}</div></div>`).join('')}</div>
+    <div class="flex gap-2 overflow-x-auto no-scrollbar mb-4 pb-1">${chip('all', 'সব')}${Object.keys(STATUS).map(k => chip(k, STATUS[k].l.split(' ')[0])).join('')}
+      <button data-action="a-reloadOrders" class="btn btn-sm btn-ghost ml-auto"><i class="fa-solid fa-rotate"></i></button></div>
+    <div class="space-y-3">${list.length ? list.map(o => {
+      const st = STATUS[o.status] || STATUS.pending;
+      return `<div class="bg-white rounded-xl shadow-sm p-4">
+        <div class="flex flex-wrap items-center gap-2 justify-between"><div><b class="text-brand">${esc(o.order_no)}</b> <span class="text-xs text-gray-500">• ${esc(fmtDate(o.created_at))}</span></div>
+          <span class="px-2 py-0.5 rounded-full text-xs font-semibold ${st.c}">${esc(st.l)}</span></div>
+        <div class="grid sm:grid-cols-2 gap-3 mt-3 text-sm">
+          <div><div class="font-semibold">${esc(o.customer_name)} ${o.user_id ? '<span class="text-[10px] bg-gray-100 px-1.5 rounded">নিবন্ধিত</span>' : '<span class="text-[10px] bg-gray-100 px-1.5 rounded">গেস্ট</span>'}</div>
+            <a href="tel:${esc(o.phone)}" class="text-cta"><i class="fa-solid fa-phone text-xs"></i> ${esc(o.phone)}</a>
+            <div class="text-gray-600 mt-1">${esc(o.address)}</div>
+            <div class="text-xs text-gray-500 mt-1">${o.area === 'dhaka' ? 'ঢাকার ভেতরে' : 'ঢাকার বাইরে'}</div>
+            ${o.note ? `<div class="text-xs mt-1 bg-amber-50 rounded p-1.5">📝 ${esc(o.note)}</div>` : ''}</div>
+          <div><ul class="space-y-0.5">${(Array.isArray(o.items) ? o.items : []).map(i => `<li>• ${esc(i.name)}${i.weight ? ' (' + esc(i.weight) + ')' : ''} × ${bn(Number(i.qty) || 0)} <span class="text-gray-500">= ${money((Number(i.price) || 0) * (Number(i.qty) || 0))}</span></li>`).join('')}</ul>
+            <div class="mt-2 border-t pt-2 text-xs text-gray-600">ডেলিভারি: ${money(o.delivery_charge)}</div><div class="font-bold text-brand">মোট: ${money(o.total)}</div></div></div>
+        <div class="flex gap-2 mt-3 pt-3 border-t items-center">
+          <select data-order-status="${esc(o.id)}" class="inp !w-auto !py-1.5 text-sm">${Object.keys(STATUS).map(k => `<option value="${k}" ${o.status === k ? 'selected' : ''}>${esc(STATUS[k].l)}</option>`).join('')}</select>
+          <button data-action="a-delOrder" data-id="${esc(o.id)}" class="btn btn-sm btn-danger ml-auto"><i class="fa-solid fa-trash-can"></i> মুছুন</button></div></div>`;
+    }).join('') : '<div class="bg-white rounded-xl p-10 text-center text-gray-500">কোনো অর্ডার নেই</div>'}</div>`;
+}
+
+/* ---- DESIGN TAB ---- */
+function tabDesign() {
+  if (!can('design')) return noPerm();
+  const F = FLD;
+  return `<div class="space-y-4 pb-24">
+    ${sect('ব্র্যান্ড', 'fa-store', F.text('ব্র্যান্ডের নাম', 'design.brand_name') + F.text('ট্যাগলাইন', 'design.tagline') + F.text('সাব-ট্যাগলাইন', 'design.sub_tagline') + F.img('লোগো', 'design.logo_url', 400))}
+    ${sect('থিম রঙ (লাইভ প্রিভিউ)', 'fa-palette', `<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">${F.color('প্রাইমারি', 'design.colors.primary')}${F.color('সেকেন্ডারি (গোল্ড)', 'design.colors.secondary')}${F.color('ব্যাকগ্রাউন্ড', 'design.colors.background')}${F.color('অ্যাকসেন্ট (CTA)', 'design.colors.accent')}</div>
+      <button type="button" data-action="a-resetColors" class="btn btn-ghost btn-sm"><i class="fa-solid fa-rotate-left"></i> ডিফল্ট রঙে ফিরুন</button>`)}
+    ${sect('ঘোষণা বার', 'fa-bullhorn', F.toggle('দেখান', 'design.announcement_show') + F.text('ঘোষণার লেখা', 'design.announcement_text'))}
+    ${sect('হিরো ব্যানার (মূল)', 'fa-image', F.img('ব্যানার ছবি', 'design.hero_image', 1600) + F.toggle('ছবির ওপর লেখা দেখান (ছবিতে নিজস্ব লেখা থাকলে বন্ধ করুন)', 'design.hero_show_text') + F.text('ব্যাজ', 'design.hero_badge') + F.text('হেডলাইন', 'design.hero_title') + F.text('সাবটাইটেল', 'design.hero_subtitle') + F.text('বাটনের লেখা', 'design.hero_cta'))}
+    ${sect('সাইড প্রোমো ব্যানার', 'fa-rectangle-ad', F.toggle('দেখান', 'design.side_banner_show') + F.img('সাইড ব্যানার ছবি', 'design.side_banner_image', 900) + F.text('শিরোনাম', 'design.side_title') + F.text('ছোট লেখা', 'design.side_text'))}
+    ${sect('ডেলিভারি চার্জ', 'fa-truck', `<div class="grid grid-cols-2 gap-3">${F.num('ঢাকার ভেতরে (৳)', 'design.delivery_dhaka')}${F.num('ঢাকার বাইরে (৳)', 'design.delivery_outside')}</div>`)}
+    ${sect('সেকশন দেখানো/লুকানো', 'fa-eye', F.toggle('ফিচার্ড ক্যাটেগরি', 'design.show_categories') + F.toggle('গ্রাহকদের রিভিউ', 'design.show_testimonials'))}
+    ${sect('গ্রাহক রিভিউ (শুধু আসল রিভিউ দিন)', 'fa-comments', [0, 1, 2].map(i => `<div class="grid sm:grid-cols-3 gap-2 border rounded-lg p-3">${F.text('নাম', `design.testimonials.${i}.name`)}<div class="sm:col-span-2">${F.area('মতামত', `design.testimonials.${i}.text`)}</div></div>`).join(''))}
+    ${sect('যোগাযোগ ও ফুটার', 'fa-address-book', F.text('ফোন', 'design.phone') + F.text('WhatsApp নম্বর (দেশ কোডসহ, যেমন 8801XXXXXXXXX)', 'design.whatsapp') + F.text('ইমেইল', 'design.email') + F.text('ঠিকানা', 'design.address') + F.area('ফুটার পরিচিতি', 'design.footer_about', 3))}
+    <div class="fixed bottom-0 inset-x-0 bg-white border-t p-3 z-20"><div class="max-w-6xl mx-auto flex gap-2 justify-end">
+      <button data-action="a-discard" class="btn btn-ghost">বাতিল</button>
+      <button data-action="a-saveDesign" class="btn btn-cta px-8"><i class="fa-solid fa-floppy-disk"></i> সংরক্ষণ করুন</button></div></div></div>`;
+}
+
+/* ---- ADS TAB ---- */
+function tabAds() {
+  if (!can('ads')) return noPerm();
+  const F = FLD, img = adminDraft.ads.mode === 'image';
+  return `<div class="space-y-4 pb-24">
+    ${sect('প্রোমোশনাল বিজ্ঞাপন ব্যানার', 'fa-bullhorn',
+      F.toggle('বিজ্ঞাপন চালু করুন', 'ads.enabled') +
+      `<label class="block"><span class="lbl">ধরন</span><select class="inp" data-path="ads.mode"><option value="text" ${!img ? 'selected' : ''}>লেখা ব্যানার</option><option value="image" ${img ? 'selected' : ''}>ছবি ব্যানার</option></select></label>` +
+      (img ? F.img('বিজ্ঞাপনের ছবি', 'ads.image_url', 1600)
+           : F.text('বিজ্ঞাপনের লেখা', 'ads.text') + `<div class="grid grid-cols-2 gap-3">${F.color('ব্যাকগ্রাউন্ড রঙ', 'ads.bg_color')}${F.color('লেখার রঙ', 'ads.text_color')}</div>`) +
+      F.text('ক্লিকের লিংক (ঐচ্ছিক, https://...)', 'ads.link'))}
+    <div class="fixed bottom-0 inset-x-0 bg-white border-t p-3 z-20"><div class="max-w-6xl mx-auto flex gap-2 justify-end">
+      <button data-action="a-discard" class="btn btn-ghost">বাতিল</button>
+      <button data-action="a-saveAds" class="btn btn-cta px-8"><i class="fa-solid fa-floppy-disk"></i> সংরক্ষণ করুন</button></div></div></div>`;
+}
+
+async function saveSettings(key) {
+  if (!sb) return toast('ডেমো মোড: Supabase সংযোগ করুন', 'err');
+  const val = clone(adminDraft[key]);
+  const { error } = await sb.from('store_settings').upsert({ key, value: val, updated_at: new Date().toISOString() });
+  if (error) { console.warn(error); return toast('সংরক্ষণ ব্যর্থ: ' + error.message, 'err'); }
+  state[key] = clone(val); applyTheme(); renderStore();
+  toast('✅ সংরক্ষিত হয়েছে — দোকানে আপডেট দেখা যাবে');
+}
+
+/* ---- USERS TAB (super admin only) ---- */
+function tabUsers() {
+  if (!isSuper()) return noPerm();
+  return `<div class="flex items-center justify-between mb-4"><h2 class="text-lg font-bold text-brand">নিবন্ধিত ইউজার (${bn(state.adminUsers.length)})</h2>
+    <button data-action="a-reloadUsers" class="btn btn-sm btn-ghost"><i class="fa-solid fa-rotate"></i></button></div>
+    <div class="space-y-2">${state.adminUsers.map(u => {
+      const me = state.user && u.id === state.user.id, perms = u.permissions || [];
+      return `<div data-urow="${esc(u.id)}" class="bg-white rounded-xl shadow-sm p-3 sm:p-4">
+        <div class="flex flex-wrap gap-3 items-center justify-between">
+          <div class="min-w-0"><div class="font-semibold truncate">${esc(u.full_name || 'নাম নেই')} ${me ? '<span class="text-[10px] bg-amber-100 text-amber-800 px-1.5 rounded">আপনি</span>' : ''}</div>
+            <div class="text-xs text-gray-500 break-all">${esc(u.email || '')}${u.phone ? ' • ' + esc(u.phone) : ''}</div></div>
+          <select data-user-role="${esc(u.id)}" class="inp !w-auto !py-1.5 text-sm" ${me ? 'disabled title="নিজের রোল পরিবর্তন করা যায় না"' : ''}>
+            ${Object.keys(ROLE_L).map(r => `<option value="${r}" ${u.role === r ? 'selected' : ''}>${ROLE_L[r]}</option>`).join('')}</select></div>
+        ${u.role === 'admin' ? `<div class="mt-3 pt-3 border-t flex flex-wrap gap-x-5 gap-y-2"><span class="text-xs font-semibold text-gray-500 w-full sm:w-auto">অনুমতি:</span>
+          ${Object.keys(PERM_L).map(k => `<label class="flex items-center gap-1.5 text-sm cursor-pointer"><input type="checkbox" class="accent-[#f48721] w-4 h-4" data-user-perm="${esc(u.id)}" value="${k}" ${perms.includes(k) ? 'checked' : ''}>${PERM_L[k]}</label>`).join('')}</div>` : ''}</div>`;
+    }).join('') || '<div class="bg-white rounded-xl p-10 text-center text-gray-500">কোনো ইউজার নেই</div>'}</div>`;
+}
+async function updateUser(id, upd) {
+  const { error } = await sb.from('profiles').update(upd).eq('id', id);
+  if (error) { console.warn(error); toast('আপডেট ব্যর্থ হয়েছে', 'err'); } else toast('✅ আপডেট হয়েছে');
+  await loadAdminUsers(); renderAdminTab();
+}
+
+/* ---------------------------- EVENTS ---------------------------- */
+function goShop() { if (location.hash === '#admin') location.hash = ''; showStore(); closeCart(); closeModal(); setTimeout(() => { const el = $('#products'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }, 30); }
+function setCat(c) { state.cat = c; renderHeader(); renderCats(); renderProducts(); goShop(); }
+function setSearch(v, src) {
+  const was = !!state.search; state.search = v;
+  $$('.search-inp').forEach(i => { if (i !== src) i.value = v; });
+  renderProducts();
+  if (v && !was) { const el = $('#products'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }
+}
+
+document.addEventListener('click', async e => {
+  if (e.target.id === 'modal') return closeModal();
+  const el = e.target.closest('[data-action]'); if (!el) return;
+  const a = el.dataset.action, id = el.dataset.id;
+  switch (a) {
+    case 'home': e.preventDefault(); state.cat = 'all'; state.search = ''; if (location.hash === '#admin') location.hash = ''; showStore(); renderStore(); window.scrollTo({ top: 0, behavior: 'smooth' }); break;
+    case 'shop': goShop(); break;
+    case 'cat': setCat(el.dataset.cat); break;
+    case 'add': case 'inc': addToCart(id); break;
+    case 'dec': decCart(id); break;
+    case 'remove': removeCart(id); break;
+    case 'view': state.viewId = id; renderProductModal(); break;
+    case 'openCart': openCart(); break;
+    case 'closeCart': closeCart(); break;
+    case 'closeCartShop': goShop(); break;
+    case 'closeModal': closeModal(); break;
+    case 'account': openAccount(); break;
+    case 'authTab': openModal(authHtml(el.dataset.tab)); state.modal = 'auth'; break;
+    case 'accTab': state.accTab = el.dataset.tab; renderAccount(); if (state.accTab === 'orders') loadMyOrders().then(() => { if (state.modal === 'account' && state.accTab === 'orders') renderAccount(); }); break;
+    case 'goAdmin': closeModal(); if (location.hash === '#admin') route(); else location.hash = '#admin'; break;
+    case 'logout': logout(); break;
+    /* admin */
+    case 'a-home': location.hash = ''; break;
+    case 'a-tab': applyTheme(); state.adminTab = el.dataset.tab; adminDraft = { design: clone(state.design), ads: clone(state.ads) }; renderAdmin(); break;
+    case 'a-newProduct': openProductForm(null); break;
+    case 'a-editProduct': openProductForm(id); break;
+    case 'a-pfRemoveImg': state.pfImage = ''; $('#pf_prev').innerHTML = prevImg(''); break;
+    case 'a-stock': {
+      const p = state.products.find(x => x.id === id); if (!p) break;
+      const { error } = await sb.from('products').update({ in_stock: !p.in_stock }).eq('id', id);
+      if (error) return toast('আপডেট ব্যর্থ', 'err');
+      p.in_stock = !p.in_stock; renderAdminTab(); renderProducts(); updateBadges(); break;
+    }
+    case 'a-delProduct': {
+      const p = state.products.find(x => x.id === id); if (!p || !confirm(`"${p.name}" মুছে ফেলবেন?`)) break;
+      const { error } = await sb.from('products').delete().eq('id', id);
+      if (error) return toast('মুছতে ব্যর্থ', 'err');
+      if (p.image_url) deleteImage(p.image_url);
+      state.cart = state.cart.filter(c => c.id !== id); saveCart();
+      await loadProducts(); renderProducts(); updateBadges(); renderAdminTab(); toast('পণ্য মুছে ফেলা হয়েছে'); break;
+    }
+    case 'a-orderFilter': state.orderFilter = el.dataset.f; renderAdminTab(); break;
+    case 'a-reloadOrders': await loadAdminOrders(); renderAdminTab(); break;
+    case 'a-delOrder': {
+      if (!confirm('এই অর্ডারটি স্থায়ীভাবে মুছে ফেলবেন?')) break;
+      const { error } = await sb.from('orders').delete().eq('id', id);
+      if (error) return toast('মুছতে ব্যর্থ', 'err');
+      state.adminOrders = state.adminOrders.filter(o => o.id !== id); renderAdminTab(); toast('অর্ডার মুছে ফেলা হয়েছে'); break;
+    }
+    case 'a-reloadUsers': await loadAdminUsers(); renderAdminTab(); break;
+    case 'a-rmimg': setPath(adminDraft, el.dataset.path, ''); renderAdminTab(); break;
+    case 'a-resetColors': adminDraft.design.colors = { ...DEFAULT_COLORS }; applyTheme(adminDraft.design.colors); renderAdminTab(); break;
+    case 'a-discard': applyTheme(); adminDraft = { design: clone(state.design), ads: clone(state.ads) }; renderAdminTab(); toast('পরিবর্তন বাতিল করা হয়েছে'); break;
+    case 'a-saveDesign': saveSettings('design'); break;
+    case 'a-saveAds': saveSettings('ads'); break;
+  }
+});
+
+document.addEventListener('submit', async e => {
+  const f = e.target.closest('[data-form]'); if (!f) return;
+  e.preventDefault();
+  switch (f.dataset.form) {
+    case 'checkout': placeOrder(); break;
+    case 'signin': handleSignin(f); break;
+    case 'signup': handleSignup(f); break;
+    case 'profile': handleProfile(f); break;
+    case 'product': saveProduct(f); break;
+  }
+});
+
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.classList.contains('search-inp')) return setSearch(t.value, t);
+  if (t.dataset && t.dataset.path && adminDraft) {
+    const v = t.type === 'checkbox' ? t.checked : t.type === 'number' ? (t.value === '' ? 0 : Number(t.value)) : t.value;
+    setPath(adminDraft, t.dataset.path, v);
+    if (t.dataset.path.startsWith('design.colors.')) {
+      applyTheme(adminDraft.design.colors);
+      const code = t.parentElement && t.parentElement.querySelector('code'); if (code) code.textContent = t.value;
+    }
+    if (t.dataset.path === 'ads.mode') renderAdminTab();
+  }
+});
+
+document.addEventListener('change', async e => {
+  const t = e.target, d = t.dataset || {};
+  if (t.name === 'area') return updateSummary();
+  if (d.upload) return handleUpload(t);
+  if (d.orderStatus) {
+    const { error } = await sb.from('orders').update({ status: t.value }).eq('id', d.orderStatus);
+    if (error) { toast('স্ট্যাটাস আপডেট ব্যর্থ', 'err'); return; }
+    const o = state.adminOrders.find(x => x.id === d.orderStatus); if (o) o.status = t.value;
+    toast('✅ অর্ডার স্ট্যাটাস আপডেট হয়েছে'); renderAdminTab(); return;
+  }
+  if (d.userRole) {
+    const role = t.value;
+    if (!confirm(`রোল পরিবর্তন করে "${ROLE_L[role]}" করবেন?`)) { await loadAdminUsers(); return renderAdminTab(); }
+    const upd = { role }; if (role !== 'admin') upd.permissions = [];
+    return updateUser(d.userRole, upd);
+  }
+  if (d.userPerm) {
+    const row = t.closest('[data-urow]');
+    const perms = $$('[data-user-perm]:checked', row).map(x => x.value);
+    return updateUser(d.userPerm, { permissions: perms });
+  }
+});
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { if (state.modal) closeModal(); else closeCart(); } });
+window.addEventListener('hashchange', route);
+
+/* ---------------------------- INIT ---------------------------- */
+async function init() {
+  renderStore();
+  if (sb) {
+    await Promise.all([loadSettings(), loadProducts()]);
+    try {
+      const { data } = await sb.auth.getSession();
+      if (data && data.session) { state.user = data.session.user; await loadProfile(); }
+    } catch (e) { console.warn(e); }
+    sb.auth.onAuthStateChange((ev, session) => {
+      if (ev === 'INITIAL_SESSION' || ev === 'TOKEN_REFRESHED') return;
+      setTimeout(async () => {
+        state.user = session ? session.user : null;
+        if (state.user) await loadProfile(); else { state.profile = null; state.myOrders = []; }
+        afterAuth();
+      }, 0);
+    });
+  } else {
+    state.products = DEMO_PRODUCTS;
+    console.info('SAR\'S HOUSE: demo mode — set SUPABASE_URL and SUPABASE_ANON_KEY to go live.');
+  }
+  // drop cart lines for products that no longer exist
+  state.cart = state.cart.filter(c => state.products.some(p => p.id === c.id)); saveCart();
+  state.ready = true;
+  renderStore(); subscribeMine(); route();
+}
+init();
+})();
+</script>
+</body>
+</html>
