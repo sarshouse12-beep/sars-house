@@ -371,6 +371,83 @@ update public.products set name_en = 'Black Cumin (Kalojira)',
   description_en = 'Clean, hand-picked black cumin seeds.'
   where name = 'কালোজিরা' and name_en = '';
 
+-- ---------------------------------------------------------------------
+-- 9. TABLE PRIVILEGES (new Supabase projects don't auto-grant API access)
+-- ---------------------------------------------------------------------
+grant usage on schema public to anon, authenticated;
+
+-- visitors (not logged in) can only READ products & settings, and PLACE orders
+grant select         on public.products       to anon, authenticated;
+grant select         on public.store_settings to anon, authenticated;
+grant insert         on public.orders         to anon, authenticated;
+
+-- logged-in users (RLS limits each role to what it is allowed to do)
+grant select, insert, update, delete on public.products       to authenticated;
+grant select, insert, update, delete on public.store_settings to authenticated;
+grant select, update, delete         on public.orders         to authenticated;
+grant select, update, delete         on public.profiles       to authenticated;
+
+grant execute on function public.get_my_role()        to anon, authenticated;
+grant execute on function public.is_super_admin()     to anon, authenticated;
+grant execute on function public.is_staff()           to anon, authenticated;
+grant execute on function public.has_permission(text) to anon, authenticated;
+
+-- make Supabase's API pick up the changes immediately
+notify pgrst, 'reload schema';
+
+-- ---------------------------------------------------------------------
+-- 10. AI CHAT TABLES
+-- ---------------------------------------------------------------------
+create table if not exists public.chat_sessions (
+  id         uuid primary key default gen_random_uuid(),
+  user_id    uuid references auth.users(id) on delete set null,
+  lang       text not null default 'bn',
+  created_at timestamptz not null default now(),
+  last_at    timestamptz not null default now()
+);
+
+create table if not exists public.chat_messages (
+  id         bigint generated always as identity primary key,
+  session_id uuid not null references public.chat_sessions(id) on delete cascade,
+  role       text not null check (role in ('user', 'assistant')),
+  content    text not null,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists chat_messages_session_idx on public.chat_messages (session_id, id);
+create index if not exists chat_messages_created_idx on public.chat_messages (created_at desc);
+create index if not exists chat_sessions_last_idx    on public.chat_sessions (last_at desc);
+
+alter table public.chat_sessions enable row level security;
+alter table public.chat_messages enable row level security;
+
+-- Visitors can NEVER read or write chats directly. Only the Edge Function
+-- (service role) writes them. Staff with the 'orders' permission can read/delete.
+drop policy if exists "chat_sessions_select" on public.chat_sessions;
+drop policy if exists "chat_sessions_delete" on public.chat_sessions;
+drop policy if exists "chat_messages_select" on public.chat_messages;
+drop policy if exists "chat_messages_delete" on public.chat_messages;
+
+create policy "chat_sessions_select" on public.chat_sessions for select to authenticated
+  using (public.has_permission('orders'));
+create policy "chat_sessions_delete" on public.chat_sessions for delete to authenticated
+  using (public.has_permission('orders'));
+create policy "chat_messages_select" on public.chat_messages for select to authenticated
+  using (public.has_permission('orders'));
+create policy "chat_messages_delete" on public.chat_messages for delete to authenticated
+  using (public.has_permission('orders'));
+
+grant select, delete on public.chat_sessions to authenticated;
+grant select, delete on public.chat_messages to authenticated;
+
+-- the Edge Function runs as service_role
+grant all on public.chat_sessions  to service_role;
+grant all on public.chat_messages  to service_role;
+grant select on public.products, public.store_settings to service_role;
+grant usage, select on all sequences in schema public to service_role;
+
+notify pgrst, 'reload schema';
+
 -- =====================================================================
 --  FIRST SUPER ADMIN
 --  1) Open your website and Sign Up with the owner's email.
