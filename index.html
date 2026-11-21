@@ -213,6 +213,7 @@ const DEFAULT_DESIGN = {
   delivery_dhaka: 60,
   delivery_outside: 120,
   show_categories: true,
+  cat_images: ['', '', '', ''],
   show_testimonials: false,
   testimonials: [
     { name: '', text: '' },
@@ -297,7 +298,8 @@ const EN = {
   'সাবটাইটেল (ইংরেজি)': 'Subtitle (English)', 'বাটনের লেখা': 'Button Text', 'বাটনের লেখা (ইংরেজি)': 'Button Text (English)',
   'সাইড প্রোমো ব্যানার': 'Side Promo Banner', 'সাইড ব্যানার ছবি': 'Side Banner Image', 'শিরোনাম': 'Title', 'শিরোনাম (ইংরেজি)': 'Title (English)',
   'ছোট লেখা': 'Short Text', 'ছোট লেখা (ইংরেজি)': 'Short Text (English)', 'ঢাকার ভেতরে (৳)': 'Inside Dhaka (৳)', 'ঢাকার বাইরে (৳)': 'Outside Dhaka (৳)',
-  'সেকশন দেখানো/লুকানো': 'Show/Hide Sections', 'ফিচার্ড ক্যাটেগরি': 'Featured Categories', 'গ্রাহকদের রিভিউ': 'Customer Reviews',
+  'সেকশন দেখানো/লুকানো': 'Show/Hide Sections', 'ক্যাটেগরির ছবি': 'Category Images',
+  'ছবি দিলে হোমপেজের গোল আইকনের জায়গায় সেটা দেখাবে। ছবি না দিলে আগের আইকনই থাকবে। বর্গাকার ছবি সবচেয়ে ভালো দেখায়।': 'If you add an image, it replaces the round icon on the homepage. Without an image the default icon stays. Square images look best.', 'ফিচার্ড ক্যাটেগরি': 'Featured Categories', 'গ্রাহকদের রিভিউ': 'Customer Reviews',
   'গ্রাহক রিভিউ (শুধু আসল রিভিউ দিন)': 'Customer Reviews (enter real reviews only)', 'মতামত': 'Review',
   'যোগাযোগ ও ফুটার': 'Contact & Footer', 'ফোন': 'Phone', 'WhatsApp নম্বর (দেশ কোডসহ, যেমন 8801XXXXXXXXX)': 'WhatsApp number (with country code, e.g. 8801XXXXXXXXX)',
   'ঠিকানা (ইংরেজি)': 'Address (English)', 'ফুটার পরিচিতি': 'Footer About', 'ফুটার পরিচিতি (ইংরেজি)': 'Footer About (English)',
@@ -536,9 +538,9 @@ function renderCats() {
   if (!state.design.show_categories) { el.innerHTML = ''; return; }
   el.innerHTML = `<div class="pt-6"><h2 class="text-lg sm:text-xl font-bold text-brand text-center mb-4">ক্যাটেগরি অনুযায়ী কিনুন</h2>
     <div class="flex justify-center gap-4 sm:gap-8 overflow-x-auto no-scrollbar pb-1">
-    ${CATEGORIES.map(c => `<button data-action="cat" data-cat="${esc(c.name)}" class="group flex flex-col items-center gap-2 shrink-0 w-20 sm:w-24">
-      <span class="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center text-2xl sm:text-3xl border-2 transition group-hover:scale-105 ${state.cat === c.name ? 'bg-brand text-gold border-gold' : 'bg-white text-brand border-gray-200 group-hover:border-gold'}"><i class="fa-solid ${c.icon}"></i></span>
-      <span class="text-xs sm:text-sm font-medium text-center leading-tight">${esc(c.name)}</span></button>`).join('')}
+    ${CATEGORIES.map((c, i) => { const ci = safeUrl((state.design.cat_images || [])[i]); return `<button data-action="cat" data-cat="${esc(c.name)}" class="group flex flex-col items-center gap-2 shrink-0 w-20 sm:w-24">
+      <span class="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden flex items-center justify-center text-2xl sm:text-3xl border-2 transition group-hover:scale-105 ${state.cat === c.name ? 'bg-brand text-gold border-gold' : 'bg-white text-brand border-gray-200 group-hover:border-gold'}">${ci ? `<img src="${esc(ci)}" alt="${esc(c.name)}" loading="lazy" class="w-full h-full object-cover">` : `<i class="fa-solid ${c.icon}"></i>`}</span>
+      <span class="text-xs sm:text-sm font-medium text-center leading-tight">${esc(c.name)}</span></button>`; }).join('')}
     </div></div>`;
 }
 
@@ -1148,6 +1150,7 @@ function tabDesign() {
     ${sect('হিরো ব্যানার (মূল)', 'fa-image', F.img('ব্যানার ছবি', 'design.hero_image', 1600) + F.toggle('ছবির ওপর লেখা দেখান (ছবিতে নিজস্ব লেখা থাকলে বন্ধ করুন)', 'design.hero_show_text') + F.text('ব্যাজ', 'design.hero_badge') + F.text('ব্যাজ (ইংরেজি)', 'design.hero_badge_en') + F.text('হেডলাইন', 'design.hero_title') + F.text('হেডলাইন (ইংরেজি)', 'design.hero_title_en') + F.text('সাবটাইটেল', 'design.hero_subtitle') + F.text('সাবটাইটেল (ইংরেজি)', 'design.hero_subtitle_en') + F.text('বাটনের লেখা', 'design.hero_cta') + F.text('বাটনের লেখা (ইংরেজি)', 'design.hero_cta_en'))}
     ${sect('সাইড প্রোমো ব্যানার', 'fa-rectangle-ad', F.toggle('দেখান', 'design.side_banner_show') + F.img('সাইড ব্যানার ছবি', 'design.side_banner_image', 900) + F.text('শিরোনাম', 'design.side_title') + F.text('শিরোনাম (ইংরেজি)', 'design.side_title_en') + F.text('ছোট লেখা', 'design.side_text') + F.text('ছোট লেখা (ইংরেজি)', 'design.side_text_en'))}
     ${sect('ডেলিভারি চার্জ', 'fa-truck', `<div class="grid grid-cols-2 gap-3">${F.num('ঢাকার ভেতরে (৳)', 'design.delivery_dhaka')}${F.num('ঢাকার বাইরে (৳)', 'design.delivery_outside')}</div>`)}
+    ${sect('ক্যাটেগরির ছবি', 'fa-images', '<p class="text-xs text-gray-500">ছবি দিলে হোমপেজের গোল আইকনের জায়গায় সেটা দেখাবে। ছবি না দিলে আগের আইকনই থাকবে। বর্গাকার ছবি সবচেয়ে ভালো দেখায়।</p>' + CATEGORIES.map((c, i) => F.img(c.name, 'design.cat_images.' + i, 400)).join(''))}
     ${sect('সেকশন দেখানো/লুকানো', 'fa-eye', F.toggle('ফিচার্ড ক্যাটেগরি', 'design.show_categories') + F.toggle('গ্রাহকদের রিভিউ', 'design.show_testimonials'))}
     ${sect('গ্রাহক রিভিউ (শুধু আসল রিভিউ দিন)', 'fa-comments', [0, 1, 2].map(i => `<div class="grid sm:grid-cols-3 gap-2 border rounded-lg p-3">${F.text('নাম', `design.testimonials.${i}.name`)}<div class="sm:col-span-2">${F.area('মতামত', `design.testimonials.${i}.text`)}</div></div>`).join(''))}
     ${sect('যোগাযোগ ও ফুটার', 'fa-address-book', F.text('ফোন', 'design.phone') + F.text('WhatsApp নম্বর (দেশ কোডসহ, যেমন 8801XXXXXXXXX)', 'design.whatsapp') + F.text('ইমেইল', 'design.email') + F.text('ঠিকানা', 'design.address') + F.text('ঠিকানা (ইংরেজি)', 'design.address_en') + F.area('ফুটার পরিচিতি', 'design.footer_about', 3) + F.area('ফুটার পরিচিতি (ইংরেজি)', 'design.footer_about_en', 3))}
