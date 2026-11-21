@@ -137,7 +137,8 @@ const BUCKET = 'shop-images';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const bn = n => String(n).replace(/\d/g, d => '০১২৩৪৫৬৭৮৯'[d]);
+let LANG = (function () { try { return localStorage.getItem('sh_lang') === 'en' ? 'en' : 'bn'; } catch (e) { return 'bn'; } })();
+const bn = n => LANG === 'en' ? String(n) : String(n).replace(/\d/g, d => '০১২৩৪৫৬৭৮৯'[d]);
 const money = n => '৳' + bn(Math.round(Number(n) || 0).toLocaleString('en-US'));
 const digits = s => String(s || '').replace(/\D/g, '');
 const clone = o => JSON.parse(JSON.stringify(o));
@@ -159,14 +160,14 @@ function deepMerge(base, over) {
   }
   return (over === undefined || over === null) ? base : over;
 }
-const fmtDate = d => { try { return new Date(d).toLocaleString('bn-BD', { dateStyle: 'medium', timeStyle: 'short' }); } catch { return String(d); } };
+const fmtDate = d => { try { return new Date(d).toLocaleString(LANG === 'en' ? 'en-GB' : 'bn-BD', { dateStyle: 'medium', timeStyle: 'short' }); } catch { return String(d); } };
 const normPhone = p => { let d = digits(p); if (d.startsWith('880')) d = '0' + d.slice(3); return d; };
 const validPhone = p => /^01[3-9]\d{8}$/.test(p);
 
 let toastT;
 function toast(msg, type = 'ok') {
   const t = $('#toast');
-  t.textContent = msg;
+  t.textContent = tr(msg);
   t.className = 'fixed z-[100] left-1/2 -translate-x-1/2 top-4 px-4 py-2 rounded-lg shadow-lg text-white text-sm max-w-[92vw] text-center ' + (type === 'err' ? 'bg-red-600' : 'bg-gray-900');
   t.style.display = 'block';
   clearTimeout(toastT);
@@ -187,6 +188,16 @@ const DEFAULT_DESIGN = {
   sub_tagline: 'Symbol of Purity • Made with Love',
   logo_url: '',
   colors: { ...DEFAULT_COLORS },
+  tagline_en: 'Our promise of safe and delicious food',
+  announcement_text_en: 'Home delivery all over Bangladesh • Call/WhatsApp to order: +8801729470904',
+  hero_badge_en: '100% Pure & Natural',
+  hero_title_en: 'Pure honey, ghee & organic food — delivered to your door',
+  hero_subtitle_en: 'Our promise of safe and delicious food',
+  hero_cta_en: 'Order Now',
+  side_title_en: 'Raw Honey',
+  side_text_en: 'Collected straight from the hive, free from adulteration',
+  address_en: 'Bangladesh',
+  footer_about_en: "SAR'S HOUSE — our promise of safe and delicious food: pure honey, ghee, mustard oil, dates, nuts and spices.",
   announcement_show: true,
   announcement_text: 'সারা বাংলাদেশে হোম ডেলিভারি • অর্ডার করতে কল/WhatsApp: +8801729470904',
   hero_image: '',
@@ -216,7 +227,7 @@ const DEFAULT_DESIGN = {
 };
 const DEFAULT_ADS = {
   enabled: false, mode: 'text', image_url: '',
-  text: '🎉 বিশেষ অফার! আজই অর্ডার করুন', link: '',
+  text: '🎉 বিশেষ অফার! আজই অর্ডার করুন', text_en: '🎉 Special offer! Order today', link: '',
   bg_color: '#C89B4B', text_color: '#041f1e'
 };
 const DEMO_PRODUCTS = [
@@ -228,15 +239,160 @@ const DEMO_PRODUCTS = [
   ['কাজুবাদাম', 'খেজুর ও বাদাম', 900, null, '৫০০ গ্রাম', '', false],
   ['কালোজিরা', 'মসলা ও অন্যান্য', 260, 300, '২৫০ গ্রাম', '', true]
 ].map((r, i) => ({ id: 'demo-' + i, name: r[0], category: r[1], description: 'ডেমো পণ্য — Supabase সংযোগ করলে আপনার আসল পণ্য এখানে দেখাবে।', price: r[2], old_price: r[3], weight: r[4], tag: r[5], in_stock: r[6], image_url: '', sort_order: i }));
+const DEMO_EN = ['Pure Mustard Flower Honey', 'Sundarbans Khalisha Flower Honey', 'Gawa Ghee', 'Cold-Pressed Mustard Oil', 'Ajwa Dates', 'Cashew Nuts', 'Black Cumin (Kalojira)'];
+DEMO_PRODUCTS.forEach((p, i) => { p.name_en = DEMO_EN[i]; p.description_en = 'Demo product — connect Supabase to show your real products here.'; });
 
 const STATUS = {
-  pending:   { l: 'অপেক্ষমাণ (Pending)',     c: 'bg-yellow-100 text-yellow-800' },
-  confirmed: { l: 'নিশ্চিত (Confirmed)',      c: 'bg-blue-100 text-blue-800' },
-  delivered: { l: 'ডেলিভারি সম্পন্ন (Delivered)', c: 'bg-green-100 text-green-800' },
-  cancelled: { l: 'বাতিল (Cancelled)',        c: 'bg-red-100 text-red-800' }
+  pending:   { l: 'অপেক্ষমাণ',     c: 'bg-yellow-100 text-yellow-800' },
+  confirmed: { l: 'নিশ্চিত',      c: 'bg-blue-100 text-blue-800' },
+  delivered: { l: 'ডেলিভারি সম্পন্ন', c: 'bg-green-100 text-green-800' },
+  cancelled: { l: 'বাতিল',        c: 'bg-red-100 text-red-800' }
 };
 const ROLE_L = { customer: 'গ্রাহক', admin: 'অ্যাডমিন', super_admin: 'সুপার অ্যাডমিন' };
 const PERM_L = { products: 'পণ্য', orders: 'অর্ডার', design: 'ডিজাইন', ads: 'বিজ্ঞাপন' };
+
+/* ---------------------------- i18n (Bengali / English) ---------------------------- */
+const EN = {
+  /* navigation & storefront */
+  'সব পণ্য': 'All Products', 'মধু': 'Honey', 'ঘি ও তেল': 'Ghee & Oil', 'খেজুর ও বাদাম': 'Dates & Nuts', 'মসলা ও অন্যান্য': 'Spices & More',
+  'পণ্য খুঁজুন...': 'Search products...', 'আমার অ্যাকাউন্ট': 'My Account', 'লগইন': 'Login', 'কার্ট': 'Cart', 'অ্যাকাউন্ট': 'Account',
+  'হোম': 'Home', 'পণ্য': 'Products', 'দেখুন': 'View', 'ক্যাটেগরি অনুযায়ী কিনুন': 'Shop by Category',
+  'স্টক শেষ': 'Out of Stock', 'কার্টে যোগ করুন': 'Add to Cart', 'কমান': 'Decrease', 'বাড়ান': 'Increase', 'মুছুন': 'Delete',
+  'কোনো পণ্য পাওয়া যায়নি': 'No products found', 'এখনো কোনো পণ্য যোগ করা হয়নি': 'No products have been added yet',
+  'আমাদের গ্রাহকদের মতামত': 'What Our Customers Say', 'ক্যাটেগরি': 'Categories', 'যোগাযোগ': 'Contact', 'WhatsApp করুন': 'Chat on WhatsApp',
+  /* cart & checkout */
+  'আপনার কার্ট': 'Your Cart', 'বন্ধ করুন': 'Close', 'ডেলিভারির তথ্য': 'Delivery Details', 'আপনার নাম *': 'Your Name *', 'পূর্ণ নাম': 'Full name',
+  'মোবাইল নম্বর *': 'Mobile Number *', 'সম্পূর্ণ ঠিকানা *': 'Full Address *', 'বাসা/রোড, থানা, জেলা': 'House/Road, Thana, District',
+  'ডেলিভারি এলাকা': 'Delivery Area', 'ঢাকার ভেতরে': 'Inside Dhaka', 'ঢাকার বাইরে': 'Outside Dhaka',
+  'অতিরিক্ত নোট (ঐচ্ছিক)': 'Additional Note (optional)', 'কোনো বিশেষ নির্দেশনা থাকলে লিখুন': 'Write any special instructions',
+  'অর্ডার নিশ্চিত করুন (WhatsApp)': 'Confirm Order (WhatsApp)',
+  'অর্ডার সেভ হওয়ার পর WhatsApp-এ অর্ডার বিবরণ খুলবে — শুধু "Send" চাপুন।': 'After your order is saved, WhatsApp will open with the order details — just press "Send".',
+  'আপনার কার্ট খালি': 'Your cart is empty', 'কেনাকাটা শুরু করুন': 'Start Shopping', 'সাবটোটাল': 'Subtotal', 'ডেলিভারি চার্জ': 'Delivery Charge',
+  'সর্বমোট': 'Total', 'ডেলিভারি': 'Delivery', 'মোট': 'Total',
+  /* auth & account */
+  'সাইন ইন': 'Sign In', 'সাইন আপ': 'Sign Up', 'ইমেইল': 'Email', 'ইমেইল *': 'Email *', 'পাসওয়ার্ড': 'Password',
+  'সাইন ইন করুন': 'Sign In', 'অ্যাকাউন্ট নেই?': 'No account?', 'সাইন আপ করুন': 'Sign up', 'আগে থেকেই অ্যাকাউন্ট আছে?': 'Already have an account?',
+  'পাসওয়ার্ড * (কমপক্ষে ৬ অক্ষর)': 'Password * (at least 6 characters)', 'অ্যাকাউন্ট তৈরি করুন': 'Create Account', 'আপনার অ্যাকাউন্ট': 'Your Account',
+  'গ্রাহক': 'Customer', 'কন্ট্রোল প্যানেল': 'Control Panel', 'প্রোফাইল': 'Profile', 'আমার অর্ডার': 'My Orders', 'লগআউট': 'Logout',
+  'নাম': 'Name', 'মোবাইল নম্বর': 'Mobile Number', 'ঠিকানা': 'Address', 'সংরক্ষণ করুন': 'Save', 'এখনো কোনো অর্ডার নেই': 'No orders yet',
+  'অপেক্ষমাণ': 'Pending', 'নিশ্চিত': 'Confirmed', 'ডেলিভারি সম্পন্ন': 'Delivered', 'বাতিল': 'Cancelled',
+  'অ্যাডমিন': 'Admin', 'সুপার অ্যাডমিন': 'Super Admin', 'অর্ডার': 'Orders', 'ডিজাইন': 'Design', 'বিজ্ঞাপন': 'Ads',
+  /* admin */
+  'দোকান দেখুন': 'View Store', 'ডিজাইন ও থিম': 'Design & Theme', 'ইউজার ও রোল': 'Users & Roles', 'নতুন পণ্য': 'New Product',
+  'পণ্য তালিকা': 'Product List', 'স্টকে আছে': 'In Stock',
+  'কোনো পণ্য নেই। "নতুন পণ্য" বাটনে ক্লিক করুন।': 'No products yet. Click "New Product".',
+  'এই সেকশনে প্রবেশের অনুমতি নেই।': 'You do not have permission to access this section.',
+  'পণ্য সম্পাদনা': 'Edit Product', 'নতুন পণ্য যোগ করুন': 'Add New Product', 'পণ্যের নাম *': 'Product Name *', 'পণ্যের নাম (ইংরেজি)': 'Product Name (English)',
+  'ক্যাটেগরি *': 'Category *', 'ওজন/পরিমাণ': 'Weight/Quantity', 'যেমন: ১ কেজি': 'e.g. 1 kg', 'বিক্রয় মূল্য (৳) *': 'Selling Price (৳) *',
+  'পুরনো মূল্য (৳)': 'Old Price (৳)', 'ট্যাগ': 'Tag', 'ক্রম (ছোট আগে)': 'Sort Order (smaller first)', 'বিবরণ': 'Description',
+  'বিবরণ (ইংরেজি)': 'Description (English)', 'পণ্যের ছবি': 'Product Image', 'ছবি আপলোড': 'Upload Image', 'ছবি মুছুন': 'Remove Image', 'সংরক্ষণ': 'Save',
+  'মোট অর্ডার': 'Total Orders', 'আয় (ডেলিভারি)': 'Revenue (Delivered)', 'সব': 'All', 'নিবন্ধিত': 'Registered', 'গেস্ট': 'Guest', 'কোনো অর্ডার নেই': 'No orders',
+  'নিবন্ধিত ইউজার': 'Registered Users', 'কোনো ইউজার নেই': 'No users', 'আপনি': 'You', 'নাম নেই': 'No name', 'নিজের রোল পরিবর্তন করা যায় না': 'You cannot change your own role', 'অনুমতি:': 'Permissions:',
+  'ব্র্যান্ড': 'Brand', 'ব্র্যান্ডের নাম': 'Brand Name', 'ট্যাগলাইন': 'Tagline', 'সাব-ট্যাগলাইন': 'Sub-tagline', 'লোগো': 'Logo',
+  'থিম রঙ (লাইভ প্রিভিউ)': 'Theme Colors (live preview)', 'প্রাইমারি': 'Primary', 'সেকেন্ডারি (গোল্ড)': 'Secondary (Gold)', 'ব্যাকগ্রাউন্ড': 'Background',
+  'অ্যাকসেন্ট (CTA)': 'Accent (CTA)', 'ডিফল্ট রঙে ফিরুন': 'Reset to default colors', 'ঘোষণা বার': 'Announcement Bar', 'দেখান': 'Show',
+  'ঘোষণার লেখা': 'Announcement Text', 'ঘোষণার লেখা (ইংরেজি)': 'Announcement Text (English)', 'হিরো ব্যানার (মূল)': 'Hero Banner (Main)', 'ব্যানার ছবি': 'Banner Image',
+  'ছবির ওপর লেখা দেখান (ছবিতে নিজস্ব লেখা থাকলে বন্ধ করুন)': 'Show text over image (turn off if the image already has text)',
+  'ব্যাজ': 'Badge', 'ব্যাজ (ইংরেজি)': 'Badge (English)', 'হেডলাইন': 'Headline', 'হেডলাইন (ইংরেজি)': 'Headline (English)', 'সাবটাইটেল': 'Subtitle',
+  'সাবটাইটেল (ইংরেজি)': 'Subtitle (English)', 'বাটনের লেখা': 'Button Text', 'বাটনের লেখা (ইংরেজি)': 'Button Text (English)',
+  'সাইড প্রোমো ব্যানার': 'Side Promo Banner', 'সাইড ব্যানার ছবি': 'Side Banner Image', 'শিরোনাম': 'Title', 'শিরোনাম (ইংরেজি)': 'Title (English)',
+  'ছোট লেখা': 'Short Text', 'ছোট লেখা (ইংরেজি)': 'Short Text (English)', 'ঢাকার ভেতরে (৳)': 'Inside Dhaka (৳)', 'ঢাকার বাইরে (৳)': 'Outside Dhaka (৳)',
+  'সেকশন দেখানো/লুকানো': 'Show/Hide Sections', 'ফিচার্ড ক্যাটেগরি': 'Featured Categories', 'গ্রাহকদের রিভিউ': 'Customer Reviews',
+  'গ্রাহক রিভিউ (শুধু আসল রিভিউ দিন)': 'Customer Reviews (enter real reviews only)', 'মতামত': 'Review',
+  'যোগাযোগ ও ফুটার': 'Contact & Footer', 'ফোন': 'Phone', 'WhatsApp নম্বর (দেশ কোডসহ, যেমন 8801XXXXXXXXX)': 'WhatsApp number (with country code, e.g. 8801XXXXXXXXX)',
+  'ঠিকানা (ইংরেজি)': 'Address (English)', 'ফুটার পরিচিতি': 'Footer About', 'ফুটার পরিচিতি (ইংরেজি)': 'Footer About (English)',
+  'প্রোমোশনাল বিজ্ঞাপন ব্যানার': 'Promotional Ad Banner', 'বিজ্ঞাপন চালু করুন': 'Enable Ad', 'ধরন': 'Type', 'লেখা ব্যানার': 'Text banner', 'ছবি ব্যানার': 'Image banner',
+  'বিজ্ঞাপনের ছবি': 'Ad Image', 'বিজ্ঞাপনের লেখা': 'Ad Text', 'বিজ্ঞাপনের লেখা (ইংরেজি)': 'Ad Text (English)', 'ব্যাকগ্রাউন্ড রঙ': 'Background Color', 'লেখার রঙ': 'Text Color',
+  'ক্লিকের লিংক (ঐচ্ছিক, https://...)': 'Click link (optional, https://...)',
+  /* toasts, errors, messages */
+  'আপনার কার্ট খালি': 'Your cart is empty', 'অনুগ্রহ করে আপনার নাম লিখুন': 'Please enter your name',
+  'সঠিক মোবাইল নম্বর দিন (যেমন: 01712345678)': 'Enter a valid mobile number (e.g. 01712345678)', 'সম্পূর্ণ ঠিকানা লিখুন': 'Please enter your full address',
+  'অর্ডার সেভ করা যায়নি, আবার চেষ্টা করুন': 'Could not save the order, please try again', 'অর্ডার গ্রহণ করা হয়েছে! WhatsApp-এ নিশ্চিত করুন।': 'Order received! Please confirm it on WhatsApp.',
+  'পণ্য লোড করা যায়নি': 'Could not load products', 'ডেমো মোড: লগইন চালু করতে Supabase URL ও Key বসান': 'Demo mode: add your Supabase URL and Key to enable login',
+  'ইমেইল বা পাসওয়ার্ড সঠিক নয়': 'Incorrect email or password', 'আগে ইমেইল ভেরিফাই করুন': 'Please verify your email first', 'লগইন ব্যর্থ হয়েছে': 'Login failed',
+  'স্বাগতম! লগইন সফল হয়েছে': 'Welcome! Login successful', 'নাম লিখুন': 'Enter your name', 'সঠিক মোবাইল নম্বর দিন': 'Enter a valid mobile number',
+  'এই ইমেইল দিয়ে আগেই অ্যাকাউন্ট আছে': 'An account with this email already exists', 'সাইন আপ ব্যর্থ': 'Sign up failed',
+  'অ্যাকাউন্ট তৈরি হয়েছে! স্বাগতম': 'Account created! Welcome', 'ইমেইলে পাঠানো লিংকে ক্লিক করে অ্যাকাউন্ট ভেরিফাই করুন, তারপর সাইন ইন করুন': 'Click the link sent to your email to verify your account, then sign in',
+  'সংরক্ষণ করা যায়নি': 'Could not save', 'প্রোফাইল আপডেট হয়েছে': 'Profile updated', 'লগআউট হয়েছে': 'Logged out',
+  'নতুন অর্ডার এসেছে!': 'New order received!', 'অর্ডার লোড করা যায়নি': 'Could not load orders', 'ইউজার লোড করা যায়নি': 'Could not load users',
+  'আপনাকে কোনো পারমিশন দেওয়া হয়নি। সুপার অ্যাডমিনের সাথে যোগাযোগ করুন।': 'You have not been given any permission. Please contact the Super Admin.',
+  'ছবি ৫MB-এর কম হতে হবে': 'Image must be under 5MB', 'শুধু JPG, PNG, WEBP বা GIF ছবি দিন': 'Only JPG, PNG, WEBP or GIF images are allowed',
+  'ছবি পড়া যায়নি': 'Could not read the image', 'ছবি প্রসেস করা যায়নি': 'Could not process the image', 'Supabase সংযোগ করা নেই': 'Supabase is not connected',
+  'ছবি আপলোড হচ্ছে...': 'Uploading image...', 'ছবি আপলোড হয়েছে': 'Image uploaded', '"সংরক্ষণ করুন" চাপুন': 'press "Save"', 'আপলোড ব্যর্থ হয়েছে': 'Upload failed',
+  'নাম ও সঠিক মূল্য দিন': 'Enter a name and a valid price', 'সংরক্ষণ ব্যর্থ': 'Save failed', 'পণ্য সংরক্ষিত হয়েছে': 'Product saved', 'আপডেট ব্যর্থ': 'Update failed',
+  'পণ্য মুছে ফেলা হয়েছে': 'Product deleted', 'মুছতে ব্যর্থ': 'Delete failed', 'অর্ডার মুছে ফেলা হয়েছে': 'Order deleted', 'স্ট্যাটাস আপডেট ব্যর্থ': 'Status update failed',
+  'অর্ডার স্ট্যাটাস আপডেট হয়েছে': 'Order status updated', 'পরিবর্তন বাতিল করা হয়েছে': 'Changes discarded', 'ডেমো মোড: Supabase সংযোগ করুন': 'Demo mode: connect Supabase',
+  'সংরক্ষিত হয়েছে — দোকানে আপডেট দেখা যাবে': 'Saved — the update will show on the store', 'আপডেট ব্যর্থ হয়েছে': 'Update failed', 'আপডেট হয়েছে': 'Updated',
+  'এই অর্ডারটি স্থায়ীভাবে মুছে ফেলবেন?': 'Permanently delete this order?'
+};
+function tr(s) {
+  s = String(s == null ? '' : s);
+  if (LANG !== 'en') return s;
+  if (EN[s] !== undefined) return EN[s];
+  const m = s.match(/^([^\p{L}\p{N}]*)([\s\S]*)$/u), pre = m[1], core = m[2];
+  if (EN[core] !== undefined) return pre + EN[core];
+  const i = core.indexOf(': ');
+  if (i > 0 && EN[core.slice(0, i)] !== undefined) return pre + EN[core.slice(0, i)] + core.slice(i);
+  return s;
+}
+const dx = (o, k) => (o && LANG === 'en' && o[k + '_en']) ? o[k + '_en'] : (o ? o[k] : '');
+const pname = p => (LANG === 'en' && p.name_en) ? p.name_en : p.name;
+const pdesc = p => (LANG === 'en' && p.description_en) ? p.description_en : p.description;
+function autoWeight(w) {
+  if (LANG !== 'en' || !w) return w;
+  return String(w).replace(/[০-৯]/g, d => '০১২৩৪৫৬৭৮৯'.indexOf(d)).replace(/কেজি/g, 'kg').replace(/গ্রাম/g, 'g').replace(/লিটার/g, 'L').replace(/মিলি/g, 'ml').replace(/পিস/g, 'pcs').replace(/ডজন/g, 'dozen');
+}
+const pweight = p => autoWeight(p.weight);
+const cnt = n => LANG === 'en' ? `${n} ${n === 1 ? 'product' : 'products'}` : `${bn(n)}টি পণ্য`;
+
+const BN_RE = /[ঀ-৿]/;
+const SKIP_TAGS = { SCRIPT: 1, STYLE: 1, TEXTAREA: 1 };
+const TXT_ATTRS = ['placeholder', 'title', 'aria-label'];
+function xlateText(n) {
+  const p = n.parentNode; if (p && SKIP_TAGS[p.nodeName]) return;
+  if (n.__bn === undefined || n.data !== n.__tr) n.__bn = n.data;
+  let out = n.__bn;
+  if (LANG === 'en' && BN_RE.test(out)) { const k = out.trim(), v = EN[k]; if (v !== undefined) out = out.replace(k, () => v); }
+  n.__tr = out;
+  if (n.data !== out) n.data = out;
+}
+function xlateAttrs(el) {
+  for (const a of TXT_ATTRS) {
+    if (!el.hasAttribute(a)) continue;
+    const o = el.__ba || (el.__ba = {}), cur = el.getAttribute(a);
+    if (o[a] === undefined || cur !== o[a + '#']) o[a] = cur;
+    let out = o[a];
+    if (LANG === 'en') { const v = EN[out.trim()]; if (v !== undefined) out = v; }
+    o[a + '#'] = out;
+    if (cur !== out) el.setAttribute(a, out);
+  }
+}
+function xlateTree(n) {
+  if (n.nodeType === 3) return xlateText(n);
+  if (n.nodeType !== 1) return;
+  xlateAttrs(n);
+  if (SKIP_TAGS[n.nodeName]) return;
+  n.childNodes.forEach(xlateTree);
+}
+function translateAll() {
+  xlateTree(document.body);
+  const md = $('meta[name="description"]');
+  if (md) md.content = LANG === 'en' ? "SAR'S HOUSE — our promise of safe and delicious food. Pure honey, ghee, oil, dates, nuts and spices." : "SAR'S HOUSE — নিরাপদ ও সুস্বাদু খাদ্য সরবরাহের অঙ্গীকার। খাঁটি মধু, ঘি, তেল, খেজুর, বাদাম ও মসলা।";
+}
+new MutationObserver(ms => {
+  if (LANG !== 'en') return;
+  for (const m of ms) { if (m.type === 'characterData') xlateText(m.target); else m.addedNodes.forEach(xlateTree); }
+}).observe(document.body, { childList: true, subtree: true, characterData: true });
+function setLang(l) {
+  LANG = l; try { localStorage.setItem('sh_lang', l); } catch (e) {}
+  document.documentElement.lang = l;
+  renderStore();
+  if (!$('#admin').classList.contains('hidden')) renderAdmin();
+  if (state.modal === 'account') renderAccount();
+  else if (state.modal === 'product') renderProductModal();
+  else if (state.modal === 'auth') openModal(authHtml('signin'));
+  translateAll();
+}
 
 /* ---------------------------- state ---------------------------- */
 const state = {
@@ -312,7 +468,8 @@ function logoHtml(cls = 'w-11 h-11') {
 /* ---------------------------- STOREFRONT RENDER ---------------------------- */
 function renderStore() {
   applyTheme();
-  document.title = `${state.design.brand_name} — খাঁটি মধু, ঘি ও অর্গানিক খাবার`;
+  document.title = LANG === 'en' ? `${state.design.brand_name} — Pure Honey, Ghee & Organic Food` : `${state.design.brand_name} — খাঁটি মধু, ঘি ও অর্গানিক খাবার`;
+  document.documentElement.lang = LANG;
   renderHeader(); renderHero(); renderCats(); renderAd(); renderProducts(); renderTesti(); renderFooter(); renderMobileNav();
   updateBadges(); renderCart();
 }
@@ -320,7 +477,7 @@ function renderStore() {
 function renderHeader() {
   const d = state.design;
   $('#announce').innerHTML = (d.announcement_show && d.announcement_text)
-    ? `<div class="bg-gold text-brand font-semibold text-center text-xs sm:text-sm py-1.5 px-3">${esc(d.announcement_text)}</div>` : '';
+    ? `<div class="bg-gold text-brand font-semibold text-center text-xs sm:text-sm py-1.5 px-3">${esc(dx(d, 'announcement_text'))}</div>` : '';
   const wa = 'https://wa.me/' + digits(d.whatsapp);
   const navBtn = (cat, label) => `<button data-action="cat" data-cat="${esc(cat)}" class="whitespace-nowrap px-4 py-2.5 text-sm font-medium hover:text-gold transition ${state.cat === cat ? 'text-gold border-b-2 border-gold' : 'text-white'}">${esc(label)}</button>`;
   const search = id => `<div class="relative w-full"><i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i><input id="${id}" class="search-inp inp !pl-9 !rounded-full" type="search" placeholder="পণ্য খুঁজুন..." value="${esc(state.search)}"></div>`;
@@ -334,6 +491,7 @@ function renderHeader() {
         </a>
         <div class="hidden md:flex flex-1 max-w-2xl mx-auto">${search('searchD')}</div>
         <div class="ml-auto flex items-center gap-1">
+          <button data-action="lang" class="px-2.5 py-1.5 rounded-lg border border-gray-200 text-xs font-bold text-brand hover:bg-gray-100" aria-label="Language">${LANG === 'en' ? 'বাং' : 'EN'}</button>
           <a href="${esc(wa)}" target="_blank" rel="noopener noreferrer" class="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold text-green-700 hover:bg-green-50"><i class="fa-brands fa-whatsapp text-xl"></i><span class="hidden lg:inline">${esc(bn(d.phone))}</span></a>
           <button data-action="account" class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold text-brand hover:bg-gray-100" aria-label="অ্যাকাউন্ট"><i class="fa-regular fa-user text-lg"></i><span class="hidden sm:inline">${state.user ? 'আমার অ্যাকাউন্ট' : 'লগইন'}</span></button>
           <button data-action="openCart" class="relative flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold text-brand hover:bg-gray-100" aria-label="কার্ট"><i class="fa-solid fa-bag-shopping text-lg"></i><span class="hidden sm:inline">কার্ট</span>
@@ -345,7 +503,7 @@ function renderHeader() {
     <nav class="bg-brand"><div class="max-w-7xl mx-auto px-2 flex overflow-x-auto no-scrollbar">
       ${navBtn('all', 'সব পণ্য')}${CATEGORIES.map(c => navBtn(c.name, c.name)).join('')}
     </div></nav>`;
-  const w = $('#waFloat'); w.href = wa + '?text=' + encodeURIComponent('আসসালামু আলাইকুম, আমি ' + d.brand_name + ' সম্পর্কে জানতে চাই।');
+  const w = $('#waFloat'); w.href = wa + '?text=' + encodeURIComponent(LANG === 'en' ? 'Hello, I would like to know about ' + d.brand_name + '.' : 'আসসালামু আলাইকুম, আমি ' + d.brand_name + ' সম্পর্কে জানতে চাই।');
 }
 
 function renderHero() {
@@ -357,17 +515,17 @@ function renderHero() {
       ${img ? `<img src="${esc(img)}" alt="${esc(d.brand_name)}" class="absolute inset-0 w-full h-full object-cover">` : `<div class="absolute -right-10 -bottom-10 w-72 h-72 rounded-full opacity-20" style="background:var(--c-secondary)"></div><div class="absolute right-16 top-6 text-7xl opacity-20 text-gold"><i class="fa-solid fa-jar-wheat"></i></div>`}
       ${(d.hero_show_text) ? `${img ? '<div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/35 to-transparent"></div>' : ''}
       <div class="relative p-5 sm:p-10 max-w-xl text-white">
-        ${d.hero_badge ? `<span class="inline-block bg-gold text-brand text-xs sm:text-sm font-bold px-3 py-1 rounded-full mb-3">${esc(d.hero_badge)}</span>` : ''}
-        <h1 class="text-2xl sm:text-4xl font-bold leading-snug">${esc(d.hero_title)}</h1>
-        <p class="mt-2 text-sm sm:text-base text-white/85">${esc(d.hero_subtitle)}</p>
-        ${d.hero_cta ? `<button data-action="shop" class="btn btn-cta mt-5 text-base px-6 py-3">${esc(d.hero_cta)} <i class="fa-solid fa-arrow-right"></i></button>` : ''}
+        ${d.hero_badge ? `<span class="inline-block bg-gold text-brand text-xs sm:text-sm font-bold px-3 py-1 rounded-full mb-3">${esc(dx(d, 'hero_badge'))}</span>` : ''}
+        <h1 class="text-2xl sm:text-4xl font-bold leading-snug">${esc(dx(d, 'hero_title'))}</h1>
+        <p class="mt-2 text-sm sm:text-base text-white/85">${esc(dx(d, 'hero_subtitle'))}</p>
+        ${d.hero_cta ? `<button data-action="shop" class="btn btn-cta mt-5 text-base px-6 py-3">${esc(dx(d, 'hero_cta'))} <i class="fa-solid fa-arrow-right"></i></button>` : ''}
       </div>` : ''}
     </div>`;
   const side = d.side_banner_show ? `
     <div class="lg:col-span-4 relative rounded-2xl overflow-hidden min-h-[150px] sm:min-h-[180px] lg:min-h-[360px] flex items-end cursor-pointer" data-action="shop" style="background:linear-gradient(160deg,var(--c-secondary),var(--c-accent))">
-      ${sideImg ? `<img src="${esc(sideImg)}" alt="${esc(d.side_title)}" class="absolute inset-0 w-full h-full object-cover">` : '<div class="absolute right-4 top-4 text-6xl text-white/30"><i class="fa-solid fa-droplet"></i></div>'}
+      ${sideImg ? `<img src="${esc(sideImg)}" alt="${esc(dx(d, 'side_title'))}" class="absolute inset-0 w-full h-full object-cover">` : '<div class="absolute right-4 top-4 text-6xl text-white/30"><i class="fa-solid fa-droplet"></i></div>'}
       ${(!sideImg || d.side_title || d.side_text) ? `<div class="relative p-5 w-full ${sideImg ? 'bg-gradient-to-t from-black/70 to-transparent' : ''} text-white">
-        <h2 class="text-2xl font-bold">${esc(d.side_title)}</h2><p class="text-sm mt-1 text-white/90">${esc(d.side_text)}</p>
+        <h2 class="text-2xl font-bold">${esc(dx(d, 'side_title'))}</h2><p class="text-sm mt-1 text-white/90">${esc(dx(d, 'side_text'))}</p>
         <span class="inline-block mt-3 text-sm font-bold underline">দেখুন <i class="fa-solid fa-arrow-right text-xs"></i></span></div>` : ''}
     </div>` : '';
   $('#hero').innerHTML = `<div class="grid grid-cols-1 lg:grid-cols-12 gap-3">${main}${side}</div>`;
@@ -392,14 +550,14 @@ function renderAd() {
   if (a.mode === 'image' && safeUrl(a.image_url)) {
     el.innerHTML = `<div class="mt-6 rounded-xl overflow-hidden shadow-sm">${wrapA(`<img src="${esc(safeUrl(a.image_url))}" alt="বিজ্ঞাপন" class="w-full h-auto block" loading="lazy">`)}</div>`;
   } else if (a.text) {
-    el.innerHTML = `<div class="mt-6">${wrapA(`<div class="rounded-xl text-center font-bold text-base sm:text-xl py-5 px-4 shadow-sm" style="background:${safeColor(a.bg_color, '#C89B4B')};color:${safeColor(a.text_color, '#041f1e')}">${esc(a.text)}</div>`)}</div>`;
+    el.innerHTML = `<div class="mt-6">${wrapA(`<div class="rounded-xl text-center font-bold text-base sm:text-xl py-5 px-4 shadow-sm" style="background:${safeColor(a.bg_color, '#C89B4B')};color:${safeColor(a.text_color, '#041f1e')}">${esc(dx(a, 'text'))}</div>`)}</div>`;
   } else el.innerHTML = '';
 }
 
 function filteredProducts() {
   const q = state.search.trim().toLowerCase();
   return state.products.filter(p => (state.cat === 'all' || p.category === state.cat) &&
-    (!q || (p.name + ' ' + (p.description || '') + ' ' + p.category + ' ' + (p.tag || '')).toLowerCase().includes(q)));
+    (!q || (p.name + ' ' + (p.name_en || '') + ' ' + (p.description || '') + ' ' + (p.description_en || '') + ' ' + p.category + ' ' + (p.tag || '')).toLowerCase().includes(q)));
 }
 
 function productCard(p) {
@@ -407,14 +565,14 @@ function productCard(p) {
   const img = safeUrl(p.image_url);
   return `<div class="card bg-white rounded-xl overflow-hidden border border-gray-100 flex flex-col">
     <div class="relative aspect-square bg-gray-50 cursor-pointer" data-action="view" data-id="${esc(p.id)}">
-      ${img ? `<img src="${esc(img)}" alt="${esc(p.name)}" loading="lazy" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-5xl text-gold/50"><i class="fa-solid fa-jar-wheat"></i></div>`}
+      ${img ? `<img src="${esc(img)}" alt="${esc(pname(p))}" loading="lazy" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-5xl text-gold/50"><i class="fa-solid fa-jar-wheat"></i></div>`}
       ${disc ? `<span class="absolute top-2 left-2 bg-cta text-white text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded">Save ${money(disc)}</span>` : ''}
       ${p.tag ? `<span class="absolute bottom-2 left-2 bg-brand text-gold text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded">${esc(p.tag)}</span>` : ''}
       ${!p.in_stock ? `<div class="absolute inset-0 bg-white/70 flex items-center justify-center"><span class="bg-gray-800 text-white px-3 py-1 rounded-full text-sm font-semibold">স্টক শেষ</span></div>` : ''}
     </div>
     <div class="p-3 flex flex-col flex-1">
-      <h3 class="font-semibold text-sm sm:text-base leading-snug line-clamp-2 cursor-pointer min-h-[2.5rem]" data-action="view" data-id="${esc(p.id)}">${esc(p.name)}</h3>
-      ${p.weight ? `<div class="text-xs text-gray-500 mt-0.5">${esc(p.weight)}</div>` : ''}
+      <h3 class="font-semibold text-sm sm:text-base leading-snug line-clamp-2 cursor-pointer min-h-[2.5rem]" data-action="view" data-id="${esc(p.id)}">${esc(pname(p))}</h3>
+      ${p.weight ? `<div class="text-xs text-gray-500 mt-0.5">${esc(pweight(p))}</div>` : ''}
       <div class="mt-1.5 flex items-baseline gap-2 flex-wrap">
         <span class="text-base sm:text-lg font-bold text-brand">${money(p.price)}</span>
         ${disc ? `<span class="text-xs text-gray-400 line-through">${money(p.old_price)}</span>` : ''}
@@ -438,7 +596,7 @@ function renderProducts() {
   $('#products').innerHTML = `
     <div class="flex items-center justify-between mb-4 gap-2">
       <h2 class="text-xl sm:text-2xl font-bold text-brand border-l-4 border-gold pl-3">${esc(title)}${state.search ? ` <span class="text-sm font-normal text-gray-500">— "${esc(state.search)}"</span>` : ''}</h2>
-      <span class="text-sm text-gray-500">${bn(list.length)}টি পণ্য</span>
+      <span class="text-sm text-gray-500">${cnt(list.length)}</span>
     </div>
     ${list.length ? `<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">${list.map(productCard).join('')}</div>`
       : `<div class="text-center py-16 text-gray-500"><i class="fa-regular fa-face-frown text-4xl mb-3"></i><p>${state.products.length ? 'কোনো পণ্য পাওয়া যায়নি' : 'এখনো কোনো পণ্য যোগ করা হয়নি'}</p></div>`}`;
@@ -462,16 +620,16 @@ function renderFooter() {
   const d = state.design;
   $('#footer').innerHTML = `<div class="bg-brand text-white mt-8"><div class="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
     <div class="lg:col-span-2"><div class="flex items-center gap-3 mb-3">${logoHtml('w-12 h-12')}<div><div class="brand-font font-bold text-xl">${esc(d.brand_name)}</div><div class="text-xs text-gold">${esc(d.sub_tagline)}</div></div></div>
-      <p class="text-sm text-white/75 max-w-md leading-relaxed">${esc(d.footer_about)}</p></div>
+      <p class="text-sm text-white/75 max-w-md leading-relaxed">${esc(dx(d, 'footer_about'))}</p></div>
     <div><h4 class="font-bold text-gold mb-3">ক্যাটেগরি</h4><ul class="space-y-2 text-sm text-white/80">
       ${CATEGORIES.map(c => `<li><button data-action="cat" data-cat="${esc(c.name)}" class="hover:text-gold">${esc(c.name)}</button></li>`).join('')}</ul></div>
     <div><h4 class="font-bold text-gold mb-3">যোগাযোগ</h4><ul class="space-y-2 text-sm text-white/80">
       <li><i class="fa-solid fa-phone w-5 text-gold"></i><a href="tel:${esc(d.phone)}" class="hover:text-gold">${esc(bn(d.phone))}</a></li>
       <li><i class="fa-brands fa-whatsapp w-5 text-gold"></i><a href="https://wa.me/${esc(digits(d.whatsapp))}" target="_blank" rel="noopener noreferrer" class="hover:text-gold">WhatsApp করুন</a></li>
       <li class="break-all"><i class="fa-solid fa-envelope w-5 text-gold"></i><a href="mailto:${esc(d.email)}" class="hover:text-gold">${esc(d.email)}</a></li>
-      <li><i class="fa-solid fa-location-dot w-5 text-gold"></i>${esc(d.address)}</li></ul></div>
+      <li><i class="fa-solid fa-location-dot w-5 text-gold"></i>${esc(dx(d, 'address'))}</li></ul></div>
     </div>
-    <div class="border-t border-white/10 py-4 text-center text-xs text-white/60">© ${bn(new Date().getFullYear())} ${esc(d.brand_name)}। সর্বস্বত্ব সংরক্ষিত।</div></div>`;
+    <div class="border-t border-white/10 py-4 text-center text-xs text-white/60">© ${bn(new Date().getFullYear())} ${esc(d.brand_name)}${LANG === 'en' ? '. All rights reserved.' : '। সর্বস্বত্ব সংরক্ষিত।'}</div></div>`;
 }
 
 function renderMobileNav() {
@@ -521,8 +679,8 @@ function renderCart() {
     const img = safeUrl(p.image_url);
     return `<div class="flex gap-3 border rounded-xl p-2">
       <div class="w-16 h-16 rounded-lg bg-gray-50 overflow-hidden shrink-0 flex items-center justify-center">${img ? `<img src="${esc(img)}" alt="" class="w-full h-full object-cover">` : '<i class="fa-solid fa-jar-wheat text-gold/50 text-xl"></i>'}</div>
-      <div class="flex-1 min-w-0"><div class="text-sm font-semibold leading-snug line-clamp-2">${esc(p.name)}</div>
-        <div class="text-xs text-gray-500">${esc(p.weight || '')}</div>
+      <div class="flex-1 min-w-0"><div class="text-sm font-semibold leading-snug line-clamp-2">${esc(pname(p))}</div>
+        <div class="text-xs text-gray-500">${esc(pweight(p) || '')}</div>
         <div class="flex items-center justify-between mt-1">
           <div class="flex items-center border rounded-lg overflow-hidden"><button data-action="dec" data-id="${esc(p.id)}" class="w-8 h-7 hover:bg-gray-100" aria-label="কমান"><i class="fa-solid fa-minus text-xs"></i></button><span class="w-8 text-center text-sm font-bold">${bn(qty)}</span><button data-action="inc" data-id="${esc(p.id)}" class="w-8 h-7 hover:bg-gray-100" aria-label="বাড়ান"><i class="fa-solid fa-plus text-xs"></i></button></div>
           <span class="font-bold text-brand text-sm">${money(p.price * qty)}</span></div></div>
@@ -567,7 +725,7 @@ async function placeOrder() {
   if (!validPhone(phone)) return toast('সঠিক মোবাইল নম্বর দিন (যেমন: 01712345678)', 'err');
   if (address.length < 8) return toast('সম্পূর্ণ ঠিকানা লিখুন', 'err');
   const area = currentArea();
-  const items = lines.map(({ p, qty }) => ({ id: p.id, name: p.name, price: Number(p.price), qty, weight: p.weight || '' }));
+  const items = lines.map(({ p, qty }) => ({ id: p.id, name: p.name, price: Number(p.price), qty, weight: p.weight || '', name_en: p.name_en || '' }));
   const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0), delivery = deliveryFor(area);
   const d = new Date(), pad = n => String(n).padStart(2, '0');
   const order = {
@@ -607,15 +765,15 @@ const modalHead = t => `<div class="sticky top-0 bg-brand text-white px-4 py-3 f
 function renderProductModal() {
   const p = state.products.find(x => x.id === state.viewId); if (!p) return closeModal();
   const img = safeUrl(p.image_url), disc = (p.old_price && Number(p.old_price) > Number(p.price)) ? Number(p.old_price) - Number(p.price) : 0;
-  openModal(`${modalHead(esc(p.name))}
+  openModal(`${modalHead(esc(pname(p)))}
     <div class="p-4 space-y-3">
       <div class="relative aspect-square max-h-72 w-full bg-gray-50 rounded-xl overflow-hidden flex items-center justify-center">
-        ${img ? `<img src="${esc(img)}" alt="${esc(p.name)}" class="w-full h-full object-contain">` : '<i class="fa-solid fa-jar-wheat text-6xl text-gold/50"></i>'}
+        ${img ? `<img src="${esc(img)}" alt="${esc(pname(p))}" class="w-full h-full object-contain">` : '<i class="fa-solid fa-jar-wheat text-6xl text-gold/50"></i>'}
         ${!p.in_stock ? '<div class="absolute inset-0 bg-white/70 flex items-center justify-center"><span class="bg-gray-800 text-white px-4 py-1 rounded-full font-semibold">স্টক শেষ</span></div>' : ''}</div>
       <div class="flex items-center gap-2 flex-wrap"><span class="text-2xl font-bold text-brand">${money(p.price)}</span>
         ${disc ? `<span class="text-gray-400 line-through">${money(p.old_price)}</span><span class="bg-cta text-white text-xs font-bold px-2 py-0.5 rounded">Save ${money(disc)}</span>` : ''}
-        ${p.weight ? `<span class="ml-auto text-sm text-gray-500">${esc(p.weight)}</span>` : ''}</div>
-      ${p.description ? `<p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">${esc(p.description)}</p>` : ''}
+        ${p.weight ? `<span class="ml-auto text-sm text-gray-500">${esc(pweight(p))}</span>` : ''}</div>
+      ${p.description ? `<p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">${esc(pdesc(p))}</p>` : ''}
       ${cartControl(p, cartQty(p.id))}
     </div>`);
   state.modal = 'product';
@@ -665,8 +823,8 @@ function renderAccount() {
       return `<div class="border rounded-xl p-3 text-sm">
         <div class="flex items-center justify-between gap-2"><b>${esc(o.order_no)}</b><span class="px-2 py-0.5 rounded-full text-xs font-semibold ${st.c}">${esc(st.l)}</span></div>
         <div class="text-xs text-gray-500 mt-0.5">${esc(fmtDate(o.created_at))}</div>
-        <ul class="mt-2 space-y-0.5 text-gray-700">${(Array.isArray(o.items) ? o.items : []).map(i => `<li>• ${esc(i.name)} × ${bn(Number(i.qty) || 0)}</li>`).join('')}</ul>
-        <div class="mt-2 flex justify-between border-t pt-2"><span>ডেলিভারি: ${money(o.delivery_charge)}</span><b class="text-brand">মোট: ${money(o.total)}</b></div></div>`;
+        <ul class="mt-2 space-y-0.5 text-gray-700">${(Array.isArray(o.items) ? o.items : []).map(i => `<li>• ${esc(LANG === 'en' && i.name_en ? i.name_en : i.name)} × ${bn(Number(i.qty) || 0)}</li>`).join('')}</ul>
+        <div class="mt-2 flex justify-between border-t pt-2"><span>${tr('ডেলিভারি')}: ${money(o.delivery_charge)}</span><b class="text-brand">${tr('মোট')}: ${money(o.total)}</b></div></div>`;
     }).join('') : '<div class="text-center text-gray-500 py-10"><i class="fa-solid fa-box-open text-4xl text-gray-300 mb-2"></i><p>এখনো কোনো অর্ডার নেই</p></div>'}</div>`;
   }
   openModal(`${modalHead('আমার অ্যাকাউন্ট')}
@@ -802,7 +960,7 @@ async function handleUpload(input) {
       setPath(adminDraft, target, await uploadImage(file, folder, maxW));
       renderAdminTab();
     }
-    toast('✅ ছবি আপলোড হয়েছে' + (target === '@product' ? '' : ' — "সংরক্ষণ করুন" চাপুন'));
+    toast(tr('✅ ছবি আপলোড হয়েছে') + (target === '@product' ? '' : ' — ' + tr('"সংরক্ষণ করুন" চাপুন')));
   } catch (e) { console.warn(e); toast(e.message || 'আপলোড ব্যর্থ হয়েছে', 'err'); }
   input.disabled = false; input.value = '';
 }
@@ -832,8 +990,9 @@ function renderAdmin() {
     <header class="bg-brand text-white sticky top-0 z-30 shadow">
       <div class="max-w-6xl mx-auto px-3 py-2.5 flex items-center gap-3">
         ${logoHtml('w-9 h-9')}
-        <div class="leading-tight"><div class="font-bold">কন্ট্রোল প্যানেল</div><div class="text-[11px] text-gold">${esc(ROLE_L[pr.role] || '')} • ${esc(pr.full_name || pr.email || '')}</div></div>
+        <div class="leading-tight"><div class="font-bold">কন্ট্রোল প্যানেল</div><div class="text-[11px] text-gold">${esc(tr(ROLE_L[pr.role] || ''))} • ${esc(pr.full_name || pr.email || '')}</div></div>
         <div class="ml-auto flex gap-2">
+          <button data-action="lang" class="btn btn-sm bg-white/10 text-white">${LANG === 'en' ? 'বাং' : 'EN'}</button>
           <button data-action="a-home" class="btn btn-gold btn-sm"><i class="fa-solid fa-store"></i><span class="hidden sm:inline"> দোকান দেখুন</span></button>
           <button data-action="logout" class="btn btn-sm bg-white/10 text-white"><i class="fa-solid fa-right-from-bracket"></i><span class="hidden sm:inline"> লগআউট</span></button>
         </div></div>
@@ -885,13 +1044,13 @@ const sect = (title, icon, inner) => `<section class="bg-white rounded-xl shadow
 /* ---- PRODUCTS TAB ---- */
 function tabProducts() {
   if (!can('products')) return noPerm();
-  return `<div class="flex items-center justify-between mb-4 gap-2"><h2 class="text-lg font-bold text-brand">পণ্য তালিকা (${bn(state.products.length)})</h2>
+  return `<div class="flex items-center justify-between mb-4 gap-2"><h2 class="text-lg font-bold text-brand">${tr('পণ্য তালিকা')} (${bn(state.products.length)})</h2>
     <button data-action="a-newProduct" class="btn btn-cta"><i class="fa-solid fa-plus"></i> নতুন পণ্য</button></div>
     <div class="space-y-2">${state.products.length ? state.products.map(p => `
       <div class="bg-white rounded-xl shadow-sm p-3 flex gap-3 items-center">
         <div class="w-16 h-16 rounded-lg bg-gray-50 overflow-hidden shrink-0 flex items-center justify-center">${prevImg(p.image_url)}</div>
         <div class="flex-1 min-w-0"><div class="font-semibold truncate">${esc(p.name)}</div>
-          <div class="text-xs text-gray-500">${esc(p.category)} ${p.weight ? '• ' + esc(p.weight) : ''}</div>
+          <div class="text-xs text-gray-500">${esc(tr(p.category))} ${p.weight ? '• ' + esc(p.weight) : ''}</div>
           <div class="text-sm"><b class="text-brand">${money(p.price)}</b>${p.old_price ? ` <span class="text-gray-400 line-through text-xs">${money(p.old_price)}</span>` : ''}</div></div>
         <div class="flex flex-col sm:flex-row gap-1.5 shrink-0">
           <button data-action="a-stock" data-id="${esc(p.id)}" class="btn btn-sm ${p.in_stock ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">${p.in_stock ? 'স্টকে আছে' : 'স্টক শেষ'}</button>
@@ -908,6 +1067,7 @@ function openProductForm(id) {
   openModal(`${modalHead(p ? 'পণ্য সম্পাদনা' : 'নতুন পণ্য যোগ করুন')}
     <form data-form="product" class="p-5 space-y-3">
       <label class="block"><span class="lbl">পণ্যের নাম *</span><input name="name" required class="inp" value="${esc(p ? p.name : '')}"></label>
+      <label class="block"><span class="lbl">পণ্যের নাম (ইংরেজি)</span><input name="name_en" class="inp" value="${esc(p ? p.name_en : '')}"></label>
       <div class="grid grid-cols-2 gap-3">
         <label class="block"><span class="lbl">ক্যাটেগরি *</span><select name="category" class="inp">${CATEGORIES.map(c => `<option ${p && p.category === c.name ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select></label>
         <label class="block"><span class="lbl">ওজন/পরিমাণ</span><input name="weight" class="inp" placeholder="যেমন: ১ কেজি" value="${esc(p ? p.weight : '')}"></label>
@@ -917,6 +1077,7 @@ function openProductForm(id) {
         <label class="block"><span class="lbl">ক্রম (ছোট আগে)</span><input name="sort_order" type="number" step="1" class="inp" value="${esc(p ? p.sort_order : 0)}"></label>
       </div>
       <label class="block"><span class="lbl">বিবরণ</span><textarea name="description" rows="3" class="inp">${esc(p ? p.description : '')}</textarea></label>
+      <label class="block"><span class="lbl">বিবরণ (ইংরেজি)</span><textarea name="description_en" rows="3" class="inp">${esc(p ? p.description_en : '')}</textarea></label>
       <div><span class="lbl">পণ্যের ছবি</span><div class="flex items-center gap-3">
         <div id="pf_prev" class="w-24 h-24 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center border shrink-0">${prevImg(state.pfImage)}</div>
         <div class="flex flex-col gap-1.5"><label class="btn btn-ghost btn-sm cursor-pointer"><i class="fa-solid fa-upload"></i> ছবি আপলোড<input type="file" accept="image/*" class="hidden" data-upload="@product" data-maxw="1000"></label>
@@ -932,7 +1093,8 @@ async function saveProduct(f) {
   const row = {
     name, category: fd.get('category'), weight: fd.get('weight').trim(), price, old_price: old, tag: fd.get('tag').trim(),
     sort_order: parseInt(fd.get('sort_order'), 10) || 0, description: fd.get('description').trim(),
-    in_stock: fd.get('in_stock') === 'on', image_url: state.pfImage || null
+    in_stock: fd.get('in_stock') === 'on', image_url: state.pfImage || null,
+    name_en: (fd.get('name_en') || '').trim(), description_en: (fd.get('description_en') || '').trim()
   };
   const btn = $('button[type=submit]', f); btn.disabled = true;
   const q = state.pfId ? sb.from('products').update(row).eq('id', state.pfId) : sb.from('products').insert(row);
@@ -953,7 +1115,7 @@ function tabOrders() {
   return `<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
       ${[['মোট অর্ডার', bn(all.length), 'fa-receipt'], ['অপেক্ষমাণ', bn(count('pending')), 'fa-hourglass-half'], ['ডেলিভারি সম্পন্ন', bn(count('delivered')), 'fa-circle-check'], ['আয় (ডেলিভারি)', money(revenue), 'fa-sack-dollar']]
         .map(c => `<div class="bg-white rounded-xl shadow-sm p-3"><i class="fa-solid ${c[2]} text-gold"></i><div class="text-xl font-bold text-brand mt-1">${c[1]}</div><div class="text-xs text-gray-500">${c[0]}</div></div>`).join('')}</div>
-    <div class="flex gap-2 overflow-x-auto no-scrollbar mb-4 pb-1">${chip('all', 'সব')}${Object.keys(STATUS).map(k => chip(k, STATUS[k].l.split(' ')[0])).join('')}
+    <div class="flex gap-2 overflow-x-auto no-scrollbar mb-4 pb-1">${chip('all', 'সব')}${Object.keys(STATUS).map(k => chip(k, STATUS[k].l)).join('')}
       <button data-action="a-reloadOrders" class="btn btn-sm btn-ghost ml-auto"><i class="fa-solid fa-rotate"></i></button></div>
     <div class="space-y-3">${list.length ? list.map(o => {
       const st = STATUS[o.status] || STATUS.pending;
@@ -967,7 +1129,7 @@ function tabOrders() {
             <div class="text-xs text-gray-500 mt-1">${o.area === 'dhaka' ? 'ঢাকার ভেতরে' : 'ঢাকার বাইরে'}</div>
             ${o.note ? `<div class="text-xs mt-1 bg-amber-50 rounded p-1.5">📝 ${esc(o.note)}</div>` : ''}</div>
           <div><ul class="space-y-0.5">${(Array.isArray(o.items) ? o.items : []).map(i => `<li>• ${esc(i.name)}${i.weight ? ' (' + esc(i.weight) + ')' : ''} × ${bn(Number(i.qty) || 0)} <span class="text-gray-500">= ${money((Number(i.price) || 0) * (Number(i.qty) || 0))}</span></li>`).join('')}</ul>
-            <div class="mt-2 border-t pt-2 text-xs text-gray-600">ডেলিভারি: ${money(o.delivery_charge)}</div><div class="font-bold text-brand">মোট: ${money(o.total)}</div></div></div>
+            <div class="mt-2 border-t pt-2 text-xs text-gray-600">${tr('ডেলিভারি')}: ${money(o.delivery_charge)}</div><div class="font-bold text-brand">${tr('মোট')}: ${money(o.total)}</div></div></div>
         <div class="flex gap-2 mt-3 pt-3 border-t items-center">
           <select data-order-status="${esc(o.id)}" class="inp !w-auto !py-1.5 text-sm">${Object.keys(STATUS).map(k => `<option value="${k}" ${o.status === k ? 'selected' : ''}>${esc(STATUS[k].l)}</option>`).join('')}</select>
           <button data-action="a-delOrder" data-id="${esc(o.id)}" class="btn btn-sm btn-danger ml-auto"><i class="fa-solid fa-trash-can"></i> মুছুন</button></div></div>`;
@@ -982,13 +1144,13 @@ function tabDesign() {
     ${sect('ব্র্যান্ড', 'fa-store', F.text('ব্র্যান্ডের নাম', 'design.brand_name') + F.text('ট্যাগলাইন', 'design.tagline') + F.text('সাব-ট্যাগলাইন', 'design.sub_tagline') + F.img('লোগো', 'design.logo_url', 400))}
     ${sect('থিম রঙ (লাইভ প্রিভিউ)', 'fa-palette', `<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">${F.color('প্রাইমারি', 'design.colors.primary')}${F.color('সেকেন্ডারি (গোল্ড)', 'design.colors.secondary')}${F.color('ব্যাকগ্রাউন্ড', 'design.colors.background')}${F.color('অ্যাকসেন্ট (CTA)', 'design.colors.accent')}</div>
       <button type="button" data-action="a-resetColors" class="btn btn-ghost btn-sm"><i class="fa-solid fa-rotate-left"></i> ডিফল্ট রঙে ফিরুন</button>`)}
-    ${sect('ঘোষণা বার', 'fa-bullhorn', F.toggle('দেখান', 'design.announcement_show') + F.text('ঘোষণার লেখা', 'design.announcement_text'))}
-    ${sect('হিরো ব্যানার (মূল)', 'fa-image', F.img('ব্যানার ছবি', 'design.hero_image', 1600) + F.toggle('ছবির ওপর লেখা দেখান (ছবিতে নিজস্ব লেখা থাকলে বন্ধ করুন)', 'design.hero_show_text') + F.text('ব্যাজ', 'design.hero_badge') + F.text('হেডলাইন', 'design.hero_title') + F.text('সাবটাইটেল', 'design.hero_subtitle') + F.text('বাটনের লেখা', 'design.hero_cta'))}
-    ${sect('সাইড প্রোমো ব্যানার', 'fa-rectangle-ad', F.toggle('দেখান', 'design.side_banner_show') + F.img('সাইড ব্যানার ছবি', 'design.side_banner_image', 900) + F.text('শিরোনাম', 'design.side_title') + F.text('ছোট লেখা', 'design.side_text'))}
+    ${sect('ঘোষণা বার', 'fa-bullhorn', F.toggle('দেখান', 'design.announcement_show') + F.text('ঘোষণার লেখা', 'design.announcement_text') + F.text('ঘোষণার লেখা (ইংরেজি)', 'design.announcement_text_en'))}
+    ${sect('হিরো ব্যানার (মূল)', 'fa-image', F.img('ব্যানার ছবি', 'design.hero_image', 1600) + F.toggle('ছবির ওপর লেখা দেখান (ছবিতে নিজস্ব লেখা থাকলে বন্ধ করুন)', 'design.hero_show_text') + F.text('ব্যাজ', 'design.hero_badge') + F.text('ব্যাজ (ইংরেজি)', 'design.hero_badge_en') + F.text('হেডলাইন', 'design.hero_title') + F.text('হেডলাইন (ইংরেজি)', 'design.hero_title_en') + F.text('সাবটাইটেল', 'design.hero_subtitle') + F.text('সাবটাইটেল (ইংরেজি)', 'design.hero_subtitle_en') + F.text('বাটনের লেখা', 'design.hero_cta') + F.text('বাটনের লেখা (ইংরেজি)', 'design.hero_cta_en'))}
+    ${sect('সাইড প্রোমো ব্যানার', 'fa-rectangle-ad', F.toggle('দেখান', 'design.side_banner_show') + F.img('সাইড ব্যানার ছবি', 'design.side_banner_image', 900) + F.text('শিরোনাম', 'design.side_title') + F.text('শিরোনাম (ইংরেজি)', 'design.side_title_en') + F.text('ছোট লেখা', 'design.side_text') + F.text('ছোট লেখা (ইংরেজি)', 'design.side_text_en'))}
     ${sect('ডেলিভারি চার্জ', 'fa-truck', `<div class="grid grid-cols-2 gap-3">${F.num('ঢাকার ভেতরে (৳)', 'design.delivery_dhaka')}${F.num('ঢাকার বাইরে (৳)', 'design.delivery_outside')}</div>`)}
     ${sect('সেকশন দেখানো/লুকানো', 'fa-eye', F.toggle('ফিচার্ড ক্যাটেগরি', 'design.show_categories') + F.toggle('গ্রাহকদের রিভিউ', 'design.show_testimonials'))}
     ${sect('গ্রাহক রিভিউ (শুধু আসল রিভিউ দিন)', 'fa-comments', [0, 1, 2].map(i => `<div class="grid sm:grid-cols-3 gap-2 border rounded-lg p-3">${F.text('নাম', `design.testimonials.${i}.name`)}<div class="sm:col-span-2">${F.area('মতামত', `design.testimonials.${i}.text`)}</div></div>`).join(''))}
-    ${sect('যোগাযোগ ও ফুটার', 'fa-address-book', F.text('ফোন', 'design.phone') + F.text('WhatsApp নম্বর (দেশ কোডসহ, যেমন 8801XXXXXXXXX)', 'design.whatsapp') + F.text('ইমেইল', 'design.email') + F.text('ঠিকানা', 'design.address') + F.area('ফুটার পরিচিতি', 'design.footer_about', 3))}
+    ${sect('যোগাযোগ ও ফুটার', 'fa-address-book', F.text('ফোন', 'design.phone') + F.text('WhatsApp নম্বর (দেশ কোডসহ, যেমন 8801XXXXXXXXX)', 'design.whatsapp') + F.text('ইমেইল', 'design.email') + F.text('ঠিকানা', 'design.address') + F.text('ঠিকানা (ইংরেজি)', 'design.address_en') + F.area('ফুটার পরিচিতি', 'design.footer_about', 3) + F.area('ফুটার পরিচিতি (ইংরেজি)', 'design.footer_about_en', 3))}
     <div class="fixed bottom-0 inset-x-0 bg-white border-t p-3 z-20"><div class="max-w-6xl mx-auto flex gap-2 justify-end">
       <button data-action="a-discard" class="btn btn-ghost">বাতিল</button>
       <button data-action="a-saveDesign" class="btn btn-cta px-8"><i class="fa-solid fa-floppy-disk"></i> সংরক্ষণ করুন</button></div></div></div>`;
@@ -1003,7 +1165,7 @@ function tabAds() {
       F.toggle('বিজ্ঞাপন চালু করুন', 'ads.enabled') +
       `<label class="block"><span class="lbl">ধরন</span><select class="inp" data-path="ads.mode"><option value="text" ${!img ? 'selected' : ''}>লেখা ব্যানার</option><option value="image" ${img ? 'selected' : ''}>ছবি ব্যানার</option></select></label>` +
       (img ? F.img('বিজ্ঞাপনের ছবি', 'ads.image_url', 1600)
-           : F.text('বিজ্ঞাপনের লেখা', 'ads.text') + `<div class="grid grid-cols-2 gap-3">${F.color('ব্যাকগ্রাউন্ড রঙ', 'ads.bg_color')}${F.color('লেখার রঙ', 'ads.text_color')}</div>`) +
+           : F.text('বিজ্ঞাপনের লেখা', 'ads.text') + F.text('বিজ্ঞাপনের লেখা (ইংরেজি)', 'ads.text_en') + `<div class="grid grid-cols-2 gap-3">${F.color('ব্যাকগ্রাউন্ড রঙ', 'ads.bg_color')}${F.color('লেখার রঙ', 'ads.text_color')}</div>`) +
       F.text('ক্লিকের লিংক (ঐচ্ছিক, https://...)', 'ads.link'))}
     <div class="fixed bottom-0 inset-x-0 bg-white border-t p-3 z-20"><div class="max-w-6xl mx-auto flex gap-2 justify-end">
       <button data-action="a-discard" class="btn btn-ghost">বাতিল</button>
@@ -1022,7 +1184,7 @@ async function saveSettings(key) {
 /* ---- USERS TAB (super admin only) ---- */
 function tabUsers() {
   if (!isSuper()) return noPerm();
-  return `<div class="flex items-center justify-between mb-4"><h2 class="text-lg font-bold text-brand">নিবন্ধিত ইউজার (${bn(state.adminUsers.length)})</h2>
+  return `<div class="flex items-center justify-between mb-4"><h2 class="text-lg font-bold text-brand">${tr('নিবন্ধিত ইউজার')} (${bn(state.adminUsers.length)})</h2>
     <button data-action="a-reloadUsers" class="btn btn-sm btn-ghost"><i class="fa-solid fa-rotate"></i></button></div>
     <div class="space-y-2">${state.adminUsers.map(u => {
       const me = state.user && u.id === state.user.id, perms = u.permissions || [];
@@ -1072,6 +1234,7 @@ document.addEventListener('click', async e => {
     case 'authTab': openModal(authHtml(el.dataset.tab)); state.modal = 'auth'; break;
     case 'accTab': state.accTab = el.dataset.tab; renderAccount(); if (state.accTab === 'orders') loadMyOrders().then(() => { if (state.modal === 'account' && state.accTab === 'orders') renderAccount(); }); break;
     case 'goAdmin': closeModal(); if (location.hash === '#admin') route(); else location.hash = '#admin'; break;
+    case 'lang': setLang(LANG === 'en' ? 'bn' : 'en'); break;
     case 'logout': logout(); break;
     /* admin */
     case 'a-home': location.hash = ''; break;
@@ -1086,7 +1249,7 @@ document.addEventListener('click', async e => {
       p.in_stock = !p.in_stock; renderAdminTab(); renderProducts(); updateBadges(); break;
     }
     case 'a-delProduct': {
-      const p = state.products.find(x => x.id === id); if (!p || !confirm(`"${p.name}" মুছে ফেলবেন?`)) break;
+      const p = state.products.find(x => x.id === id); if (!p || !confirm(LANG === 'en' ? `Delete "${p.name}"?` : `"${p.name}" মুছে ফেলবেন?`)) break;
       const { error } = await sb.from('products').delete().eq('id', id);
       if (error) return toast('মুছতে ব্যর্থ', 'err');
       if (p.image_url) deleteImage(p.image_url);
@@ -1096,7 +1259,7 @@ document.addEventListener('click', async e => {
     case 'a-orderFilter': state.orderFilter = el.dataset.f; renderAdminTab(); break;
     case 'a-reloadOrders': await loadAdminOrders(); renderAdminTab(); break;
     case 'a-delOrder': {
-      if (!confirm('এই অর্ডারটি স্থায়ীভাবে মুছে ফেলবেন?')) break;
+      if (!confirm(tr('এই অর্ডারটি স্থায়ীভাবে মুছে ফেলবেন?'))) break;
       const { error } = await sb.from('orders').delete().eq('id', id);
       if (error) return toast('মুছতে ব্যর্থ', 'err');
       state.adminOrders = state.adminOrders.filter(o => o.id !== id); renderAdminTab(); toast('অর্ডার মুছে ফেলা হয়েছে'); break;
@@ -1148,7 +1311,7 @@ document.addEventListener('change', async e => {
   }
   if (d.userRole) {
     const role = t.value;
-    if (!confirm(`রোল পরিবর্তন করে "${ROLE_L[role]}" করবেন?`)) { await loadAdminUsers(); return renderAdminTab(); }
+    if (!confirm(LANG === 'en' ? `Change role to "${tr(ROLE_L[role])}"?` : `রোল পরিবর্তন করে "${ROLE_L[role]}" করবেন?`)) { await loadAdminUsers(); return renderAdminTab(); }
     const upd = { role }; if (role !== 'admin') upd.permissions = [];
     return updateUser(d.userRole, upd);
   }
@@ -1164,6 +1327,8 @@ window.addEventListener('hashchange', route);
 
 /* ---------------------------- INIT ---------------------------- */
 async function init() {
+  document.documentElement.lang = LANG;
+  translateAll();
   renderStore();
   if (sb) {
     await Promise.all([loadSettings(), loadProducts()]);
