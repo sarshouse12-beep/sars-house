@@ -70,6 +70,25 @@
      class="fixed right-4 bottom-20 md:bottom-6 z-40 w-14 h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center text-3xl shadow-xl hover:scale-105 transition">
     <i class="fa-brands fa-whatsapp"></i>
   </a>
+  <button id="chatFab" data-action="chatToggle" aria-label="AI Chat"
+     class="hidden fixed left-4 bottom-20 md:bottom-6 z-40 w-14 h-14 rounded-full bg-brand text-gold items-center justify-center text-2xl shadow-xl hover:scale-105 transition border-2 border-gold">
+    <i class="fa-solid fa-comment-dots"></i>
+  </button>
+  <div id="chatPanel" class="hidden fixed z-50 left-2 right-2 bottom-2 sm:left-4 sm:right-auto sm:bottom-4 sm:w-[370px] h-[78vh] max-h-[580px] bg-white rounded-2xl shadow-2xl flex-col overflow-hidden border border-gray-200">
+    <div class="bg-brand text-white px-4 py-3 flex items-center gap-2">
+      <span class="w-9 h-9 rounded-full bg-gold text-brand flex items-center justify-center shrink-0"><i class="fa-solid fa-robot"></i></span>
+      <div class="leading-tight flex-1 min-w-0"><div class="font-bold text-sm">সহকারী (AI)</div><div class="text-[11px] text-white/70 truncate">পণ্য, দাম ও ডেলিভারি সম্পর্কে জিজ্ঞাসা করুন</div></div>
+      <a id="chatWa" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center text-green-400" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp text-xl"></i></a>
+      <button data-action="chatToggle" class="w-8 h-8 rounded-full hover:bg-white/10" aria-label="বন্ধ করুন"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div id="chatMsgs" class="flex-1 overflow-y-auto p-3 space-y-2 bg-cream text-sm"></div>
+    <div id="chatChips" class="px-3 pt-2 flex gap-1.5 overflow-x-auto no-scrollbar"></div>
+    <form data-form="chat" class="p-2 flex gap-2" autocomplete="off">
+      <input id="chatInput" class="inp" maxlength="500" placeholder="আপনার প্রশ্ন লিখুন..." autocomplete="off">
+      <button class="btn btn-cta" type="submit" aria-label="পাঠান"><i class="fa-solid fa-paper-plane"></i></button>
+    </form>
+    <div class="px-3 pb-2 text-[10px] text-gray-400 text-center leading-snug">AI-র উত্তর ভুল হতে পারে। ফোন নম্বর বা ঠিকানা এখানে লিখবেন না। অর্ডারের জন্য কার্ট বা WhatsApp ব্যবহার করুন।</div>
+  </div>
 </div>
 
 <!-- ===================== ADMIN ===================== -->
@@ -240,6 +259,7 @@ const DEMO_PRODUCTS = [
   ['কাজুবাদাম', 'খেজুর ও বাদাম', 900, null, '৫০০ গ্রাম', '', false],
   ['কালোজিরা', 'মসলা ও অন্যান্য', 260, 300, '২৫০ গ্রাম', '', true]
 ].map((r, i) => ({ id: 'demo-' + i, name: r[0], category: r[1], description: 'ডেমো পণ্য — Supabase সংযোগ করলে আপনার আসল পণ্য এখানে দেখাবে।', price: r[2], old_price: r[3], weight: r[4], tag: r[5], in_stock: r[6], image_url: '', sort_order: i }));
+const DEFAULT_CHAT = { enabled: false, knowledge: '' };
 const DEMO_EN = ['Pure Mustard Flower Honey', 'Sundarbans Khalisha Flower Honey', 'Gawa Ghee', 'Cold-Pressed Mustard Oil', 'Ajwa Dates', 'Cashew Nuts', 'Black Cumin (Kalojira)'];
 DEMO_PRODUCTS.forEach((p, i) => { p.name_en = DEMO_EN[i]; p.description_en = 'Demo product — connect Supabase to show your real products here.'; });
 
@@ -298,7 +318,16 @@ const EN = {
   'সাবটাইটেল (ইংরেজি)': 'Subtitle (English)', 'বাটনের লেখা': 'Button Text', 'বাটনের লেখা (ইংরেজি)': 'Button Text (English)',
   'সাইড প্রোমো ব্যানার': 'Side Promo Banner', 'সাইড ব্যানার ছবি': 'Side Banner Image', 'শিরোনাম': 'Title', 'শিরোনাম (ইংরেজি)': 'Title (English)',
   'ছোট লেখা': 'Short Text', 'ছোট লেখা (ইংরেজি)': 'Short Text (English)', 'ঢাকার ভেতরে (৳)': 'Inside Dhaka (৳)', 'ঢাকার বাইরে (৳)': 'Outside Dhaka (৳)',
-  'সেকশন দেখানো/লুকানো': 'Show/Hide Sections', 'ক্যাটেগরির ছবি': 'Category Images',
+  'সেকশন দেখানো/লুকানো': 'Show/Hide Sections',
+  'সহকারী (AI)': 'Assistant (AI)', 'পণ্য, দাম ও ডেলিভারি সম্পর্কে জিজ্ঞাসা করুন': 'Ask about products, prices and delivery',
+  'আপনার প্রশ্ন লিখুন...': 'Type your question...', 'পাঠান': 'Send',
+  'AI-র উত্তর ভুল হতে পারে। ফোন নম্বর বা ঠিকানা এখানে লিখবেন না। অর্ডারের জন্য কার্ট বা WhatsApp ব্যবহার করুন।': 'AI answers may be wrong. Do not share your phone number or address here. Use the cart or WhatsApp to order.',
+  'এআই চ্যাট': 'AI Chat', 'এআই চ্যাট সেটিংস': 'AI Chat Settings', 'চ্যাট চালু করুন': 'Turn chat on',
+  'AI-কে জানানো তথ্য (ডেলিভারির সময়, পেমেন্ট পদ্ধতি, রিটার্ন নিয়ম ইত্যাদি)': 'Information for the AI (delivery time, payment methods, return policy, etc.)',
+  'এখানে লেখা তথ্য সাইটের ডাটাবেসে সাধারণভাবে পড়া যায়, তাই গোপন কিছু লিখবেন না। পণ্য ও দাম AI নিজে থেকেই জানে।': 'This text can be read publicly from the site database, so do not write anything secret. The AI already knows your products and prices.',
+  'কথোপকথন': 'Conversations', 'এখনো কোনো চ্যাট নেই': 'No chats yet', 'মেসেজ': 'messages', 'চ্যাট মুছুন': 'Delete chat', 'গ্রাহক': 'Customer', 'সহকারী': 'Assistant',
+  'চ্যাট সেটিংস সংরক্ষিত হয়েছে': 'Chat settings saved', 'চ্যাট মুছে ফেলা হয়েছে': 'Chat deleted', 'চ্যাট লোড করা যায়নি': 'Could not load chats',
+  'এই চ্যাটটি স্থায়ীভাবে মুছে ফেলবেন?': 'Permanently delete this chat?', 'ক্যাটেগরির ছবি': 'Category Images',
   'ছবি দিলে হোমপেজের গোল আইকনের জায়গায় সেটা দেখাবে। ছবি না দিলে আগের আইকনই থাকবে। বর্গাকার ছবি সবচেয়ে ভালো দেখায়।': 'If you add an image, it replaces the round icon on the homepage. Without an image the default icon stays. Square images look best.', 'ফিচার্ড ক্যাটেগরি': 'Featured Categories', 'গ্রাহকদের রিভিউ': 'Customer Reviews',
   'গ্রাহক রিভিউ (শুধু আসল রিভিউ দিন)': 'Customer Reviews (enter real reviews only)', 'মতামত': 'Review',
   'যোগাযোগ ও ফুটার': 'Contact & Footer', 'ফোন': 'Phone', 'WhatsApp নম্বর (দেশ কোডসহ, যেমন 8801XXXXXXXXX)': 'WhatsApp number (with country code, e.g. 8801XXXXXXXXX)',
@@ -398,7 +427,7 @@ function setLang(l) {
 
 /* ---------------------------- state ---------------------------- */
 const state = {
-  design: clone(DEFAULT_DESIGN), ads: clone(DEFAULT_ADS),
+  design: clone(DEFAULT_DESIGN), ads: clone(DEFAULT_ADS), chatCfg: clone(DEFAULT_CHAT), chatSessions: [], chatOpenId: null,
   products: [], cart: loadCart(),
   user: null, profile: null, myOrders: [],
   cat: 'all', search: '',
@@ -436,6 +465,7 @@ async function loadSettings() {
   (data || []).forEach(r => {
     if (r.key === 'design') state.design = clone(deepMerge(DEFAULT_DESIGN, r.value || {}));
     if (r.key === 'ads') state.ads = clone(deepMerge(DEFAULT_ADS, r.value || {}));
+    if (r.key === 'chat') state.chatCfg = clone(deepMerge(DEFAULT_CHAT, r.value || {}));
   });
   const t = state.design.testimonials = Array.isArray(state.design.testimonials) ? state.design.testimonials : [];
   while (t.length < 3) t.push({ name: '', text: '' });
@@ -473,7 +503,7 @@ function renderStore() {
   document.title = LANG === 'en' ? `${state.design.brand_name} — Pure Honey, Ghee & Organic Food` : `${state.design.brand_name} — খাঁটি মধু, ঘি ও অর্গানিক খাবার`;
   document.documentElement.lang = LANG;
   renderHeader(); renderHero(); renderCats(); renderAd(); renderProducts(); renderTesti(); renderFooter(); renderMobileNav();
-  updateBadges(); renderCart();
+  updateBadges(); renderCart(); renderChat();
 }
 
 function renderHeader() {
@@ -646,6 +676,55 @@ function renderMobileNav() {
 function updateBadges() {
   const n = bn(cartCount());
   $$('.cart-badge').forEach(b => { b.textContent = n; b.style.display = cartCount() ? 'flex' : 'none'; });
+}
+
+/* ---------------------------- AI CHAT (storefront) ---------------------------- */
+const chat = { open: false, busy: false, sid: '', msgs: [] };
+try { chat.sid = localStorage.getItem('sh_chat_sid') || ''; const m = JSON.parse(localStorage.getItem('sh_chat_msgs') || '[]'); chat.msgs = Array.isArray(m) ? m.filter(x => x && (x.role === 'user' || x.role === 'assistant') && typeof x.content === 'string') : []; } catch (e) {}
+function saveChat() { try { localStorage.setItem('sh_chat_sid', chat.sid); localStorage.setItem('sh_chat_msgs', JSON.stringify(chat.msgs.filter(m => !m.err).slice(-20))); } catch (e) {} }
+const chatOn = () => !!sb && !!(state.chatCfg && state.chatCfg.enabled);
+const CHIPS = {
+  bn: ['দাম কত?', 'ডেলিভারি চার্জ কত?', 'কোন কোন পণ্য আছে?', 'কীভাবে অর্ডার করব?'],
+  en: ['What are the prices?', 'Delivery charge?', 'Which products do you have?', 'How do I order?']
+};
+function chatGreeting() {
+  const b = state.design.brand_name;
+  return LANG === 'en' ? `Hello! I'm the assistant of ${b}. Ask me about our products, prices and delivery.` : `আসসালামু আলাইকুম! আমি ${b}-এর সহকারী। আমাদের পণ্য, দাম ও ডেলিভারি সম্পর্কে জিজ্ঞাসা করতে পারেন।`;
+}
+function chatBubble(m) {
+  const u = m.role === 'user';
+  return `<div class="flex ${u ? 'justify-end' : 'justify-start'}"><div class="max-w-[85%] px-3 py-2 rounded-2xl whitespace-pre-line break-words ${u ? 'bg-brand text-white rounded-br-sm' : 'bg-white border border-gray-200 text-gray-800 rounded-bl-sm'}">${esc(m.content)}</div></div>`;
+}
+function renderChatMsgs() {
+  const box = $('#chatMsgs'); if (!box) return;
+  box.innerHTML = chatBubble({ role: 'assistant', content: chatGreeting() }) + chat.msgs.map(chatBubble).join('') +
+    (chat.busy ? '<div class="flex justify-start"><div class="px-3 py-2 rounded-2xl bg-white border border-gray-200 text-gray-400"><i class="fa-solid fa-ellipsis fa-fade"></i></div></div>' : '');
+  box.scrollTop = box.scrollHeight;
+  $('#chatChips').innerHTML = chat.msgs.length ? '' : CHIPS[LANG === 'en' ? 'en' : 'bn'].map((c, i) => `<button type="button" data-action="chatChip" data-i="${i}" class="whitespace-nowrap text-xs border border-gold text-brand rounded-full px-3 py-1 hover:bg-amber-50">${esc(c)}</button>`).join('');
+}
+function renderChat() {
+  const fab = $('#chatFab'), panel = $('#chatPanel'); if (!fab || !panel) return;
+  const on = chatOn();
+  fab.classList.toggle('flex', on && !chat.open); fab.classList.toggle('hidden', !(on && !chat.open));
+  panel.classList.toggle('flex', on && chat.open); panel.classList.toggle('hidden', !(on && chat.open));
+  const wa = $('#chatWa'); if (wa) wa.href = 'https://wa.me/' + digits(state.design.whatsapp);
+  if (on && chat.open) renderChatMsgs();
+}
+function toggleChat() { chat.open = !chat.open; renderChat(); if (chat.open) setTimeout(() => { const i = $('#chatInput'); if (i && window.innerWidth > 640) i.focus(); }, 50); }
+async function sendChat(text) {
+  text = String(text || '').trim().slice(0, 500);
+  if (!text || chat.busy || !sb) return;
+  chat.msgs.push({ role: 'user', content: text }); chat.busy = true; renderChatMsgs();
+  try {
+    const { data, error } = await sb.functions.invoke('chat', { body: { session_id: chat.sid, message: text, lang: LANG } });
+    if (data && data.session_id) chat.sid = data.session_id;
+    if (error || !data || !data.reply) throw error || new Error('no reply');
+    chat.msgs.push({ role: 'assistant', content: data.reply });
+  } catch (e) {
+    console.warn(e);
+    chat.msgs.push({ role: 'assistant', err: true, content: LANG === 'en' ? 'Sorry, I could not answer right now. Please message us on WhatsApp.' : 'দুঃখিত, এখন উত্তর দিতে পারছি না। অনুগ্রহ করে WhatsApp-এ মেসেজ করুন।' });
+  }
+  chat.busy = false; saveChat(); renderChatMsgs();
 }
 
 /* ---------------------------- CART ---------------------------- */
@@ -974,15 +1053,16 @@ const ADMIN_TABS = [
   { k: 'orders', l: 'অর্ডার', i: 'fa-receipt' },
   { k: 'design', l: 'ডিজাইন ও থিম', i: 'fa-palette' },
   { k: 'ads', l: 'বিজ্ঞাপন', i: 'fa-bullhorn' },
+  { k: 'chats', l: 'এআই চ্যাট', i: 'fa-robot' },
   { k: 'users', l: 'ইউজার ও রোল', i: 'fa-users-gear' }
 ];
-const visibleTabs = () => ADMIN_TABS.filter(t => t.k === 'users' ? isSuper() : can(t.k));
+const visibleTabs = () => ADMIN_TABS.filter(t => t.k === 'users' ? isSuper() : t.k === 'chats' ? can('orders') : can(t.k));
 
 function enterAdmin() {
   const tabs = visibleTabs();
   if (!tabs.length) { toast('আপনাকে কোনো পারমিশন দেওয়া হয়নি। সুপার অ্যাডমিনের সাথে যোগাযোগ করুন।', 'err'); location.hash = ''; return; }
   if (!tabs.find(t => t.k === state.adminTab)) state.adminTab = tabs[0].k;
-  adminDraft = { design: clone(state.design), ads: clone(state.ads) };
+  adminDraft = { design: clone(state.design), ads: clone(state.ads), chat: clone(state.chatCfg) };
   subscribeAdmin();
   renderAdmin();
 }
@@ -1008,6 +1088,7 @@ async function loadForTab() {
   const t = state.adminTab;
   if (t === 'orders') { await loadAdminOrders(); }
   if (t === 'users') { await loadAdminUsers(); }
+  if (t === 'chats') { await loadChatSessions(); }
   if (state.adminTab === t) renderAdminTab();
 }
 async function loadAdminOrders() {
@@ -1026,7 +1107,7 @@ function renderAdminTab() {
   const body = $('#adminBody'); if (!body) return;
   const t = state.adminTab;
   // keep focus-free re-render; draft is always the source of truth
-  body.innerHTML = t === 'products' ? tabProducts() : t === 'orders' ? tabOrders() : t === 'design' ? tabDesign() : t === 'ads' ? tabAds() : tabUsers();
+  body.innerHTML = t === 'products' ? tabProducts() : t === 'orders' ? tabOrders() : t === 'design' ? tabDesign() : t === 'ads' ? tabAds() : t === 'chats' ? tabChats() : tabUsers();
 }
 
 /* ---- form field helpers (bound to adminDraft by data-path) ---- */
@@ -1184,6 +1265,54 @@ async function saveSettings(key) {
   toast('✅ সংরক্ষিত হয়েছে — দোকানে আপডেট দেখা যাবে');
 }
 
+/* ---- AI CHAT TAB ---- */
+async function loadChatSessions() {
+  if (!sb) return;
+  const { data: ses, error } = await sb.from('chat_sessions').select('*').order('last_at', { ascending: false }).limit(100);
+  if (error) { console.warn(error); toast('চ্যাট লোড করা যায়নি', 'err'); return; }
+  const ids = (ses || []).map(x => x.id);
+  let msgs = [];
+  if (ids.length) {
+    const r = await sb.from('chat_messages').select('id,session_id,role,content,created_at').in('session_id', ids).order('id', { ascending: true }).limit(2000);
+    msgs = r.data || [];
+  }
+  const by = {}; msgs.forEach(m => { (by[m.session_id] = by[m.session_id] || []).push(m); });
+  state.chatSessions = (ses || []).map(x => ({ ...x, msgs: by[x.id] || [] })).filter(x => x.msgs.length);
+}
+function tabChats() {
+  if (!can('orders')) return noPerm();
+  const F = FLD, list = state.chatSessions;
+  const settings = isSuper() ? `<div class="mb-5">${sect('এআই চ্যাট সেটিংস', 'fa-robot',
+      F.toggle('চ্যাট চালু করুন', 'chat.enabled') +
+      F.area('AI-কে জানানো তথ্য (ডেলিভারির সময়, পেমেন্ট পদ্ধতি, রিটার্ন নিয়ম ইত্যাদি)', 'chat.knowledge', 7) +
+      '<p class="text-xs text-gray-500">এখানে লেখা তথ্য সাইটের ডাটাবেসে সাধারণভাবে পড়া যায়, তাই গোপন কিছু লিখবেন না। পণ্য ও দাম AI নিজে থেকেই জানে।</p>' +
+      '<div class="flex justify-end"><button data-action="a-saveChat" class="btn btn-cta px-8"><i class="fa-solid fa-floppy-disk"></i> সংরক্ষণ করুন</button></div>')}</div>` : '';
+  return `${settings}
+    <div class="flex items-center justify-between mb-3"><h2 class="text-lg font-bold text-brand">কথোপকথন (${bn(list.length)})</h2>
+      <button data-action="a-reloadChats" class="btn btn-sm btn-ghost"><i class="fa-solid fa-rotate"></i></button></div>
+    <div class="space-y-2">${list.length ? list.map(c => {
+      const first = (c.msgs.find(m => m.role === 'user') || {}).content || '';
+      const open = state.chatOpenId === c.id;
+      return `<div class="bg-white rounded-xl shadow-sm">
+        <button data-action="a-chatOpen" data-id="${esc(c.id)}" class="w-full text-left p-3 flex items-center gap-3">
+          <span class="w-9 h-9 rounded-full bg-brand text-gold flex items-center justify-center shrink-0"><i class="fa-regular fa-comments"></i></span>
+          <span class="min-w-0 flex-1"><span class="block text-sm font-semibold truncate">${esc(first)}</span>
+          <span class="block text-xs text-gray-500">${esc(fmtDate(c.last_at))} • ${bn(c.msgs.length)} মেসেজ • ${c.lang === 'en' ? 'EN' : 'বাং'}</span></span>
+          <i class="fa-solid fa-chevron-${open ? 'up' : 'down'} text-gray-400 text-xs"></i></button>
+        ${open ? `<div class="border-t p-3 space-y-2 bg-gray-50 rounded-b-xl">
+          ${c.msgs.map(m => `<div class="flex ${m.role === 'user' ? 'justify-start' : 'justify-end'}"><div class="max-w-[85%]"><div class="text-[10px] text-gray-400 mb-0.5 ${m.role === 'user' ? '' : 'text-right'}">${m.role === 'user' ? 'গ্রাহক' : 'সহকারী'} • ${esc(fmtDate(m.created_at))}</div>
+            <div class="px-3 py-2 rounded-2xl text-sm whitespace-pre-line break-words ${m.role === 'user' ? 'bg-white border' : 'bg-brand text-white'}">${esc(m.content)}</div></div></div>`).join('')}
+          <div class="text-right pt-1"><button data-action="a-delChat" data-id="${esc(c.id)}" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash-can"></i> চ্যাট মুছুন</button></div></div>` : ''}</div>`;
+    }).join('') : '<div class="bg-white rounded-xl p-10 text-center text-gray-500">এখনো কোনো চ্যাট নেই</div>'}</div>`;
+}
+async function saveChatCfg() {
+  if (!sb || !isSuper()) return;
+  const val = clone(adminDraft.chat);
+  const { error } = await sb.from('store_settings').upsert({ key: 'chat', value: val, updated_at: new Date().toISOString() });
+  if (error) { console.warn(error); return toast('সংরক্ষণ ব্যর্থ: ' + error.message, 'err'); }
+  state.chatCfg = clone(val); renderChat(); toast('✅ চ্যাট সেটিংস সংরক্ষিত হয়েছে');
+}
+
 /* ---- USERS TAB (super admin only) ---- */
 function tabUsers() {
   if (!isSuper()) return noPerm();
@@ -1238,10 +1367,12 @@ document.addEventListener('click', async e => {
     case 'accTab': state.accTab = el.dataset.tab; renderAccount(); if (state.accTab === 'orders') loadMyOrders().then(() => { if (state.modal === 'account' && state.accTab === 'orders') renderAccount(); }); break;
     case 'goAdmin': closeModal(); if (location.hash === '#admin') route(); else location.hash = '#admin'; break;
     case 'lang': setLang(LANG === 'en' ? 'bn' : 'en'); break;
+    case 'chatToggle': toggleChat(); break;
+    case 'chatChip': sendChat(CHIPS[LANG === 'en' ? 'en' : 'bn'][Number(el.dataset.i)]); break;
     case 'logout': logout(); break;
     /* admin */
     case 'a-home': location.hash = ''; break;
-    case 'a-tab': applyTheme(); state.adminTab = el.dataset.tab; adminDraft = { design: clone(state.design), ads: clone(state.ads) }; renderAdmin(); break;
+    case 'a-tab': applyTheme(); state.adminTab = el.dataset.tab; adminDraft = { design: clone(state.design), ads: clone(state.ads), chat: clone(state.chatCfg) }; renderAdmin(); break;
     case 'a-newProduct': openProductForm(null); break;
     case 'a-editProduct': openProductForm(id); break;
     case 'a-pfRemoveImg': state.pfImage = ''; $('#pf_prev').innerHTML = prevImg(''); break;
@@ -1270,9 +1401,18 @@ document.addEventListener('click', async e => {
     case 'a-reloadUsers': await loadAdminUsers(); renderAdminTab(); break;
     case 'a-rmimg': setPath(adminDraft, el.dataset.path, ''); renderAdminTab(); break;
     case 'a-resetColors': adminDraft.design.colors = { ...DEFAULT_COLORS }; applyTheme(adminDraft.design.colors); renderAdminTab(); break;
-    case 'a-discard': applyTheme(); adminDraft = { design: clone(state.design), ads: clone(state.ads) }; renderAdminTab(); toast('পরিবর্তন বাতিল করা হয়েছে'); break;
+    case 'a-discard': applyTheme(); adminDraft = { design: clone(state.design), ads: clone(state.ads), chat: clone(state.chatCfg) }; renderAdminTab(); toast('পরিবর্তন বাতিল করা হয়েছে'); break;
     case 'a-saveDesign': saveSettings('design'); break;
     case 'a-saveAds': saveSettings('ads'); break;
+    case 'a-saveChat': saveChatCfg(); break;
+    case 'a-reloadChats': await loadChatSessions(); renderAdminTab(); break;
+    case 'a-chatOpen': state.chatOpenId = state.chatOpenId === id ? null : id; renderAdminTab(); break;
+    case 'a-delChat': {
+      if (!confirm(tr('এই চ্যাটটি স্থায়ীভাবে মুছে ফেলবেন?'))) break;
+      const { error } = await sb.from('chat_sessions').delete().eq('id', id);
+      if (error) return toast('মুছতে ব্যর্থ', 'err');
+      state.chatSessions = state.chatSessions.filter(c => c.id !== id); state.chatOpenId = null; renderAdminTab(); toast('চ্যাট মুছে ফেলা হয়েছে'); break;
+    }
   }
 });
 
@@ -1281,6 +1421,7 @@ document.addEventListener('submit', async e => {
   e.preventDefault();
   switch (f.dataset.form) {
     case 'checkout': placeOrder(); break;
+    case 'chat': { const i = $('#chatInput'); const v = i.value; i.value = ''; sendChat(v); break; }
     case 'signin': handleSignin(f); break;
     case 'signup': handleSignup(f); break;
     case 'profile': handleProfile(f); break;
