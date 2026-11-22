@@ -22,7 +22,8 @@
   .bg-cta{background-color:var(--c-accent)}.text-cta{color:var(--c-accent)}
   .bg-cream{background-color:var(--c-bg)}
   .btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;font-weight:600;border-radius:.6rem;padding:.55rem 1rem;transition:filter .15s,transform .05s;cursor:pointer;line-height:1.3}
-  .btn:hover{filter:brightness(.93)}.btn:active{transform:scale(.98)}.btn:disabled{opacity:.55;cursor:not-allowed}
+  .btn:hover{filter:brightness(.93)}.btn:active{transform:scale(.96);filter:brightness(.85)}
+  .btn:disabled,.btn:disabled:hover,.btn:disabled:active{opacity:.4;filter:grayscale(.6);transform:none;cursor:not-allowed}
   .btn-cta{background:var(--c-accent);color:#fff}
   .btn-brand{background:var(--c-primary);color:#fff}
   .btn-gold{background:var(--c-secondary);color:#fff}
@@ -194,12 +195,7 @@ function toast(msg, type = 'ok') {
 }
 
 /* ---------------------------- defaults ---------------------------- */
-const CATEGORIES = [
-  { name: 'মধু', icon: 'fa-droplet' },
-  { name: 'ঘি ও তেল', icon: 'fa-bottle-droplet' },
-  { name: 'খেজুর ও বাদাম', icon: 'fa-seedling' },
-  { name: 'মসলা ও অন্যান্য', icon: 'fa-pepper-hot' }
-];
+const CAT_ICONS = { 'fa-droplet': 'ফোঁটা', 'fa-bottle-droplet': 'বোতল', 'fa-seedling': 'চারা', 'fa-pepper-hot': 'মরিচ', 'fa-jar-wheat': 'জার', 'fa-wheat-awn': 'গম', 'fa-cookie-bite': 'বিস্কুট', 'fa-leaf': 'পাতা', 'fa-mug-hot': 'কাপ', 'fa-egg': 'ডিম', 'fa-lemon': 'লেবু', 'fa-bowl-food': 'বাটি', 'fa-cheese': 'পনির', 'fa-tag': 'ট্যাগ' };
 const DEFAULT_COLORS = { primary: '#041f1e', secondary: '#C89B4B', background: '#FBF9F5', accent: '#f48721' };
 const DEFAULT_DESIGN = {
   brand_name: "SAR'S HOUSE",
@@ -232,7 +228,12 @@ const DEFAULT_DESIGN = {
   delivery_dhaka: 60,
   delivery_outside: 120,
   show_categories: true,
-  cat_images: ['', '', '', ''],
+  categories: [
+    { id: 'c1', name: 'মধু', name_en: 'Honey', icon: 'fa-droplet', image: '' },
+    { id: 'c2', name: 'ঘি ও তেল', name_en: 'Ghee & Oil', icon: 'fa-bottle-droplet', image: '' },
+    { id: 'c3', name: 'খেজুর ও বাদাম', name_en: 'Dates & Nuts', icon: 'fa-seedling', image: '' },
+    { id: 'c4', name: 'মসলা ও অন্যান্য', name_en: 'Spices & More', icon: 'fa-pepper-hot', image: '' }
+  ],
   show_testimonials: false,
   testimonials: [
     { name: '', text: '' },
@@ -319,6 +320,19 @@ const EN = {
   'সাইড প্রোমো ব্যানার': 'Side Promo Banner', 'সাইড ব্যানার ছবি': 'Side Banner Image', 'শিরোনাম': 'Title', 'শিরোনাম (ইংরেজি)': 'Title (English)',
   'ছোট লেখা': 'Short Text', 'ছোট লেখা (ইংরেজি)': 'Short Text (English)', 'ঢাকার ভেতরে (৳)': 'Inside Dhaka (৳)', 'ঢাকার বাইরে (৳)': 'Outside Dhaka (৳)',
   'সেকশন দেখানো/লুকানো': 'Show/Hide Sections',
+  'ক্যাটেগরি ব্যবস্থাপনা': 'Manage Categories', 'ক্যাটেগরির নাম (বাংলা)': 'Category name (Bengali)', 'ক্যাটেগরির নাম (ইংরেজি)': 'Category name (English)',
+  'আইকন (ছবি না দিলে এটা দেখাবে)': 'Icon (shown if there is no image)', 'ছবি (ঐচ্ছিক, বর্গাকার ভালো)': 'Image (optional, square works best)', 'নতুন ক্যাটেগরি': 'New Category',
+  'উপরে': 'Move up', 'নিচে': 'Move down',
+  'নাম বদলালে ওই ক্যাটেগরির সব পণ্যের ক্যাটেগরিও নিজে থেকে বদলে যাবে। ক্যাটেগরি মুছলে তার পণ্যগুলো প্রথম ক্যাটেগরিতে সরে যাবে। সব বদল "সংরক্ষণ করুন" চাপলে তবেই কার্যকর হয়।': 'Renaming a category also renames it on all its products. Deleting a category moves its products to the first category. Nothing takes effect until you press "Save".',
+  'ক্যাটেগরি বদলানোর জন্য "পণ্য" অনুমতি লাগে।': 'You need the "Products" permission to change categories.',
+  'ফোঁটা': 'Drop', 'বোতল': 'Bottle', 'চারা': 'Seedling', 'মরিচ': 'Chili', 'জার': 'Jar', 'গম': 'Wheat', 'বিস্কুট': 'Cookie', 'পাতা': 'Leaf', 'কাপ': 'Cup', 'ডিম': 'Egg', 'লেবু': 'Lemon', 'বাটি': 'Bowl', 'পনির': 'Cheese', 'ট্যাগ': 'Tag',
+  'অসংরক্ষিত পরিবর্তন আছে': 'You have unsaved changes', 'সব সংরক্ষিত': 'All saved', 'সংরক্ষণ হচ্ছে...': 'Saving...',
+  'অসংরক্ষিত পরিবর্তন আছে। সংরক্ষণ না করেই চলে যাবেন?': 'You have unsaved changes. Leave without saving?',
+  'কমপক্ষে একটি ক্যাটেগরি রাখতে হবে': 'Keep at least one category', 'ক্যাটেগরির নাম খালি রাখা যাবে না': 'Category name cannot be empty',
+  'দুটি ক্যাটেগরির নাম একই হতে পারবে না': 'Two categories cannot have the same name', 'ক্যাটেগরি বদলাতে ব্যর্থ': 'Could not change category',
+  'সর্বোচ্চ ১২টি ক্যাটেগরি রাখা যাবে': 'You can keep at most 12 categories',
+  'পণ্য স্টকে আছে হিসেবে চিহ্নিত হয়েছে': 'Product marked as in stock', 'পণ্য স্টক শেষ হিসেবে চিহ্নিত হয়েছে': 'Product marked as out of stock',
+  'সব অর্ডার': 'All Orders',
   'সহকারী (AI)': 'Assistant (AI)', 'পণ্য, দাম ও ডেলিভারি সম্পর্কে জিজ্ঞাসা করুন': 'Ask about products, prices and delivery',
   'আপনার প্রশ্ন লিখুন...': 'Type your question...', 'পাঠান': 'Send',
   'AI-র উত্তর ভুল হতে পারে। ফোন নম্বর বা ঠিকানা এখানে লিখবেন না। অর্ডারের জন্য কার্ট বা WhatsApp ব্যবহার করুন।': 'AI answers may be wrong. Do not share your phone number or address here. Use the cart or WhatsApp to order.',
@@ -469,7 +483,17 @@ async function loadSettings() {
   });
   const t = state.design.testimonials = Array.isArray(state.design.testimonials) ? state.design.testimonials : [];
   while (t.length < 3) t.push({ name: '', text: '' });
+  normalizeCats(state.design);
 }
+function normalizeCats(d) {
+  let cs = (Array.isArray(d.categories) ? d.categories : []).filter(c => c && String(c.name || '').trim())
+    .map((c, i) => ({ id: String(c.id || 'c' + (i + 1)), name: String(c.name).trim(), name_en: String(c.name_en || '').trim(), icon: CAT_ICONS[c.icon] ? c.icon : 'fa-tag', image: String(c.image || '') }));
+  if (!cs.length) cs = clone(DEFAULT_DESIGN.categories);
+  if (Array.isArray(d.cat_images)) cs.forEach((c, i) => { if (!c.image && d.cat_images[i]) c.image = d.cat_images[i]; });   // old saved layout
+  delete d.cat_images; d.categories = cs;
+}
+const cats = () => (state.design && state.design.categories) || DEFAULT_DESIGN.categories;
+const catLabel = n => { const c = cats().find(x => x.name === n); return c ? ((LANG === 'en' && c.name_en) ? c.name_en : c.name) : tr(n); };
 async function loadProducts() {
   if (!sb) { state.products = DEMO_PRODUCTS; return; }
   const { data, error } = await sb.from('products').select('*').order('sort_order', { ascending: true }).order('created_at', { ascending: false });
@@ -533,7 +557,7 @@ function renderHeader() {
       <div class="md:hidden px-3 pb-2">${search('searchM')}</div>
     </div>
     <nav class="bg-brand"><div class="max-w-7xl mx-auto px-2 flex overflow-x-auto no-scrollbar">
-      ${navBtn('all', 'সব পণ্য')}${CATEGORIES.map(c => navBtn(c.name, c.name)).join('')}
+      ${navBtn('all', 'সব পণ্য')}${cats().map(c => navBtn(c.name, catLabel(c.name))).join('')}
     </div></nav>`;
   const w = $('#waFloat'); w.href = wa + '?text=' + encodeURIComponent(LANG === 'en' ? 'Hello, I would like to know about ' + d.brand_name + '.' : 'আসসালামু আলাইকুম, আমি ' + d.brand_name + ' সম্পর্কে জানতে চাই।');
 }
@@ -568,9 +592,9 @@ function renderCats() {
   if (!state.design.show_categories) { el.innerHTML = ''; return; }
   el.innerHTML = `<div class="pt-6"><h2 class="text-lg sm:text-xl font-bold text-brand text-center mb-4">ক্যাটেগরি অনুযায়ী কিনুন</h2>
     <div class="flex justify-center gap-4 sm:gap-8 overflow-x-auto no-scrollbar pb-1">
-    ${CATEGORIES.map((c, i) => { const ci = safeUrl((state.design.cat_images || [])[i]); return `<button data-action="cat" data-cat="${esc(c.name)}" class="group flex flex-col items-center gap-2 shrink-0 w-20 sm:w-24">
-      <span class="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden flex items-center justify-center text-2xl sm:text-3xl border-2 transition group-hover:scale-105 ${state.cat === c.name ? 'bg-brand text-gold border-gold' : 'bg-white text-brand border-gray-200 group-hover:border-gold'}">${ci ? `<img src="${esc(ci)}" alt="${esc(c.name)}" loading="lazy" class="w-full h-full object-cover">` : `<i class="fa-solid ${c.icon}"></i>`}</span>
-      <span class="text-xs sm:text-sm font-medium text-center leading-tight">${esc(c.name)}</span></button>`; }).join('')}
+    ${cats().map(c => { const ci = safeUrl(c.image); return `<button data-action="cat" data-cat="${esc(c.name)}" class="group flex flex-col items-center gap-2 shrink-0 w-20 sm:w-24">
+      <span class="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden flex items-center justify-center text-2xl sm:text-3xl border-2 transition group-hover:scale-105 ${state.cat === c.name ? 'bg-brand text-gold border-gold' : 'bg-white text-brand border-gray-200 group-hover:border-gold'}">${ci ? `<img src="${esc(ci)}" alt="${esc(catLabel(c.name))}" loading="lazy" class="w-full h-full object-cover">` : `<i class="fa-solid ${esc(c.icon)}"></i>`}</span>
+      <span class="text-xs sm:text-sm font-medium text-center leading-tight">${esc(catLabel(c.name))}</span></button>`; }).join('')}
     </div></div>`;
 }
 
@@ -624,7 +648,7 @@ function cartControl(p, q) {
 
 function renderProducts() {
   const list = filteredProducts();
-  const title = state.cat === 'all' ? 'সব পণ্য' : state.cat;
+  const title = state.cat === 'all' ? tr('সব পণ্য') : catLabel(state.cat);
   $('#products').innerHTML = `
     <div class="flex items-center justify-between mb-4 gap-2">
       <h2 class="text-xl sm:text-2xl font-bold text-brand border-l-4 border-gold pl-3">${esc(title)}${state.search ? ` <span class="text-sm font-normal text-gray-500">— "${esc(state.search)}"</span>` : ''}</h2>
@@ -654,7 +678,7 @@ function renderFooter() {
     <div class="lg:col-span-2"><div class="flex items-center gap-3 mb-3">${logoHtml('w-12 h-12')}<div><div class="brand-font font-bold text-xl">${esc(d.brand_name)}</div><div class="text-xs text-gold">${esc(d.sub_tagline)}</div></div></div>
       <p class="text-sm text-white/75 max-w-md leading-relaxed">${esc(dx(d, 'footer_about'))}</p></div>
     <div><h4 class="font-bold text-gold mb-3">ক্যাটেগরি</h4><ul class="space-y-2 text-sm text-white/80">
-      ${CATEGORIES.map(c => `<li><button data-action="cat" data-cat="${esc(c.name)}" class="hover:text-gold">${esc(c.name)}</button></li>`).join('')}</ul></div>
+      ${cats().map(c => `<li><button data-action="cat" data-cat="${esc(c.name)}" class="hover:text-gold">${esc(catLabel(c.name))}</button></li>`).join('')}</ul></div>
     <div><h4 class="font-bold text-gold mb-3">যোগাযোগ</h4><ul class="space-y-2 text-sm text-white/80">
       <li><i class="fa-solid fa-phone w-5 text-gold"></i><a href="tel:${esc(d.phone)}" class="hover:text-gold">${esc(bn(d.phone))}</a></li>
       <li><i class="fa-brands fa-whatsapp w-5 text-gold"></i><a href="https://wa.me/${esc(digits(d.whatsapp))}" target="_blank" rel="noopener noreferrer" class="hover:text-gold">WhatsApp করুন</a></li>
@@ -1107,7 +1131,9 @@ function renderAdminTab() {
   const body = $('#adminBody'); if (!body) return;
   const t = state.adminTab;
   // keep focus-free re-render; draft is always the source of truth
+  const y = window.scrollY;
   body.innerHTML = t === 'products' ? tabProducts() : t === 'orders' ? tabOrders() : t === 'design' ? tabDesign() : t === 'ads' ? tabAds() : t === 'chats' ? tabChats() : tabUsers();
+  window.scrollTo(0, y); updateDirty();
 }
 
 /* ---- form field helpers (bound to adminDraft by data-path) ---- */
@@ -1133,7 +1159,7 @@ function tabProducts() {
       <div class="bg-white rounded-xl shadow-sm p-3 flex gap-3 items-center">
         <div class="w-16 h-16 rounded-lg bg-gray-50 overflow-hidden shrink-0 flex items-center justify-center">${prevImg(p.image_url)}</div>
         <div class="flex-1 min-w-0"><div class="font-semibold truncate">${esc(p.name)}</div>
-          <div class="text-xs text-gray-500">${esc(tr(p.category))} ${p.weight ? '• ' + esc(p.weight) : ''}</div>
+          <div class="text-xs text-gray-500">${esc(catLabel(p.category))} ${p.weight ? '• ' + esc(p.weight) : ''}</div>
           <div class="text-sm"><b class="text-brand">${money(p.price)}</b>${p.old_price ? ` <span class="text-gray-400 line-through text-xs">${money(p.old_price)}</span>` : ''}</div></div>
         <div class="flex flex-col sm:flex-row gap-1.5 shrink-0">
           <button data-action="a-stock" data-id="${esc(p.id)}" class="btn btn-sm ${p.in_stock ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">${p.in_stock ? 'স্টকে আছে' : 'স্টক শেষ'}</button>
@@ -1152,7 +1178,7 @@ function openProductForm(id) {
       <label class="block"><span class="lbl">পণ্যের নাম *</span><input name="name" required class="inp" value="${esc(p ? p.name : '')}"></label>
       <label class="block"><span class="lbl">পণ্যের নাম (ইংরেজি)</span><input name="name_en" class="inp" value="${esc(p ? p.name_en : '')}"></label>
       <div class="grid grid-cols-2 gap-3">
-        <label class="block"><span class="lbl">ক্যাটেগরি *</span><select name="category" class="inp">${CATEGORIES.map(c => `<option ${p && p.category === c.name ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select></label>
+        <label class="block"><span class="lbl">ক্যাটেগরি *</span><select name="category" class="inp">${cats().concat(p && !cats().some(c => c.name === p.category) ? [{ name: p.category }] : []).map(c => `<option value="${esc(c.name)}" ${p && p.category === c.name ? 'selected' : ''}>${esc(catLabel(c.name))}</option>`).join('')}</select></label>
         <label class="block"><span class="lbl">ওজন/পরিমাণ</span><input name="weight" class="inp" placeholder="যেমন: ১ কেজি" value="${esc(p ? p.weight : '')}"></label>
         <label class="block"><span class="lbl">বিক্রয় মূল্য (৳) *</span><input name="price" type="number" min="0" step="1" required class="inp" value="${esc(p ? p.price : '')}"></label>
         <label class="block"><span class="lbl">পুরনো মূল্য (৳)</span><input name="old_price" type="number" min="0" step="1" class="inp" value="${esc(p && p.old_price ? p.old_price : '')}"></label>
@@ -1194,16 +1220,20 @@ function tabOrders() {
   const list = f === 'all' ? all : all.filter(o => o.status === f);
   const count = s => all.filter(o => o.status === s).length;
   const revenue = all.filter(o => o.status === 'delivered').reduce((s, o) => s + Number(o.total), 0);
-  const chip = (k, l) => `<button data-action="a-orderFilter" data-f="${k}" class="btn btn-sm whitespace-nowrap ${f === k ? 'btn-brand' : 'btn-ghost'}">${l}</button>`;
+  const chip = (k, l, n) => `<button data-action="a-orderFilter" data-f="${k}" class="btn btn-sm whitespace-nowrap ${f === k ? 'btn-brand' : 'btn-ghost'}">${esc(tr(l))} (${bn(n)})</button>`;
+  const serial = {}; [...all].sort((a, b) => new Date(a.created_at) - new Date(b.created_at)).forEach((o, i) => { serial[o.id] = i + 1; });
+  const card = (label, val, icon, fk) => { const inner = `<i class="fa-solid ${icon} text-gold"></i><div class="text-xl font-bold text-brand mt-1">${val}</div><div class="text-xs text-gray-500">${label}</div>`;
+    return fk ? `<button type="button" data-action="a-orderFilter" data-f="${fk}" class="text-left bg-white rounded-xl shadow-sm p-3 transition active:scale-95 ${f === fk ? 'ring-2 ring-[#C89B4B]' : 'hover:shadow-md'}">${inner}</button>` : `<div class="bg-white rounded-xl shadow-sm p-3">${inner}</div>`; };
+  const heading = f === 'all' ? tr('সব অর্ডার') : tr(STATUS[f].l) + (LANG === 'en' ? ' orders' : ' অর্ডার');
   return `<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-      ${[['মোট অর্ডার', bn(all.length), 'fa-receipt'], ['অপেক্ষমাণ', bn(count('pending')), 'fa-hourglass-half'], ['ডেলিভারি সম্পন্ন', bn(count('delivered')), 'fa-circle-check'], ['আয় (ডেলিভারি)', money(revenue), 'fa-sack-dollar']]
-        .map(c => `<div class="bg-white rounded-xl shadow-sm p-3"><i class="fa-solid ${c[2]} text-gold"></i><div class="text-xl font-bold text-brand mt-1">${c[1]}</div><div class="text-xs text-gray-500">${c[0]}</div></div>`).join('')}</div>
-    <div class="flex gap-2 overflow-x-auto no-scrollbar mb-4 pb-1">${chip('all', 'সব')}${Object.keys(STATUS).map(k => chip(k, STATUS[k].l)).join('')}
+      ${card('মোট অর্ডার', bn(all.length), 'fa-receipt', 'all')}${card('অপেক্ষমাণ', bn(count('pending')), 'fa-hourglass-half', 'pending')}${card('ডেলিভারি সম্পন্ন', bn(count('delivered')), 'fa-circle-check', 'delivered')}${card('আয় (ডেলিভারি)', money(revenue), 'fa-sack-dollar', '')}</div>
+    <div class="flex gap-2 overflow-x-auto no-scrollbar mb-4 pb-1">${chip('all', 'সব', all.length)}${Object.keys(STATUS).map(k => chip(k, STATUS[k].l, count(k))).join('')}
       <button data-action="a-reloadOrders" class="btn btn-sm btn-ghost ml-auto"><i class="fa-solid fa-rotate"></i></button></div>
-    <div class="space-y-3">${list.length ? list.map(o => {
+    <div class="flex items-center justify-between mb-2"><h3 class="font-bold text-brand">${esc(heading)} (${bn(list.length)})</h3></div>
+    <div id="orderList" class="space-y-3 scroll-mt-32">${list.length ? list.map(o => {
       const st = STATUS[o.status] || STATUS.pending;
       return `<div class="bg-white rounded-xl shadow-sm p-4">
-        <div class="flex flex-wrap items-center gap-2 justify-between"><div><b class="text-brand">${esc(o.order_no)}</b> <span class="text-xs text-gray-500">• ${esc(fmtDate(o.created_at))}</span></div>
+        <div class="flex flex-wrap items-center gap-2 justify-between"><div><span class="inline-block bg-brand text-gold rounded px-1.5 text-xs font-bold mr-1">#${bn(serial[o.id])}</span><b class="text-brand">${esc(o.order_no)}</b> <span class="text-xs text-gray-500">• ${esc(fmtDate(o.created_at))}</span></div>
           <span class="px-2 py-0.5 rounded-full text-xs font-semibold ${st.c}">${esc(st.l)}</span></div>
         <div class="grid sm:grid-cols-2 gap-3 mt-3 text-sm">
           <div><div class="font-semibold">${esc(o.customer_name)} ${o.user_id ? '<span class="text-[10px] bg-gray-100 px-1.5 rounded">নিবন্ধিত</span>' : '<span class="text-[10px] bg-gray-100 px-1.5 rounded">গেস্ট</span>'}</div>
@@ -1220,6 +1250,21 @@ function tabOrders() {
 }
 
 /* ---- DESIGN TAB ---- */
+function catManager() {
+  if (!can('products')) return '<p class="text-sm text-gray-500">ক্যাটেগরি বদলানোর জন্য "পণ্য" অনুমতি লাগে।</p>';
+  const F = FLD, cs = adminDraft.design.categories || [];
+  return '<p class="text-xs text-gray-500">নাম বদলালে ওই ক্যাটেগরির সব পণ্যের ক্যাটেগরিও নিজে থেকে বদলে যাবে। ক্যাটেগরি মুছলে তার পণ্যগুলো প্রথম ক্যাটেগরিতে সরে যাবে। সব বদল "সংরক্ষণ করুন" চাপলে তবেই কার্যকর হয়।</p>' +
+    cs.map((c, i) => `<div class="border rounded-xl p-3 space-y-3 bg-gray-50">
+      <div class="flex items-center gap-2"><span class="w-8 h-8 rounded-full bg-brand text-gold flex items-center justify-center text-sm font-bold">${bn(i + 1)}</span>
+        <div class="ml-auto flex gap-1">
+          <button type="button" data-action="a-catUp" data-i="${i}" class="btn btn-sm btn-ghost" ${i === 0 ? 'disabled' : ''} aria-label="উপরে"><i class="fa-solid fa-arrow-up"></i></button>
+          <button type="button" data-action="a-catDown" data-i="${i}" class="btn btn-sm btn-ghost" ${i === cs.length - 1 ? 'disabled' : ''} aria-label="নিচে"><i class="fa-solid fa-arrow-down"></i></button>
+          <button type="button" data-action="a-catDel" data-i="${i}" class="btn btn-sm btn-danger" aria-label="মুছুন"><i class="fa-solid fa-trash-can"></i></button></div></div>
+      <div class="grid sm:grid-cols-2 gap-3">${F.text('ক্যাটেগরির নাম (বাংলা)', `design.categories.${i}.name`)}${F.text('ক্যাটেগরির নাম (ইংরেজি)', `design.categories.${i}.name_en`)}</div>
+      <label class="block"><span class="lbl">আইকন (ছবি না দিলে এটা দেখাবে)</span><select class="inp" data-path="design.categories.${i}.icon">${Object.keys(CAT_ICONS).map(k => `<option value="${k}" ${c.icon === k ? 'selected' : ''}>${CAT_ICONS[k]}</option>`).join('')}</select></label>
+      ${F.img('ছবি (ঐচ্ছিক, বর্গাকার ভালো)', `design.categories.${i}.image`, 400)}</div>`).join('') +
+    '<button type="button" data-action="a-catAdd" class="btn btn-ghost w-full"><i class="fa-solid fa-plus"></i> নতুন ক্যাটেগরি</button>';
+}
 function tabDesign() {
   if (!can('design')) return noPerm();
   const F = FLD;
@@ -1231,13 +1276,11 @@ function tabDesign() {
     ${sect('হিরো ব্যানার (মূল)', 'fa-image', F.img('ব্যানার ছবি', 'design.hero_image', 1600) + F.toggle('ছবির ওপর লেখা দেখান (ছবিতে নিজস্ব লেখা থাকলে বন্ধ করুন)', 'design.hero_show_text') + F.text('ব্যাজ', 'design.hero_badge') + F.text('ব্যাজ (ইংরেজি)', 'design.hero_badge_en') + F.text('হেডলাইন', 'design.hero_title') + F.text('হেডলাইন (ইংরেজি)', 'design.hero_title_en') + F.text('সাবটাইটেল', 'design.hero_subtitle') + F.text('সাবটাইটেল (ইংরেজি)', 'design.hero_subtitle_en') + F.text('বাটনের লেখা', 'design.hero_cta') + F.text('বাটনের লেখা (ইংরেজি)', 'design.hero_cta_en'))}
     ${sect('সাইড প্রোমো ব্যানার', 'fa-rectangle-ad', F.toggle('দেখান', 'design.side_banner_show') + F.img('সাইড ব্যানার ছবি', 'design.side_banner_image', 900) + F.text('শিরোনাম', 'design.side_title') + F.text('শিরোনাম (ইংরেজি)', 'design.side_title_en') + F.text('ছোট লেখা', 'design.side_text') + F.text('ছোট লেখা (ইংরেজি)', 'design.side_text_en'))}
     ${sect('ডেলিভারি চার্জ', 'fa-truck', `<div class="grid grid-cols-2 gap-3">${F.num('ঢাকার ভেতরে (৳)', 'design.delivery_dhaka')}${F.num('ঢাকার বাইরে (৳)', 'design.delivery_outside')}</div>`)}
-    ${sect('ক্যাটেগরির ছবি', 'fa-images', '<p class="text-xs text-gray-500">ছবি দিলে হোমপেজের গোল আইকনের জায়গায় সেটা দেখাবে। ছবি না দিলে আগের আইকনই থাকবে। বর্গাকার ছবি সবচেয়ে ভালো দেখায়।</p>' + CATEGORIES.map((c, i) => F.img(c.name, 'design.cat_images.' + i, 400)).join(''))}
+    ${sect('ক্যাটেগরি ব্যবস্থাপনা', 'fa-layer-group', catManager())}
     ${sect('সেকশন দেখানো/লুকানো', 'fa-eye', F.toggle('ফিচার্ড ক্যাটেগরি', 'design.show_categories') + F.toggle('গ্রাহকদের রিভিউ', 'design.show_testimonials'))}
     ${sect('গ্রাহক রিভিউ (শুধু আসল রিভিউ দিন)', 'fa-comments', [0, 1, 2].map(i => `<div class="grid sm:grid-cols-3 gap-2 border rounded-lg p-3">${F.text('নাম', `design.testimonials.${i}.name`)}<div class="sm:col-span-2">${F.area('মতামত', `design.testimonials.${i}.text`)}</div></div>`).join(''))}
     ${sect('যোগাযোগ ও ফুটার', 'fa-address-book', F.text('ফোন', 'design.phone') + F.text('WhatsApp নম্বর (দেশ কোডসহ, যেমন 8801XXXXXXXXX)', 'design.whatsapp') + F.text('ইমেইল', 'design.email') + F.text('ঠিকানা', 'design.address') + F.text('ঠিকানা (ইংরেজি)', 'design.address_en') + F.area('ফুটার পরিচিতি', 'design.footer_about', 3) + F.area('ফুটার পরিচিতি (ইংরেজি)', 'design.footer_about_en', 3))}
-    <div class="fixed bottom-0 inset-x-0 bg-white border-t p-3 z-20"><div class="max-w-6xl mx-auto flex gap-2 justify-end">
-      <button data-action="a-discard" class="btn btn-ghost">বাতিল</button>
-      <button data-action="a-saveDesign" class="btn btn-cta px-8"><i class="fa-solid fa-floppy-disk"></i> সংরক্ষণ করুন</button></div></div></div>`;
+    ${saveBar('a-saveDesign')}</div>`;
 }
 
 /* ---- ADS TAB ---- */
@@ -1251,18 +1294,72 @@ function tabAds() {
       (img ? F.img('বিজ্ঞাপনের ছবি', 'ads.image_url', 1600)
            : F.text('বিজ্ঞাপনের লেখা', 'ads.text') + F.text('বিজ্ঞাপনের লেখা (ইংরেজি)', 'ads.text_en') + `<div class="grid grid-cols-2 gap-3">${F.color('ব্যাকগ্রাউন্ড রঙ', 'ads.bg_color')}${F.color('লেখার রঙ', 'ads.text_color')}</div>`) +
       F.text('ক্লিকের লিংক (ঐচ্ছিক, https://...)', 'ads.link'))}
-    <div class="fixed bottom-0 inset-x-0 bg-white border-t p-3 z-20"><div class="max-w-6xl mx-auto flex gap-2 justify-end">
-      <button data-action="a-discard" class="btn btn-ghost">বাতিল</button>
-      <button data-action="a-saveAds" class="btn btn-cta px-8"><i class="fa-solid fa-floppy-disk"></i> সংরক্ষণ করুন</button></div></div></div>`;
+    ${saveBar('a-saveAds')}</div>`;
 }
 
+/* ---- save feedback: buttons stay dim until there is something to save ---- */
+let saving = false;
+const DIRTY_KEYS = { design: 'design', ads: 'ads', chats: 'chat' };
+function isDirty() {
+  const k = DIRTY_KEYS[state.adminTab]; if (!k || !adminDraft) return false;
+  return JSON.stringify(adminDraft[k]) !== JSON.stringify(k === 'chat' ? state.chatCfg : state[k]);
+}
+function updateDirty() {
+  if (!DIRTY_KEYS[state.adminTab]) return;
+  const dirty = isDirty();
+  $$('[data-save-ui]').forEach(b => { b.disabled = saving || !dirty; });
+  const st = $('#saveState');
+  if (st) st.innerHTML = saving ? '<span class="text-gray-600"><i class="fa-solid fa-spinner fa-spin"></i> সংরক্ষণ হচ্ছে...</span>'
+    : dirty ? '<span class="text-amber-600"><i class="fa-solid fa-circle text-[8px] align-middle"></i> অসংরক্ষিত পরিবর্তন আছে</span>'
+            : '<span class="text-green-600"><i class="fa-solid fa-circle-check"></i> সব সংরক্ষিত</span>';
+}
+function setSaving(on) {
+  saving = on;
+  const b = $('#saveBtn');
+  if (b) b.innerHTML = on ? '<i class="fa-solid fa-spinner fa-spin"></i> <span>সংরক্ষণ হচ্ছে...</span>' : '<i class="fa-solid fa-floppy-disk"></i> <span>সংরক্ষণ করুন</span>';
+  updateDirty();
+}
+const saveBtns = act => `<span id="saveState" class="mr-auto text-xs sm:text-sm font-semibold"></span>
+      <button data-save-ui data-action="a-discard" class="btn btn-ghost">বাতিল</button>
+      <button data-save-ui id="saveBtn" data-action="${act}" class="btn btn-cta px-8"><i class="fa-solid fa-floppy-disk"></i> <span>সংরক্ষণ করুন</span></button>`;
+const saveBar = act => `<div class="fixed bottom-0 inset-x-0 bg-white border-t p-3 z-20"><div class="max-w-6xl mx-auto flex gap-2 items-center justify-end">${saveBtns(act)}</div></div>`;
+
+async function applyCategoryChanges() {
+  if (!can('products')) return true;
+  const d = adminDraft.design;
+  const cs = (d.categories || []).map(c => ({ ...c, name: String(c.name || '').trim(), name_en: String(c.name_en || '').trim() }));
+  if (!cs.length) { toast('কমপক্ষে একটি ক্যাটেগরি রাখতে হবে', 'err'); return false; }
+  if (cs.some(c => !c.name)) { toast('ক্যাটেগরির নাম খালি রাখা যাবে না', 'err'); return false; }
+  if (new Set(cs.map(c => c.name)).size !== cs.length) { toast('দুটি ক্যাটেগরির নাম একই হতে পারবে না', 'err'); return false; }
+  const old = state.design.categories || [], renames = [];
+  cs.forEach(c => { const o = old.find(x => x.id === c.id); if (o && o.name !== c.name) renames.push({ from: o.name, to: c.name, id: c.id }); });
+  const map = {}; renames.forEach(r => { map[r.from] = r.to; });
+  const names = new Set(cs.map(c => c.name)), orphans = {};
+  state.products.forEach(p => { const nc = map[p.category] || p.category; if (!names.has(nc)) orphans[nc] = (orphans[nc] || 0) + 1; });
+  const orphanCount = Object.values(orphans).reduce((a, b) => a + b, 0), target = cs[0].name;
+  if (orphanCount && !confirm(LANG === 'en' ? `${orphanCount} product(s) belong to a removed category. They will be moved to "${target}". Continue?` : `মুছে ফেলা ক্যাটেগরির ${bn(orphanCount)}টি পণ্য আছে। সেগুলো "${target}" ক্যাটেগরিতে সরানো হবে। ঠিক আছে?`)) return false;
+  const move = async (from, to) => { const { error } = await sb.from('products').update({ category: to }).eq('category', from); if (error) { console.warn(error); toast('ক্যাটেগরি বদলাতে ব্যর্থ: ' + error.message, 'err'); return false; } return true; };
+  const two = renames.length > 1;
+  for (const r of renames) if (!await move(r.from, two ? '__tmp__' + r.id : r.to)) return false;
+  if (two) for (const r of renames) if (!await move('__tmp__' + r.id, r.to)) return false;
+  for (const name of Object.keys(orphans)) if (!await move(name, target)) return false;
+  d.categories = cs;
+  if (map[state.cat]) state.cat = map[state.cat]; else if (state.cat !== 'all' && !names.has(state.cat)) state.cat = 'all';
+  if (renames.length || orphanCount) await loadProducts();
+  return true;
+}
 async function saveSettings(key) {
   if (!sb) return toast('ডেমো মোড: Supabase সংযোগ করুন', 'err');
-  const val = clone(adminDraft[key]);
-  const { error } = await sb.from('store_settings').upsert({ key, value: val, updated_at: new Date().toISOString() });
-  if (error) { console.warn(error); return toast('সংরক্ষণ ব্যর্থ: ' + error.message, 'err'); }
-  state[key] = clone(val); applyTheme(); renderStore();
-  toast('✅ সংরক্ষিত হয়েছে — দোকানে আপডেট দেখা যাবে');
+  if (saving) return;
+  setSaving(true);
+  try {
+    if (key === 'design' && !await applyCategoryChanges()) return;
+    const val = clone(adminDraft[key]);
+    const { error } = await sb.from('store_settings').upsert({ key, value: val, updated_at: new Date().toISOString() });
+    if (error) { console.warn(error); return toast('সংরক্ষণ ব্যর্থ: ' + error.message, 'err'); }
+    state[key] = clone(val); applyTheme(); renderStore();
+    toast('✅ সংরক্ষিত হয়েছে — দোকানে আপডেট দেখা যাবে');
+  } finally { setSaving(false); }
 }
 
 /* ---- AI CHAT TAB ---- */
@@ -1286,7 +1383,7 @@ function tabChats() {
       F.toggle('চ্যাট চালু করুন', 'chat.enabled') +
       F.area('AI-কে জানানো তথ্য (ডেলিভারির সময়, পেমেন্ট পদ্ধতি, রিটার্ন নিয়ম ইত্যাদি)', 'chat.knowledge', 7) +
       '<p class="text-xs text-gray-500">এখানে লেখা তথ্য সাইটের ডাটাবেসে সাধারণভাবে পড়া যায়, তাই গোপন কিছু লিখবেন না। পণ্য ও দাম AI নিজে থেকেই জানে।</p>' +
-      '<div class="flex justify-end"><button data-action="a-saveChat" class="btn btn-cta px-8"><i class="fa-solid fa-floppy-disk"></i> সংরক্ষণ করুন</button></div>')}</div>` : '';
+      `<div class="flex gap-2 items-center justify-end pt-1">${saveBtns('a-saveChat')}</div>`)}</div>` : '';
   return `${settings}
     <div class="flex items-center justify-between mb-3"><h2 class="text-lg font-bold text-brand">কথোপকথন (${bn(list.length)})</h2>
       <button data-action="a-reloadChats" class="btn btn-sm btn-ghost"><i class="fa-solid fa-rotate"></i></button></div>
@@ -1306,11 +1403,14 @@ function tabChats() {
     }).join('') : '<div class="bg-white rounded-xl p-10 text-center text-gray-500">এখনো কোনো চ্যাট নেই</div>'}</div>`;
 }
 async function saveChatCfg() {
-  if (!sb || !isSuper()) return;
-  const val = clone(adminDraft.chat);
-  const { error } = await sb.from('store_settings').upsert({ key: 'chat', value: val, updated_at: new Date().toISOString() });
-  if (error) { console.warn(error); return toast('সংরক্ষণ ব্যর্থ: ' + error.message, 'err'); }
-  state.chatCfg = clone(val); renderChat(); toast('✅ চ্যাট সেটিংস সংরক্ষিত হয়েছে');
+  if (!sb || !isSuper() || saving) return;
+  setSaving(true);
+  try {
+    const val = clone(adminDraft.chat);
+    const { error } = await sb.from('store_settings').upsert({ key: 'chat', value: val, updated_at: new Date().toISOString() });
+    if (error) { console.warn(error); return toast('সংরক্ষণ ব্যর্থ: ' + error.message, 'err'); }
+    state.chatCfg = clone(val); renderChat(); toast('✅ চ্যাট সেটিংস সংরক্ষিত হয়েছে');
+  } finally { setSaving(false); }
 }
 
 /* ---- USERS TAB (super admin only) ---- */
@@ -1372,15 +1472,19 @@ document.addEventListener('click', async e => {
     case 'logout': logout(); break;
     /* admin */
     case 'a-home': location.hash = ''; break;
-    case 'a-tab': applyTheme(); state.adminTab = el.dataset.tab; adminDraft = { design: clone(state.design), ads: clone(state.ads), chat: clone(state.chatCfg) }; renderAdmin(); break;
+    case 'a-tab':
+      if (isDirty() && !confirm(tr('অসংরক্ষিত পরিবর্তন আছে। সংরক্ষণ না করেই চলে যাবেন?'))) break;
+      applyTheme(); state.adminTab = el.dataset.tab; adminDraft = { design: clone(state.design), ads: clone(state.ads), chat: clone(state.chatCfg) }; renderAdmin(); window.scrollTo(0, 0); break;
     case 'a-newProduct': openProductForm(null); break;
     case 'a-editProduct': openProductForm(id); break;
     case 'a-pfRemoveImg': state.pfImage = ''; $('#pf_prev').innerHTML = prevImg(''); break;
     case 'a-stock': {
       const p = state.products.find(x => x.id === id); if (!p) break;
+      el.disabled = true;
       const { error } = await sb.from('products').update({ in_stock: !p.in_stock }).eq('id', id);
-      if (error) return toast('আপডেট ব্যর্থ', 'err');
-      p.in_stock = !p.in_stock; renderAdminTab(); renderProducts(); updateBadges(); break;
+      if (error) { el.disabled = false; return toast('আপডেট ব্যর্থ', 'err'); }
+      p.in_stock = !p.in_stock; renderAdminTab(); renderProducts(); updateBadges();
+      toast(p.in_stock ? '✅ পণ্য স্টকে আছে হিসেবে চিহ্নিত হয়েছে' : '✅ পণ্য স্টক শেষ হিসেবে চিহ্নিত হয়েছে'); break;
     }
     case 'a-delProduct': {
       const p = state.products.find(x => x.id === id); if (!p || !confirm(LANG === 'en' ? `Delete "${p.name}"?` : `"${p.name}" মুছে ফেলবেন?`)) break;
@@ -1390,7 +1494,7 @@ document.addEventListener('click', async e => {
       state.cart = state.cart.filter(c => c.id !== id); saveCart();
       await loadProducts(); renderProducts(); updateBadges(); renderAdminTab(); toast('পণ্য মুছে ফেলা হয়েছে'); break;
     }
-    case 'a-orderFilter': state.orderFilter = el.dataset.f; renderAdminTab(); break;
+    case 'a-orderFilter': { state.orderFilter = el.dataset.f; renderAdminTab(); const l = $('#orderList'); if (l) l.scrollIntoView({ behavior: 'smooth', block: 'start' }); break; }
     case 'a-reloadOrders': await loadAdminOrders(); renderAdminTab(); break;
     case 'a-delOrder': {
       if (!confirm(tr('এই অর্ডারটি স্থায়ীভাবে মুছে ফেলবেন?'))) break;
@@ -1405,6 +1509,9 @@ document.addEventListener('click', async e => {
     case 'a-saveDesign': saveSettings('design'); break;
     case 'a-saveAds': saveSettings('ads'); break;
     case 'a-saveChat': saveChatCfg(); break;
+    case 'a-catAdd': { const cs = adminDraft.design.categories; if (cs.length >= 12) { toast('সর্বোচ্চ ১২টি ক্যাটেগরি রাখা যাবে', 'err'); break; } cs.push({ id: 'c' + Date.now().toString(36), name: 'নতুন ক্যাটেগরি', name_en: 'New Category', icon: 'fa-tag', image: '' }); renderAdminTab(); break; }
+    case 'a-catDel': { const cs = adminDraft.design.categories; if (cs.length <= 1) { toast('কমপক্ষে একটি ক্যাটেগরি রাখতে হবে', 'err'); break; } cs.splice(Number(el.dataset.i), 1); renderAdminTab(); break; }
+    case 'a-catUp': case 'a-catDown': { const cs = adminDraft.design.categories, i = Number(el.dataset.i), j = a === 'a-catUp' ? i - 1 : i + 1; if (j < 0 || j >= cs.length) break; [cs[i], cs[j]] = [cs[j], cs[i]]; renderAdminTab(); break; }
     case 'a-reloadChats': await loadChatSessions(); renderAdminTab(); break;
     case 'a-chatOpen': state.chatOpenId = state.chatOpenId === id ? null : id; renderAdminTab(); break;
     case 'a-delChat': {
@@ -1439,7 +1546,7 @@ document.addEventListener('input', e => {
       applyTheme(adminDraft.design.colors);
       const code = t.parentElement && t.parentElement.querySelector('code'); if (code) code.textContent = t.value;
     }
-    if (t.dataset.path === 'ads.mode') renderAdminTab();
+    if (t.dataset.path === 'ads.mode') renderAdminTab(); else updateDirty();
   }
 });
 
