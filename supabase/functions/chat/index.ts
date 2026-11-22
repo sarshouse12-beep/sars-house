@@ -50,7 +50,8 @@ function buildSystem(lang, design, knowledge, products) {
   const lines = products.map((p) => {
     const name = lang === "en" && p.name_en ? p.name_en : p.name;
     const old = p.old_price && Number(p.old_price) > Number(p.price) ? ` (was ৳${p.old_price})` : "";
-    return `- ${name} [${p.category}] ${p.weight || ""}: ৳${p.price}${old} — ${p.in_stock ? "in stock" : "OUT OF STOCK"}`;
+    const priceTxt = Number(p.price) > 0 ? `৳${p.price}${old}` : "price not set yet (ask the customer to message us on WhatsApp for the price)";
+    return `- ${name} [${p.category}] ${p.weight || ""}: ${priceTxt} — ${p.in_stock ? "in stock" : "OUT OF STOCK"}`;
   });
   return [
     `You are the friendly shop assistant of "${brand}", a Bangladeshi online shop for pure honey, ghee, oils, dates, nuts and spices.`,

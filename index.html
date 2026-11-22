@@ -231,9 +231,12 @@ const DEFAULT_DESIGN = {
   categories: [
     { id: 'c1', name: 'মধু', name_en: 'Honey', icon: 'fa-droplet', image: '' },
     { id: 'c2', name: 'ঘি ও তেল', name_en: 'Ghee & Oil', icon: 'fa-bottle-droplet', image: '' },
-    { id: 'c3', name: 'খেজুর ও বাদাম', name_en: 'Dates & Nuts', icon: 'fa-seedling', image: '' },
-    { id: 'c4', name: 'মসলা ও অন্যান্য', name_en: 'Spices & More', icon: 'fa-pepper-hot', image: '' }
+    { id: 'c3', name: 'দই ও দুগ্ধজাত', name_en: 'Yogurt & Dairy', icon: 'fa-bowl-food', image: '' },
+    { id: 'c4', name: 'ড্রাই ফ্রুটস ও বাদাম', name_en: 'Dry Fruits & Nuts', icon: 'fa-seedling', image: '' }
   ],
+  cats_title: 'ক্যাটেগরি অনুযায়ী কিনুন', cats_title_en: 'Shop by Category',
+  all_label: 'সব পণ্য', all_label_en: 'All Products',
+  testi_title: 'আমাদের গ্রাহকদের মতামত', testi_title_en: 'What Our Customers Say',
   show_testimonials: false,
   testimonials: [
     { name: '', text: '' },
@@ -252,17 +255,25 @@ const DEFAULT_ADS = {
   bg_color: '#C89B4B', text_color: '#041f1e'
 };
 const DEMO_PRODUCTS = [
-  ['খাঁটি সরিষা ফুলের মধু', 'মধু', 850, 950, '১ কেজি', 'Best Selling', true],
-  ['সুন্দরবনের খলিসা ফুলের মধু', 'মধু', 1200, 1350, '১ কেজি', '', true],
-  ['গাওয়া ঘি', 'ঘি ও তেল', 1100, null, '৫০০ গ্রাম', 'Best Selling', true],
-  ['ঘানি ভাঙা সরিষার তেল', 'ঘি ও তেল', 380, 420, '১ লিটার', '', true],
-  ['আজওয়া খেজুর', 'খেজুর ও বাদাম', 1500, 1650, '১ কেজি', '', true],
-  ['কাজুবাদাম', 'খেজুর ও বাদাম', 900, null, '৫০০ গ্রাম', '', false],
-  ['কালোজিরা', 'মসলা ও অন্যান্য', 260, 300, '২৫০ গ্রাম', '', true]
-].map((r, i) => ({ id: 'demo-' + i, name: r[0], category: r[1], description: 'ডেমো পণ্য — Supabase সংযোগ করলে আপনার আসল পণ্য এখানে দেখাবে।', price: r[2], old_price: r[3], weight: r[4], tag: r[5], in_stock: r[6], image_url: '', sort_order: i }));
+  ['সরমালাই দই', 'Sormalai Doi (Cream Yogurt)', 'দই ও দুগ্ধজাত'],
+  ['সরের রসমালাই', 'Cream Rasmalai', 'দই ও দুগ্ধজাত'],
+  ['সরযুক্ত সলপের মাঠা', 'Sholop Buttermilk (Mattha) with Cream', 'দই ও দুগ্ধজাত'],
+  ['সিরাজগঞ্জের খাঁটি গাওয়া ঘি', 'Pure Gawa Ghee of Sirajganj', 'ঘি ও তেল'],
+  ['তেঁতুল কাঠের ঘানির সরিষার তেল', 'Tamarind-Wood Ghani Mustard Oil', 'ঘি ও তেল'],
+  ['ড্রাই ফ্রুটস', 'Dry Fruits', 'ড্রাই ফ্রুটস ও বাদাম'],
+  ['মধুময় বাদাম / হানি নাটস', 'Honey Nuts', 'ড্রাই ফ্রুটস ও বাদাম'],
+  ['প্রাকৃতিক চাকের মধু', 'Natural Honeycomb Honey', 'মধু'],
+  ['সুন্দরবনের মধু', 'Sundarbans Honey', 'মধু'],
+  ['কালোজিরা ফুলের মধু', 'Black Cumin Flower Honey', 'মধু'],
+  ['লিচু ফুলের মধু', 'Litchi Flower Honey', 'মধু'],
+  ['বড়ই ফুলের মধু', 'Boroi (Jujube) Flower Honey', 'মধু'],
+  ['সরিষা ফুলের মধু', 'Mustard Flower Honey', 'মধু'],
+  ['দুধের ক্রীম', 'Milk Cream', 'দই ও দুগ্ধজাত'],
+  ['সরের ঘি', 'Cream Ghee (Shorer Ghee)', 'ঘি ও তেল'],
+  ['মাটির কাপদই', 'Clay Cup Doi', 'দই ও দুগ্ধজাত'],
+  ['প্লাস্টিকের কাপদই', 'Plastic Cup Doi', 'দই ও দুগ্ধজাত']
+].map((r, i) => ({ id: 'demo-' + i, name: r[0], name_en: r[1], category: r[2], description: '', description_en: '', price: 0, old_price: null, weight: '', tag: '', in_stock: true, image_url: '', sort_order: i + 1 }));
 const DEFAULT_CHAT = { enabled: false, knowledge: '' };
-const DEMO_EN = ['Pure Mustard Flower Honey', 'Sundarbans Khalisha Flower Honey', 'Gawa Ghee', 'Cold-Pressed Mustard Oil', 'Ajwa Dates', 'Cashew Nuts', 'Black Cumin (Kalojira)'];
-DEMO_PRODUCTS.forEach((p, i) => { p.name_en = DEMO_EN[i]; p.description_en = 'Demo product — connect Supabase to show your real products here.'; });
 
 const STATUS = {
   pending:   { l: 'অপেক্ষমাণ',     c: 'bg-yellow-100 text-yellow-800' },
@@ -320,6 +331,11 @@ const EN = {
   'সাইড প্রোমো ব্যানার': 'Side Promo Banner', 'সাইড ব্যানার ছবি': 'Side Banner Image', 'শিরোনাম': 'Title', 'শিরোনাম (ইংরেজি)': 'Title (English)',
   'ছোট লেখা': 'Short Text', 'ছোট লেখা (ইংরেজি)': 'Short Text (English)', 'ঢাকার ভেতরে (৳)': 'Inside Dhaka (৳)', 'ঢাকার বাইরে (৳)': 'Outside Dhaka (৳)',
   'সেকশন দেখানো/লুকানো': 'Show/Hide Sections',
+  'দাম জানতে মেসেজ করুন': 'Message us for price', 'দাম জানতে WhatsApp': 'Ask price on WhatsApp', 'দাম দেওয়া হয়নি': 'Price not set',
+  'দাম ০ রাখলে সাইটে "দাম জানতে মেসেজ করুন" দেখাবে এবং কার্টে যোগ করা যাবে না।': 'If the price is 0, the site shows "Message us for price" and the product cannot be added to the cart.',
+  'সাইটের শিরোনাম ও লেখা': 'Site Titles & Texts', '"সব পণ্য" বাটনের নাম': '"All Products" button name', '"সব পণ্য" বাটনের নাম (ইংরেজি)': '"All Products" button name (English)',
+  'ক্যাটেগরি সেকশনের শিরোনাম': 'Category section title', 'ক্যাটেগরি সেকশনের শিরোনাম (ইংরেজি)': 'Category section title (English)',
+  'রিভিউ সেকশনের শিরোনাম': 'Reviews section title', 'রিভিউ সেকশনের শিরোনাম (ইংরেজি)': 'Reviews section title (English)',
   'ক্যাটেগরি ব্যবস্থাপনা': 'Manage Categories', 'ক্যাটেগরির নাম (বাংলা)': 'Category name (Bengali)', 'ক্যাটেগরির নাম (ইংরেজি)': 'Category name (English)',
   'আইকন (ছবি না দিলে এটা দেখাবে)': 'Icon (shown if there is no image)', 'ছবি (ঐচ্ছিক, বর্গাকার ভালো)': 'Image (optional, square works best)', 'নতুন ক্যাটেগরি': 'New Category',
   'উপরে': 'Move up', 'নিচে': 'Move down',
@@ -454,7 +470,9 @@ let adminDraft = null;
 function loadCart() { try { const c = JSON.parse(localStorage.getItem('sh_cart') || '[]'); return Array.isArray(c) ? c.filter(x => x && x.id && x.qty > 0) : []; } catch { return []; } }
 function saveCart() { try { localStorage.setItem('sh_cart', JSON.stringify(state.cart)); } catch {} }
 const cartQty = id => (state.cart.find(c => c.id === id) || {}).qty || 0;
-const cartLines = () => state.cart.map(c => { const p = state.products.find(p => p.id === c.id); return (p && p.in_stock) ? { p, qty: c.qty } : null; }).filter(Boolean);
+function hasPrice(p) { return Number(p.price) > 0; }
+const waAsk = p => 'https://wa.me/' + digits(state.design.whatsapp) + '?text=' + encodeURIComponent((LANG === 'en' ? 'I would like to know the price of: ' : 'আমি এই পণ্যের দাম জানতে চাই: ') + pname(p));
+const cartLines = () => state.cart.map(c => { const p = state.products.find(p => p.id === c.id); return (p && p.in_stock && hasPrice(p)) ? { p, qty: c.qty } : null; }).filter(Boolean);
 const cartCount = () => cartLines().reduce((s, l) => s + l.qty, 0);
 const isStaff = () => !!state.profile && (state.profile.role === 'admin' || state.profile.role === 'super_admin');
 const isSuper = () => !!state.profile && state.profile.role === 'super_admin';
@@ -476,20 +494,21 @@ function applyTheme(c) {
 async function loadSettings() {
   const { data, error } = await sb.from('store_settings').select('key,value');
   if (error) { console.warn(error); return; }
+  let hadCats = false;
   (data || []).forEach(r => {
-    if (r.key === 'design') state.design = clone(deepMerge(DEFAULT_DESIGN, r.value || {}));
+    if (r.key === 'design') { state.design = clone(deepMerge(DEFAULT_DESIGN, r.value || {})); hadCats = Array.isArray((r.value || {}).categories); }
     if (r.key === 'ads') state.ads = clone(deepMerge(DEFAULT_ADS, r.value || {}));
     if (r.key === 'chat') state.chatCfg = clone(deepMerge(DEFAULT_CHAT, r.value || {}));
   });
   const t = state.design.testimonials = Array.isArray(state.design.testimonials) ? state.design.testimonials : [];
   while (t.length < 3) t.push({ name: '', text: '' });
-  normalizeCats(state.design);
+  normalizeCats(state.design, hadCats);
 }
-function normalizeCats(d) {
+function normalizeCats(d, hadCats) {
   let cs = (Array.isArray(d.categories) ? d.categories : []).filter(c => c && String(c.name || '').trim())
     .map((c, i) => ({ id: String(c.id || 'c' + (i + 1)), name: String(c.name).trim(), name_en: String(c.name_en || '').trim(), icon: CAT_ICONS[c.icon] ? c.icon : 'fa-tag', image: String(c.image || '') }));
   if (!cs.length) cs = clone(DEFAULT_DESIGN.categories);
-  if (Array.isArray(d.cat_images)) cs.forEach((c, i) => { if (!c.image && d.cat_images[i]) c.image = d.cat_images[i]; });   // old saved layout
+  if (!hadCats && Array.isArray(d.cat_images)) cs.forEach((c, i) => { if (!c.image && d.cat_images[i]) c.image = d.cat_images[i]; });   // old saved layout
   delete d.cat_images; d.categories = cs;
 }
 const cats = () => (state.design && state.design.categories) || DEFAULT_DESIGN.categories;
@@ -557,7 +576,7 @@ function renderHeader() {
       <div class="md:hidden px-3 pb-2">${search('searchM')}</div>
     </div>
     <nav class="bg-brand"><div class="max-w-7xl mx-auto px-2 flex overflow-x-auto no-scrollbar">
-      ${navBtn('all', 'সব পণ্য')}${cats().map(c => navBtn(c.name, catLabel(c.name))).join('')}
+      ${navBtn('all', dx(state.design, 'all_label'))}${cats().map(c => navBtn(c.name, catLabel(c.name))).join('')}
     </div></nav>`;
   const w = $('#waFloat'); w.href = wa + '?text=' + encodeURIComponent(LANG === 'en' ? 'Hello, I would like to know about ' + d.brand_name + '.' : 'আসসালামু আলাইকুম, আমি ' + d.brand_name + ' সম্পর্কে জানতে চাই।');
 }
@@ -590,7 +609,7 @@ function renderHero() {
 function renderCats() {
   const el = $('#cats');
   if (!state.design.show_categories) { el.innerHTML = ''; return; }
-  el.innerHTML = `<div class="pt-6"><h2 class="text-lg sm:text-xl font-bold text-brand text-center mb-4">ক্যাটেগরি অনুযায়ী কিনুন</h2>
+  el.innerHTML = `<div class="pt-6"><h2 class="text-lg sm:text-xl font-bold text-brand text-center mb-4">${esc(dx(state.design, 'cats_title'))}</h2>
     <div class="flex justify-center gap-4 sm:gap-8 overflow-x-auto no-scrollbar pb-1">
     ${cats().map(c => { const ci = safeUrl(c.image); return `<button data-action="cat" data-cat="${esc(c.name)}" class="group flex flex-col items-center gap-2 shrink-0 w-20 sm:w-24">
       <span class="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden flex items-center justify-center text-2xl sm:text-3xl border-2 transition group-hover:scale-105 ${state.cat === c.name ? 'bg-brand text-gold border-gold' : 'bg-white text-brand border-gray-200 group-hover:border-gold'}">${ci ? `<img src="${esc(ci)}" alt="${esc(catLabel(c.name))}" loading="lazy" class="w-full h-full object-cover">` : `<i class="fa-solid ${esc(c.icon)}"></i>`}</span>
@@ -630,7 +649,7 @@ function productCard(p) {
       <h3 class="font-semibold text-sm sm:text-base leading-snug line-clamp-2 cursor-pointer min-h-[2.5rem]" data-action="view" data-id="${esc(p.id)}">${esc(pname(p))}</h3>
       ${p.weight ? `<div class="text-xs text-gray-500 mt-0.5">${esc(pweight(p))}</div>` : ''}
       <div class="mt-1.5 flex items-baseline gap-2 flex-wrap">
-        <span class="text-base sm:text-lg font-bold text-brand">${money(p.price)}</span>
+        ${hasPrice(p) ? `<span class="text-base sm:text-lg font-bold text-brand">${money(p.price)}</span>` : '<span class="text-sm font-semibold text-cta">দাম জানতে মেসেজ করুন</span>'}
         ${disc ? `<span class="text-xs text-gray-400 line-through">${money(p.old_price)}</span>` : ''}
       </div>
       <div class="mt-auto pt-3">${cartControl(p, q)}</div>
@@ -639,6 +658,7 @@ function productCard(p) {
 
 function cartControl(p, q) {
   if (!p.in_stock) return `<button disabled class="btn btn-ghost w-full text-sm">স্টক শেষ</button>`;
+  if (!hasPrice(p)) return `<a href="${esc(waAsk(p))}" target="_blank" rel="noopener noreferrer" class="btn btn-cta w-full text-sm"><i class="fa-brands fa-whatsapp"></i> দাম জানতে WhatsApp</a>`;
   if (q > 0) return `<div class="flex items-center justify-between border-2 border-gold rounded-lg overflow-hidden">
     <button data-action="dec" data-id="${esc(p.id)}" class="w-10 h-9 text-brand font-bold hover:bg-amber-50" aria-label="কমান"><i class="fa-solid fa-minus"></i></button>
     <span class="font-bold">${bn(q)}</span>
@@ -648,7 +668,7 @@ function cartControl(p, q) {
 
 function renderProducts() {
   const list = filteredProducts();
-  const title = state.cat === 'all' ? tr('সব পণ্য') : catLabel(state.cat);
+  const title = state.cat === 'all' ? dx(state.design, 'all_label') : catLabel(state.cat);
   $('#products').innerHTML = `
     <div class="flex items-center justify-between mb-4 gap-2">
       <h2 class="text-xl sm:text-2xl font-bold text-brand border-l-4 border-gold pl-3">${esc(title)}${state.search ? ` <span class="text-sm font-normal text-gray-500">— "${esc(state.search)}"</span>` : ''}</h2>
@@ -663,7 +683,7 @@ function renderTesti() {
   const list = (d.testimonials || []).filter(t => t && t.name && t.text);
   if (!d.show_testimonials || !list.length) { el.innerHTML = ''; return; }
   el.innerHTML = `<div class="bg-white py-10 mt-4"><div class="max-w-7xl mx-auto px-3">
-    <h2 class="text-xl sm:text-2xl font-bold text-brand text-center mb-6">আমাদের গ্রাহকদের মতামত</h2>
+    <h2 class="text-xl sm:text-2xl font-bold text-brand text-center mb-6">${esc(dx(d, 'testi_title'))}</h2>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
     ${list.map(t => `<div class="rounded-xl border border-gray-100 bg-cream p-5 shadow-sm">
       <div class="text-gold text-sm mb-2">${'<i class="fa-solid fa-star"></i>'.repeat(5)}</div>
@@ -757,7 +777,7 @@ function refreshCartUI() {
   if (state.modal === 'product' && state.viewId) renderProductModal();
 }
 function addToCart(id) {
-  const p = state.products.find(x => x.id === id); if (!p || !p.in_stock) return;
+  const p = state.products.find(x => x.id === id); if (!p || !p.in_stock || !hasPrice(p)) return;
   const c = state.cart.find(x => x.id === id);
   if (c) c.qty = Math.min(50, c.qty + 1); else state.cart.push({ id, qty: 1 });
   refreshCartUI();
@@ -875,7 +895,7 @@ function renderProductModal() {
       <div class="relative aspect-square max-h-72 w-full bg-gray-50 rounded-xl overflow-hidden flex items-center justify-center">
         ${img ? `<img src="${esc(img)}" alt="${esc(pname(p))}" class="w-full h-full object-contain">` : '<i class="fa-solid fa-jar-wheat text-6xl text-gold/50"></i>'}
         ${!p.in_stock ? '<div class="absolute inset-0 bg-white/70 flex items-center justify-center"><span class="bg-gray-800 text-white px-4 py-1 rounded-full font-semibold">স্টক শেষ</span></div>' : ''}</div>
-      <div class="flex items-center gap-2 flex-wrap"><span class="text-2xl font-bold text-brand">${money(p.price)}</span>
+      <div class="flex items-center gap-2 flex-wrap">${hasPrice(p) ? `<span class="text-2xl font-bold text-brand">${money(p.price)}</span>` : '<span class="text-lg font-bold text-cta">দাম জানতে মেসেজ করুন</span>'}
         ${disc ? `<span class="text-gray-400 line-through">${money(p.old_price)}</span><span class="bg-cta text-white text-xs font-bold px-2 py-0.5 rounded">Save ${money(disc)}</span>` : ''}
         ${p.weight ? `<span class="ml-auto text-sm text-gray-500">${esc(pweight(p))}</span>` : ''}</div>
       ${p.description ? `<p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">${esc(pdesc(p))}</p>` : ''}
@@ -1160,7 +1180,7 @@ function tabProducts() {
         <div class="w-16 h-16 rounded-lg bg-gray-50 overflow-hidden shrink-0 flex items-center justify-center">${prevImg(p.image_url)}</div>
         <div class="flex-1 min-w-0"><div class="font-semibold truncate">${esc(p.name)}</div>
           <div class="text-xs text-gray-500">${esc(catLabel(p.category))} ${p.weight ? '• ' + esc(p.weight) : ''}</div>
-          <div class="text-sm"><b class="text-brand">${money(p.price)}</b>${p.old_price ? ` <span class="text-gray-400 line-through text-xs">${money(p.old_price)}</span>` : ''}</div></div>
+          <div class="text-sm">${Number(p.price) > 0 ? `<b class="text-brand">${money(p.price)}</b>` : '<b class="text-amber-600">দাম দেওয়া হয়নি</b>'}${p.old_price ? ` <span class="text-gray-400 line-through text-xs">${money(p.old_price)}</span>` : ''}</div></div>
         <div class="flex flex-col sm:flex-row gap-1.5 shrink-0">
           <button data-action="a-stock" data-id="${esc(p.id)}" class="btn btn-sm ${p.in_stock ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">${p.in_stock ? 'স্টকে আছে' : 'স্টক শেষ'}</button>
           <button data-action="a-editProduct" data-id="${esc(p.id)}" class="btn btn-sm btn-ghost"><i class="fa-solid fa-pen"></i></button>
@@ -1185,6 +1205,7 @@ function openProductForm(id) {
         <label class="block"><span class="lbl">ট্যাগ</span><input name="tag" class="inp" placeholder="Best Selling" value="${esc(p ? p.tag : '')}"></label>
         <label class="block"><span class="lbl">ক্রম (ছোট আগে)</span><input name="sort_order" type="number" step="1" class="inp" value="${esc(p ? p.sort_order : 0)}"></label>
       </div>
+      <p class="text-xs text-gray-500 -mt-1">দাম ০ রাখলে সাইটে "দাম জানতে মেসেজ করুন" দেখাবে এবং কার্টে যোগ করা যাবে না।</p>
       <label class="block"><span class="lbl">বিবরণ</span><textarea name="description" rows="3" class="inp">${esc(p ? p.description : '')}</textarea></label>
       <label class="block"><span class="lbl">বিবরণ (ইংরেজি)</span><textarea name="description_en" rows="3" class="inp">${esc(p ? p.description_en : '')}</textarea></label>
       <div><span class="lbl">পণ্যের ছবি</span><div class="flex items-center gap-3">
@@ -1279,6 +1300,7 @@ function tabDesign() {
     ${sect('ক্যাটেগরি ব্যবস্থাপনা', 'fa-layer-group', catManager())}
     ${sect('সেকশন দেখানো/লুকানো', 'fa-eye', F.toggle('ফিচার্ড ক্যাটেগরি', 'design.show_categories') + F.toggle('গ্রাহকদের রিভিউ', 'design.show_testimonials'))}
     ${sect('গ্রাহক রিভিউ (শুধু আসল রিভিউ দিন)', 'fa-comments', [0, 1, 2].map(i => `<div class="grid sm:grid-cols-3 gap-2 border rounded-lg p-3">${F.text('নাম', `design.testimonials.${i}.name`)}<div class="sm:col-span-2">${F.area('মতামত', `design.testimonials.${i}.text`)}</div></div>`).join(''))}
+    ${sect('সাইটের শিরোনাম ও লেখা', 'fa-heading', F.text('"সব পণ্য" বাটনের নাম', 'design.all_label') + F.text('"সব পণ্য" বাটনের নাম (ইংরেজি)', 'design.all_label_en') + F.text('ক্যাটেগরি সেকশনের শিরোনাম', 'design.cats_title') + F.text('ক্যাটেগরি সেকশনের শিরোনাম (ইংরেজি)', 'design.cats_title_en') + F.text('রিভিউ সেকশনের শিরোনাম', 'design.testi_title') + F.text('রিভিউ সেকশনের শিরোনাম (ইংরেজি)', 'design.testi_title_en'))}
     ${sect('যোগাযোগ ও ফুটার', 'fa-address-book', F.text('ফোন', 'design.phone') + F.text('WhatsApp নম্বর (দেশ কোডসহ, যেমন 8801XXXXXXXXX)', 'design.whatsapp') + F.text('ইমেইল', 'design.email') + F.text('ঠিকানা', 'design.address') + F.text('ঠিকানা (ইংরেজি)', 'design.address_en') + F.area('ফুটার পরিচিতি', 'design.footer_about', 3) + F.area('ফুটার পরিচিতি (ইংরেজি)', 'design.footer_about_en', 3))}
     ${saveBar('a-saveDesign')}</div>`;
 }

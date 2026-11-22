@@ -321,55 +321,37 @@ end $$;
 -- ---------------------------------------------------------------------
 -- 7. DEFAULT SETTINGS ROWS (empty = the site uses its built-in defaults)
 -- ---------------------------------------------------------------------
-insert into public.store_settings (key, value) values ('design', '{}'::jsonb)
+insert into public.store_settings (key, value)
+  values ('design', jsonb_build_object('categories', '[{"id": "c1", "name": "মধু", "name_en": "Honey", "icon": "fa-droplet", "image": ""}, {"id": "c2", "name": "ঘি ও তেল", "name_en": "Ghee & Oil", "icon": "fa-bottle-droplet", "image": ""}, {"id": "c3", "name": "দই ও দুগ্ধজাত", "name_en": "Yogurt & Dairy", "icon": "fa-bowl-food", "image": ""}, {"id": "c4", "name": "ড্রাই ফ্রুটস ও বাদাম", "name_en": "Dry Fruits & Nuts", "icon": "fa-seedling", "image": ""}]'::jsonb))
   on conflict (key) do nothing;
 insert into public.store_settings (key, value) values ('ads', '{}'::jsonb)
   on conflict (key) do nothing;
 
 -- ---------------------------------------------------------------------
--- 8. OPTIONAL SAMPLE PRODUCTS — prices are placeholders! Edit or delete them
---    from the Admin panel after your first login.
+-- 8. YOUR PRODUCT LIST (price 0 = "ask on WhatsApp" until you set the price
+--    in Admin panel → পণ্য). Only added when the products table is empty.
 -- ---------------------------------------------------------------------
-insert into public.products (name, category, description, price, old_price, weight, tag, in_stock, sort_order)
-select * from (values
-  ('খাঁটি সরিষা ফুলের মধু', 'মধু', 'সরাসরি মৌচাক থেকে সংগৃহীত ১০০% খাঁটি মধু।',          850::numeric, 950::numeric, '১ কেজি',  'Best Selling', true, 1),
-  ('সুন্দরবনের খলিসা ফুলের মধু', 'মধু', 'প্রাকৃতিক ও ভেজালমুক্ত খলিসা ফুলের মধু।',      1200::numeric, 1350::numeric, '১ কেজি', '',             true, 2),
-  ('গাওয়া ঘি', 'ঘি ও তেল', 'খাঁটি দুধের সর থেকে তৈরি ঘ্রাণে ভরপুর গাওয়া ঘি।',          1100::numeric, null, '৫০০ গ্রাম', 'Best Selling', true, 3),
-  ('ঘানি ভাঙা সরিষার তেল', 'ঘি ও তেল', 'কাঠের ঘানিতে ভাঙা খাঁটি সরিষার তেল।',            380::numeric,  420::numeric, '১ লিটার', '',            true, 4),
-  ('আজওয়া খেজুর', 'খেজুর ও বাদাম', 'নরম ও সুস্বাদু প্রিমিয়াম মানের আজওয়া খেজুর।',      1500::numeric, 1650::numeric, '১ কেজি', '',            true, 5),
-  ('কাজুবাদাম', 'খেজুর ও বাদাম', 'বাছাই করা ক্রিস্পি কাজুবাদাম।',                       900::numeric,  null, '৫০০ গ্রাম', '',            true, 6),
-  ('কালোজিরা', 'মসলা ও অন্যান্য', 'পরিষ্কার ও বাছাই করা কালোজিরা।',                      260::numeric,  300::numeric, '২৫০ গ্রাম', '',          true, 7)
-) as v(name, category, description, price, old_price, weight, tag, in_stock, sort_order)
+insert into public.products (name, name_en, category, description, description_en, price, old_price, weight, tag, in_stock, sort_order)
+select v.* from (values
+  ('সরমালাই দই', 'Sormalai Doi (Cream Yogurt)', 'দই ও দুগ্ধজাত', '', '', 0::numeric, null::numeric, '', '', true, 1),
+  ('সরের রসমালাই', 'Cream Rasmalai', 'দই ও দুগ্ধজাত', '', '', 0::numeric, null::numeric, '', '', true, 2),
+  ('সরযুক্ত সলপের মাঠা', 'Sholop Buttermilk (Mattha) with Cream', 'দই ও দুগ্ধজাত', '', '', 0::numeric, null::numeric, '', '', true, 3),
+  ('সিরাজগঞ্জের খাঁটি গাওয়া ঘি', 'Pure Gawa Ghee of Sirajganj', 'ঘি ও তেল', '', '', 0::numeric, null::numeric, '', '', true, 4),
+  ('তেঁতুল কাঠের ঘানির সরিষার তেল', 'Tamarind-Wood Ghani Mustard Oil', 'ঘি ও তেল', '', '', 0::numeric, null::numeric, '', '', true, 5),
+  ('ড্রাই ফ্রুটস', 'Dry Fruits', 'ড্রাই ফ্রুটস ও বাদাম', '', '', 0::numeric, null::numeric, '', '', true, 6),
+  ('মধুময় বাদাম / হানি নাটস', 'Honey Nuts', 'ড্রাই ফ্রুটস ও বাদাম', '', '', 0::numeric, null::numeric, '', '', true, 7),
+  ('প্রাকৃতিক চাকের মধু', 'Natural Honeycomb Honey', 'মধু', '', '', 0::numeric, null::numeric, '', '', true, 8),
+  ('সুন্দরবনের মধু', 'Sundarbans Honey', 'মধু', '', '', 0::numeric, null::numeric, '', '', true, 9),
+  ('কালোজিরা ফুলের মধু', 'Black Cumin Flower Honey', 'মধু', '', '', 0::numeric, null::numeric, '', '', true, 10),
+  ('লিচু ফুলের মধু', 'Litchi Flower Honey', 'মধু', '', '', 0::numeric, null::numeric, '', '', true, 11),
+  ('বড়ই ফুলের মধু', 'Boroi (Jujube) Flower Honey', 'মধু', '', '', 0::numeric, null::numeric, '', '', true, 12),
+  ('সরিষা ফুলের মধু', 'Mustard Flower Honey', 'মধু', '', '', 0::numeric, null::numeric, '', '', true, 13),
+  ('দুধের ক্রীম', 'Milk Cream', 'দই ও দুগ্ধজাত', '', '', 0::numeric, null::numeric, '', '', true, 14),
+  ('সরের ঘি', 'Cream Ghee (Shorer Ghee)', 'ঘি ও তেল', '', '', 0::numeric, null::numeric, '', '', true, 15),
+  ('মাটির কাপদই', 'Clay Cup Doi', 'দই ও দুগ্ধজাত', '', '', 0::numeric, null::numeric, '', '', true, 16),
+  ('প্লাস্টিকের কাপদই', 'Plastic Cup Doi', 'দই ও দুগ্ধজাত', '', '', 0::numeric, null::numeric, '', '', true, 17)
+) as v(name, name_en, category, description, description_en, price, old_price, weight, tag, in_stock, sort_order)
 where not exists (select 1 from public.products);
-
--- English text for the sample products (only where still empty)
-update public.products set name_en = 'Pure Mustard Flower Honey',
-  description_en = '100% pure honey collected straight from the hive.'
-  where name = 'খাঁটি সরিষা ফুলের মধু' and name_en = '';
-
-update public.products set name_en = 'Sundarbans Khalisha Flower Honey',
-  description_en = 'Natural, adulteration-free Khalisha flower honey.'
-  where name = 'সুন্দরবনের খলিসা ফুলের মধু' and name_en = '';
-
-update public.products set name_en = 'Gawa Ghee',
-  description_en = 'Aromatic gawa ghee made from pure milk cream.'
-  where name = 'গাওয়া ঘি' and name_en = '';
-
-update public.products set name_en = 'Cold-Pressed Mustard Oil',
-  description_en = 'Pure mustard oil pressed in a traditional wooden ghani.'
-  where name = 'ঘানি ভাঙা সরিষার তেল' and name_en = '';
-
-update public.products set name_en = 'Ajwa Dates',
-  description_en = 'Soft and delicious premium-quality Ajwa dates.'
-  where name = 'আজওয়া খেজুর' and name_en = '';
-
-update public.products set name_en = 'Cashew Nuts',
-  description_en = 'Hand-picked crispy cashew nuts.'
-  where name = 'কাজুবাদাম' and name_en = '';
-
-update public.products set name_en = 'Black Cumin (Kalojira)',
-  description_en = 'Clean, hand-picked black cumin seeds.'
-  where name = 'কালোজিরা' and name_en = '';
 
 -- ---------------------------------------------------------------------
 -- 9. TABLE PRIVILEGES (new Supabase projects don't auto-grant API access)
