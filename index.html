@@ -277,8 +277,11 @@ const DEFAULT_CHAT = {
   enabled: false, knowledge: '', icon: 'fa-headset',
   name: 'কাস্টমার সাপোর্ট', name_en: 'Customer Support',
   subtitle: 'পণ্য, দাম ও ডেলিভারি সম্পর্কে জিজ্ঞাসা করুন', subtitle_en: 'Ask about products, prices and delivery',
-  welcome: 'আসসালামু আলাইকুম! {brand}-এ স্বাগতম। আমাদের পণ্য, দাম ও ডেলিভারি সম্পর্কে জিজ্ঞাসা করতে পারেন।',
-  welcome_en: 'Hello! Welcome to {brand}. Ask us about our products, prices and delivery.',
+  welcome: "আসসালামু আলাইকুম ওয়া রাহমাতুল্লাহ! {brand}-এ আপনাকে আন্তরিক স্বাগতম। খাঁটি ও বিশুদ্ধ পণ্যের যেকোনো তথ্য, দাম বা অর্ডার সংক্রান্ত বিষয়ে আমি আপনাকে কীভাবে সহযোগিতা করতে পারি? অনুগ্রহ করে আপনার প্রয়োজনটি জানান।",
+  welcome_en: "Assalamu Alaikum wa Rahmatullah! Warm welcome to {brand}. How may I have the pleasure of assisting you today with our pure products, pricing, or orders? Please let me know.",
+  chips: ['আজকের তাজা পণ্য ও দাম', 'ডেলিভারি চার্জ কত?', 'কম্বো ও বিশেষ অফার', 'WhatsApp-এ কথা বলুন'],
+  chips_en: ["Today's Fresh Items & Prices", 'Delivery Charge?', 'Combo & Special Offers', 'Chat on WhatsApp'],
+  heritage: '',
   note: 'স্বয়ংক্রিয় সহায়তা। ফোন নম্বর বা ঠিকানা এখানে লিখবেন না। দাম ও স্টক নিশ্চিত হতে বা অর্ডারের জন্য কার্ট বা WhatsApp ব্যবহার করুন।',
   note_en: 'Automated assistance. Do not share your phone number or address here. To confirm price/stock or to order, use the cart or WhatsApp.'
 };
@@ -735,9 +738,10 @@ const chat = { open: false, busy: false, sid: '', msgs: [] };
 try { chat.sid = localStorage.getItem('sh_chat_sid') || ''; const m = JSON.parse(localStorage.getItem('sh_chat_msgs') || '[]'); chat.msgs = Array.isArray(m) ? m.filter(x => x && (x.role === 'user' || x.role === 'assistant') && typeof x.content === 'string') : []; } catch (e) {}
 function saveChat() { try { localStorage.setItem('sh_chat_sid', chat.sid); localStorage.setItem('sh_chat_msgs', JSON.stringify(chat.msgs.filter(m => !m.err).slice(-20))); } catch (e) {} }
 const chatOn = () => !!sb && !!(state.chatCfg && state.chatCfg.enabled);
-const CHIPS = {
-  bn: ['দাম কত?', 'ডেলিভারি চার্জ কত?', 'কোন কোন পণ্য আছে?', 'কীভাবে অর্ডার করব?'],
-  en: ['What are the prices?', 'Delivery charge?', 'Which products do you have?', 'How do I order?']
+const chatChips = () => {
+  const c = state.chatCfg || {}, en = LANG === 'en';
+  const a = (en ? c.chips_en : c.chips), d = (en ? DEFAULT_CHAT.chips_en : DEFAULT_CHAT.chips);
+  return [0, 1, 2, 3].map(k => (Array.isArray(a) && String(a[k] || '').trim()) || (Array.isArray(c.chips) && en && String(c.chips[k] || '').trim()) || d[k]);
 };
 function chatGreeting() {
   const b = state.design.brand_name, c = state.chatCfg || {};
@@ -753,7 +757,7 @@ function renderChatMsgs() {
   box.innerHTML = chatBubble({ role: 'assistant', content: chatGreeting() }) + chat.msgs.map(chatBubble).join('') +
     (chat.busy ? '<div class="flex justify-start"><div class="px-3 py-2 rounded-2xl bg-white border border-gray-200 text-gray-400"><i class="fa-solid fa-ellipsis fa-fade"></i></div></div>' : '');
   box.scrollTop = box.scrollHeight;
-  $('#chatChips').innerHTML = chat.msgs.length ? '' : CHIPS[LANG === 'en' ? 'en' : 'bn'].map((c, i) => `<button type="button" data-action="chatChip" data-i="${i}" class="whitespace-nowrap text-xs border border-gold text-brand rounded-full px-3 py-1 hover:bg-amber-50">${esc(c)}</button>`).join('');
+  $('#chatChips').innerHTML = chat.msgs.length ? '' : chatChips().map((c, i) => `<button type="button" data-action="chatChip" data-i="${i}" class="whitespace-nowrap text-xs border border-gold text-brand rounded-full px-3 py-1 hover:bg-amber-50">${i === 3 ? '<i class="fa-brands fa-whatsapp text-green-600"></i> ' : ''}${esc(c)}</button>`).join('');
 }
 function renderChat() {
   const fab = $('#chatFab'), panel = $('#chatPanel'); if (!fab || !panel) return;
@@ -1421,8 +1425,10 @@ function tabChats() {
       `<label class="block"><span class="lbl">চ্যাটের আইকন</span><select class="inp" data-path="chat.icon">${[['fa-headset', 'হেডসেট (সাপোর্ট)'], ['fa-comments', 'চ্যাট'], ['fa-user', 'ব্যক্তি'], ['fa-store', 'দোকান'], ['fa-leaf', 'পাতা'], ['fa-heart', 'হার্ট'], ['fa-robot', 'রোবট']].map(([v, l]) => `<option value="${v}" ${adminDraft.chat.icon === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>` +
       F.area('স্বাগত বার্তা (বাংলা) — {brand} লিখলে দোকানের নাম বসবে', 'chat.welcome', 2) +
       F.area('স্বাগত বার্তা (ইংরেজি)', 'chat.welcome_en', 2) +
+      `<div class="border rounded-lg p-3 space-y-2"><div class="text-sm font-semibold text-brand">৪টি কুইক বাটন <span class="text-xs font-normal text-gray-500">(৪র্থ বাটনটি সবসময় WhatsApp খোলে, বাকি তিনটি লেখা চ্যাটে পাঠায়)</span></div><div class="grid sm:grid-cols-2 gap-3">${[0, 1, 2, 3].map(k => F.text(`বাটন ${bn(k + 1)} (বাংলা)`, `chat.chips.${k}`) + F.text(`বাটন ${bn(k + 1)} (ইংরেজি)`, `chat.chips_en.${k}`)).join('')}</div></div>` +
       F.area('চ্যাটের নিচের ছোট লেখা (বাংলা)', 'chat.note', 2) +
       F.area('চ্যাটের নিচের ছোট লেখা (ইংরেজি)', 'chat.note_en', 2) +
+      F.area('খাবারের ঐতিহ্য ও গল্প (AI গ্রাহককে বলবে; শুধু সত্য তথ্য লিখুন, যেমন: ঘি কীভাবে তৈরি হয়, মধু কোথা থেকে আসে)', 'chat.heritage', 4) +
       F.area('AI-কে জানানো তথ্য (ডেলিভারির সময়, পেমেন্ট পদ্ধতি, রিটার্ন নিয়ম ইত্যাদি)', 'chat.knowledge', 7) +
       '<p class="text-xs text-gray-500">এখানে লেখা তথ্য সাইটের ডাটাবেসে সাধারণভাবে পড়া যায়, তাই গোপন কিছু লিখবেন না। পণ্য ও দাম AI নিজে থেকেই জানে।</p>' +
       `<div class="flex gap-2 items-center justify-end pt-1">${saveBtns('a-saveChat')}</div>`)}</div>` : '';
@@ -1510,7 +1516,7 @@ document.addEventListener('click', async e => {
     case 'goAdmin': closeModal(); if (location.hash === '#admin') route(); else location.hash = '#admin'; break;
     case 'lang': setLang(LANG === 'en' ? 'bn' : 'en'); break;
     case 'chatToggle': toggleChat(); break;
-    case 'chatChip': sendChat(CHIPS[LANG === 'en' ? 'en' : 'bn'][Number(el.dataset.i)]); break;
+    case 'chatChip': { const k = Number(el.dataset.i); if (k === 3) window.open('https://wa.me/' + digits(state.design.whatsapp), '_blank', 'noopener'); else sendChat(chatChips()[k]); break; }
     case 'logout': logout(); break;
     /* admin */
     case 'a-home': location.hash = ''; break;
