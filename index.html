@@ -77,8 +77,8 @@
   </button>
   <div id="chatPanel" class="hidden fixed z-50 left-2 right-2 bottom-2 sm:left-4 sm:right-auto sm:bottom-4 sm:w-[370px] h-[78vh] max-h-[580px] bg-white rounded-2xl shadow-2xl flex-col overflow-hidden border border-gray-200">
     <div class="bg-brand text-white px-4 py-3 flex items-center gap-2">
-      <span class="w-9 h-9 rounded-full bg-gold text-brand flex items-center justify-center shrink-0"><i class="fa-solid fa-robot"></i></span>
-      <div class="leading-tight flex-1 min-w-0"><div class="font-bold text-sm">সহকারী (AI)</div><div class="text-[11px] text-white/70 truncate">পণ্য, দাম ও ডেলিভারি সম্পর্কে জিজ্ঞাসা করুন</div></div>
+      <span class="w-9 h-9 rounded-full bg-gold text-brand flex items-center justify-center shrink-0"><i id="chatIcon" class="fa-solid fa-headset"></i></span>
+      <div class="leading-tight flex-1 min-w-0"><div id="chatName" class="font-bold text-sm"></div><div id="chatSub" class="text-[11px] text-white/70 truncate"></div></div>
       <a id="chatWa" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center text-green-400" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp text-xl"></i></a>
       <button data-action="chatToggle" class="w-8 h-8 rounded-full hover:bg-white/10" aria-label="বন্ধ করুন"><i class="fa-solid fa-xmark"></i></button>
     </div>
@@ -88,7 +88,7 @@
       <input id="chatInput" class="inp" maxlength="500" placeholder="আপনার প্রশ্ন লিখুন..." autocomplete="off">
       <button class="btn btn-cta" type="submit" aria-label="পাঠান"><i class="fa-solid fa-paper-plane"></i></button>
     </form>
-    <div class="px-3 pb-2 text-[10px] text-gray-400 text-center leading-snug">AI-র উত্তর ভুল হতে পারে। ফোন নম্বর বা ঠিকানা এখানে লিখবেন না। অর্ডারের জন্য কার্ট বা WhatsApp ব্যবহার করুন।</div>
+    <div id="chatNote" class="px-3 pb-2 text-[10px] text-gray-400 text-center leading-snug"></div>
   </div>
 </div>
 
@@ -273,7 +273,15 @@ const DEMO_PRODUCTS = [
   ['মাটির কাপদই', 'Clay Cup Doi', 'দই ও দুগ্ধজাত'],
   ['প্লাস্টিকের কাপদই', 'Plastic Cup Doi', 'দই ও দুগ্ধজাত']
 ].map((r, i) => ({ id: 'demo-' + i, name: r[0], name_en: r[1], category: r[2], description: '', description_en: '', price: 0, old_price: null, weight: '', tag: '', in_stock: true, image_url: '', sort_order: i + 1 }));
-const DEFAULT_CHAT = { enabled: false, knowledge: '' };
+const DEFAULT_CHAT = {
+  enabled: false, knowledge: '', icon: 'fa-headset',
+  name: 'কাস্টমার সাপোর্ট', name_en: 'Customer Support',
+  subtitle: 'পণ্য, দাম ও ডেলিভারি সম্পর্কে জিজ্ঞাসা করুন', subtitle_en: 'Ask about products, prices and delivery',
+  welcome: 'আসসালামু আলাইকুম! {brand}-এ স্বাগতম। আমাদের পণ্য, দাম ও ডেলিভারি সম্পর্কে জিজ্ঞাসা করতে পারেন।',
+  welcome_en: 'Hello! Welcome to {brand}. Ask us about our products, prices and delivery.',
+  note: 'স্বয়ংক্রিয় সহায়তা। ফোন নম্বর বা ঠিকানা এখানে লিখবেন না। দাম ও স্টক নিশ্চিত হতে বা অর্ডারের জন্য কার্ট বা WhatsApp ব্যবহার করুন।',
+  note_en: 'Automated assistance. Do not share your phone number or address here. To confirm price/stock or to order, use the cart or WhatsApp.'
+};
 
 const STATUS = {
   pending:   { l: 'অপেক্ষমাণ',     c: 'bg-yellow-100 text-yellow-800' },
@@ -732,8 +740,9 @@ const CHIPS = {
   en: ['What are the prices?', 'Delivery charge?', 'Which products do you have?', 'How do I order?']
 };
 function chatGreeting() {
-  const b = state.design.brand_name;
-  return LANG === 'en' ? `Hello! I'm the assistant of ${b}. Ask me about our products, prices and delivery.` : `আসসালামু আলাইকুম! আমি ${b}-এর সহকারী। আমাদের পণ্য, দাম ও ডেলিভারি সম্পর্কে জিজ্ঞাসা করতে পারেন।`;
+  const b = state.design.brand_name, c = state.chatCfg || {};
+  const t = (LANG === 'en' ? (c.welcome_en || c.welcome) : c.welcome) || DEFAULT_CHAT.welcome;
+  return t.replace(/\{brand\}/g, b);
 }
 function chatBubble(m) {
   const u = m.role === 'user';
@@ -752,6 +761,11 @@ function renderChat() {
   fab.classList.toggle('flex', on && !chat.open); fab.classList.toggle('hidden', !(on && !chat.open));
   panel.classList.toggle('flex', on && chat.open); panel.classList.toggle('hidden', !(on && chat.open));
   const wa = $('#chatWa'); if (wa) wa.href = 'https://wa.me/' + digits(state.design.whatsapp);
+  const cc = state.chatCfg || {}, pick = k => ((LANG === 'en' && cc[k + '_en']) ? cc[k + '_en'] : cc[k]);
+  const ic = $('#chatIcon'); if (ic) ic.className = 'fa-solid ' + (/^fa-[a-z0-9-]+$/.test(cc.icon || '') ? cc.icon : 'fa-headset');
+  const nm = $('#chatName'); if (nm) nm.textContent = pick('name') || '';
+  const sb2 = $('#chatSub'); if (sb2) sb2.textContent = pick('subtitle') || '';
+  const nt = $('#chatNote'); if (nt) { nt.textContent = pick('note') || ''; nt.classList.toggle('hidden', !nt.textContent); }
   if (on && chat.open) renderChatMsgs();
 }
 function toggleChat() { chat.open = !chat.open; renderChat(); if (chat.open) setTimeout(() => { const i = $('#chatInput'); if (i && window.innerWidth > 640) i.focus(); }, 50); }
@@ -1403,6 +1417,12 @@ function tabChats() {
   const F = FLD, list = state.chatSessions;
   const settings = isSuper() ? `<div class="mb-5">${sect('এআই চ্যাট সেটিংস', 'fa-robot',
       F.toggle('চ্যাট চালু করুন', 'chat.enabled') +
+      `<div class="grid sm:grid-cols-2 gap-3">${F.text('চ্যাটের নাম (বাংলা)', 'chat.name', 'যেমন: কাস্টমার সাপোর্ট')}${F.text('চ্যাটের নাম (ইংরেজি)', 'chat.name_en')}${F.text('নামের নিচের লেখা (বাংলা)', 'chat.subtitle')}${F.text('নামের নিচের লেখা (ইংরেজি)', 'chat.subtitle_en')}</div>` +
+      `<label class="block"><span class="lbl">চ্যাটের আইকন</span><select class="inp" data-path="chat.icon">${[['fa-headset', 'হেডসেট (সাপোর্ট)'], ['fa-comments', 'চ্যাট'], ['fa-user', 'ব্যক্তি'], ['fa-store', 'দোকান'], ['fa-leaf', 'পাতা'], ['fa-heart', 'হার্ট'], ['fa-robot', 'রোবট']].map(([v, l]) => `<option value="${v}" ${adminDraft.chat.icon === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>` +
+      F.area('স্বাগত বার্তা (বাংলা) — {brand} লিখলে দোকানের নাম বসবে', 'chat.welcome', 2) +
+      F.area('স্বাগত বার্তা (ইংরেজি)', 'chat.welcome_en', 2) +
+      F.area('চ্যাটের নিচের ছোট লেখা (বাংলা)', 'chat.note', 2) +
+      F.area('চ্যাটের নিচের ছোট লেখা (ইংরেজি)', 'chat.note_en', 2) +
       F.area('AI-কে জানানো তথ্য (ডেলিভারির সময়, পেমেন্ট পদ্ধতি, রিটার্ন নিয়ম ইত্যাদি)', 'chat.knowledge', 7) +
       '<p class="text-xs text-gray-500">এখানে লেখা তথ্য সাইটের ডাটাবেসে সাধারণভাবে পড়া যায়, তাই গোপন কিছু লিখবেন না। পণ্য ও দাম AI নিজে থেকেই জানে।</p>' +
       `<div class="flex gap-2 items-center justify-end pt-1">${saveBtns('a-saveChat')}</div>`)}</div>` : '';
