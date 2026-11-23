@@ -50,8 +50,12 @@ function buildSystem(lang, design, knowledge, products, heritage = "") {
   const lines = products.map((p) => {
     const name = lang === "en" && p.name_en ? p.name_en : p.name;
     const old = p.old_price && Number(p.old_price) > Number(p.price) ? ` (was ৳${p.old_price})` : "";
-    const priceTxt = Number(p.price) > 0 ? `৳${p.price}${old}` : "price not set yet (ask the customer to message us on WhatsApp for the price)";
-    return `- ${name} [${p.category}] ${p.weight || ""}: ${priceTxt} — ${p.in_stock ? "in stock" : "OUT OF STOCK"}`;
+    const vs = Array.isArray(p.variants) ? p.variants.filter((v) => v && v.label && Number(v.price) > 0) : [];
+    const priceTxt = vs.length
+      ? vs.map((v) => `৳${v.price} (${lang === "en" && v.label_en ? v.label_en : v.label})`).join(", ")
+      : Number(p.price) > 0 ? `৳${p.price}${old}` : "price not set yet (ask the customer to message us on WhatsApp for the price)";
+    const stock = p.in_stock ? (p.stock_qty != null ? `in stock (${p.stock_qty} left)` : "in stock") : "OUT OF STOCK";
+    return `- ${name}${p.is_combo ? " [COMBO/OFFER PACK]" : ""} [${p.category}] ${vs.length ? "" : (p.weight || "")}: ${priceTxt} — ${stock}`;
   });
   return [
     `You are the friendly shop assistant of "${brand}", a Bangladeshi online shop for pure honey, ghee, oils, dates, nuts and spices.`,
@@ -144,9 +148,15 @@ Deno.serve(async (req) => {
   while (history.length && history[0].role !== "user") history.shift();
   const msgs = [...history, { role: "user", content: message }];
 
-  const { data: products } = await db.from("products")
-    .select("name,name_en,category,price,old_price,weight,in_stock")
+  // newer columns exist only after supabase-features.sql has been run; fall back gracefully
+  let pr = await db.from("products")
+    .select("name,name_en,category,price,old_price,weight,in_stock,variants,is_combo,stock_qty")
     .order("sort_order", { ascending: true }).limit(120);
+  if (pr.error) {
+    pr = await db.from("products").select("name,name_en,category,price,old_price,weight,in_stock")
+      .order("sort_order", { ascending: true }).limit(120);
+  }
+  const products = pr.data;
 
   const system = buildSystem(lang, design, String(chatCfg.knowledge || "").slice(0, 4000), products || [], String(chatCfg.heritage || "").slice(0, 3000));
 

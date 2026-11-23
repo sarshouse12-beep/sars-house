@@ -113,18 +113,15 @@
         <label class="block"><span class="lbl">সম্পূর্ণ ঠিকানা *</span><textarea id="c_address" class="inp" rows="2" autocomplete="street-address" placeholder="বাসা/রোড, থানা, জেলা"></textarea></label>
         <div>
           <span class="lbl">ডেলিভারি এলাকা</span>
-          <div class="grid grid-cols-2 gap-2">
-            <label class="flex items-center gap-2 border rounded-lg px-3 py-2 cursor-pointer has-[:checked]:border-gold has-[:checked]:bg-amber-50">
-              <input type="radio" name="area" value="dhaka" checked class="accent-[#C89B4B]"><span class="text-sm">ঢাকার ভেতরে<br><b id="chgDhaka"></b></span></label>
-            <label class="flex items-center gap-2 border rounded-lg px-3 py-2 cursor-pointer has-[:checked]:border-gold has-[:checked]:bg-amber-50">
-              <input type="radio" name="area" value="outside" class="accent-[#C89B4B]"><span class="text-sm">ঢাকার বাইরে<br><b id="chgOut"></b></span></label>
-          </div>
+          <div id="areaBox" class="grid grid-cols-2 gap-2"></div>
         </div>
         <label class="block"><span class="lbl">অতিরিক্ত নোট (ঐচ্ছিক)</span><input id="c_note" class="inp" placeholder="কোনো বিশেষ নির্দেশনা থাকলে লিখুন"></label>
       </form>
     </div>
     <div id="cartFooter" class="border-t p-4 bg-gray-50 space-y-3 hidden">
+      <div id="couponBox"></div>
       <div id="cartSummary" class="text-sm space-y-1"></div>
+      <div id="pauseNote" class="hidden text-sm bg-red-50 text-red-700 border border-red-200 rounded-lg p-2"></div>
       <button type="submit" form="checkoutForm" id="placeBtn" class="btn btn-cta w-full text-base py-3"><i class="fa-brands fa-whatsapp text-lg"></i> অর্ডার নিশ্চিত করুন (WhatsApp)</button>
       <p class="text-[11px] text-gray-500 text-center">অর্ডার সেভ হওয়ার পর WhatsApp-এ অর্ডার বিবরণ খুলবে — শুধু "Send" চাপুন।</p>
     </div>
@@ -228,6 +225,22 @@ const DEFAULT_DESIGN = {
   side_text: 'মৌচাক থেকে সরাসরি সংগৃহীত, ভেজালমুক্ত',
   delivery_dhaka: 60,
   delivery_outside: 120,
+  free_delivery_min: 0,
+  extra_zones: [{ id: 'z1', name: '', name_en: '', charge: 0 }, { id: 'z2', name: '', name_en: '', charge: 0 }, { id: 'z3', name: '', name_en: '', charge: 0 }],
+  delivery_eta: '', delivery_eta_en: '',
+  orders_paused: false, pause_msg: 'আমরা সাময়িকভাবে নতুন অর্ডার নিচ্ছি না। অনুগ্রহ করে পরে আবার চেষ্টা করুন বা WhatsApp-এ মেসেজ করুন।', pause_msg_en: 'We are temporarily not accepting new orders. Please try again later or message us on WhatsApp.',
+  low_stock: 5,
+  combo_title: 'কম্বো ও বিশেষ অফার', combo_title_en: 'Combo & Special Offers',
+  pages: {
+    story: { title: 'আমাদের গল্প', title_en: 'Our Story', body: '', body_en: '' },
+    policy: { title: 'ডেলিভারি ও রিটার্ন নীতি', title_en: 'Delivery & Return Policy', body: '', body_en: '' }
+  },
+  faq: [
+    { q: 'কীভাবে অর্ডার করব?', q_en: 'How do I order?', a: 'পছন্দের পণ্য কার্টে যোগ করে ডেলিভারির তথ্য দিয়ে "অর্ডার নিশ্চিত করুন" চাপুন। অর্ডারের বিবরণ WhatsApp-এ খুলবে, শুধু "Send" চাপুন। চাইলে সরাসরি আমাদের WhatsApp-এও অর্ডার করতে পারেন।', a_en: 'Add products to your cart, enter your delivery details and press "Confirm order". The order details will open in WhatsApp; just press "Send". You can also order directly on our WhatsApp.' },
+    { q: 'পেমেন্ট কীভাবে করব?', q_en: 'How do I pay?', a: 'পেমেন্টের বিষয়ে WhatsApp-এ আমাদের সঙ্গে কথা বলে নিন।', a_en: 'Please talk to us on WhatsApp about payment.' },
+    { q: 'ডেলিভারি চার্জ কত?', q_en: 'What is the delivery charge?', a: 'ঢাকার ভেতরে ও বাইরের ডেলিভারি চার্জ কার্টে অর্ডারের আগেই দেখানো হয়।', a_en: 'Delivery charges for inside and outside Dhaka are shown in the cart before you order.' },
+    { q: '', q_en: '', a: '', a_en: '' }, { q: '', q_en: '', a: '', a_en: '' }, { q: '', q_en: '', a: '', a_en: '' }
+  ],
   show_categories: true,
   categories: [
     { id: 'c1', name: 'মধু', name_en: 'Honey', icon: 'fa-droplet', image: '' },
@@ -290,6 +303,7 @@ const DEFAULT_CHAT = {
 const STATUS = {
   pending:   { l: 'অপেক্ষমাণ',     c: 'bg-yellow-100 text-yellow-800' },
   confirmed: { l: 'নিশ্চিত',      c: 'bg-blue-100 text-blue-800' },
+  shipped:   { l: 'কুরিয়ারে দেওয়া হয়েছে', c: 'bg-indigo-100 text-indigo-800' },
   delivered: { l: 'ডেলিভারি সম্পন্ন', c: 'bg-green-100 text-green-800' },
   cancelled: { l: 'বাতিল',        c: 'bg-red-100 text-red-800' }
 };
@@ -298,6 +312,19 @@ const PERM_L = { products: 'পণ্য', orders: 'অর্ডার', design:
 
 /* ---------------------------- i18n (Bengali / English) ---------------------------- */
 const EN = {
+  /* v2 features */
+  'কম্বো': 'Combo', 'পছন্দের তালিকা': 'Wishlist', 'থেকে': 'From', 'বিকল্প বেছে নিন': 'Choose option', 'স্টকে এলে জানান': 'Notify me when in stock',
+  'আমার পছন্দের তালিকা': 'My Wishlist', 'পছন্দের': 'Wishlist', 'ওজন / পরিমাণ বেছে নিন': 'Choose size / quantity', 'গ্রাহক রিভিউ': 'Customer Reviews',
+  'আপনার রিভিউ দিন': 'Write your review', 'পণ্য কেমন লেগেছে?': 'How did you like it?', 'রিভিউ জমা দিন': 'Submit review',
+  'অনুমোদনের পর রিভিউ সাইটে দেখা যাবে।': 'Your review will appear on the site after approval.', 'এটাও কিনতে পারেন': 'You may also like',
+  'স্টকে এলে আমরা আপনার সঙ্গে যোগাযোগ করব। মোবাইল নম্বর দিন।': 'We will contact you when it is back in stock. Please enter your mobile number.',
+  'অনুরোধ পাঠান': 'Send request', 'কুপন ছাড়': 'Coupon discount', 'ফ্রি': 'Free', 'প্রয়োগ হয়েছে': 'applied', 'সরান': 'Remove',
+  'কুপন কোড (থাকলে)': 'Coupon code (if any)', 'প্রয়োগ করুন': 'Apply', 'অর্ডার সম্পন্ন': 'Order complete',
+  'ধন্যবাদ! আপনার অর্ডার গ্রহণ করা হয়েছে': 'Thank you! Your order has been received', 'অর্ডার নং': 'Order No', 'এলাকা': 'Area',
+  'আনুমানিক ডেলিভারি': 'Estimated delivery', 'অর্ডার চূড়ান্ত করতে WhatsApp-এ বার্তাটি পাঠিয়ে দিন। না খুললে নিচের বাটন চাপুন।': 'To finalise your order, send the message on WhatsApp. If it did not open, press the button below.',
+  'WhatsApp-এ নিশ্চিত করুন': 'Confirm on WhatsApp', 'কেনাকাটা চালিয়ে যান': 'Continue shopping', 'ডেলিভারি আপডেট': 'Delivery update',
+  'কুরিয়ারে দেওয়া হয়েছে': 'Shipped', 'ঢাকার ভেতরে': 'Inside Dhaka', 'ঢাকার বাইরে': 'Outside Dhaka',
+  'সারসংক্ষেপ': 'Overview', 'গ্রাহক': 'Customers', 'কুপন': 'Coupons', 'রিভিউ ও অনুরোধ': 'Reviews & Requests', 'দোকান সেটিংস': 'Shop Settings',
   /* navigation & storefront */
   'সব পণ্য': 'All Products', 'মধু': 'Honey', 'ঘি ও তেল': 'Ghee & Oil', 'খেজুর ও বাদাম': 'Dates & Nuts', 'মসলা ও অন্যান্য': 'Spices & More',
   'পণ্য খুঁজুন...': 'Search products...', 'আমার অ্যাকাউন্ট': 'My Account', 'লগইন': 'Login', 'কার্ট': 'Cart', 'অ্যাকাউন্ট': 'Account',
@@ -475,21 +502,47 @@ const state = {
   cat: 'all', search: '',
   ready: false, modal: null, accTab: 'profile', viewId: null,
   adminTab: null, adminOrders: [], adminUsers: [], orderFilter: 'all',
-  pfId: null, pfImage: ''
+  pfId: null, pfImage: '', pfImages: [],
+  reviews: [], wish: [], feat: true, area: 'dhaka',
+  couponCode: '', coupon: null, couponKey: '',
+  selV: '', galI: 0,
+  adminCoupons: [], adminRequests: [], adminReviews: [], custQ: ''
 };
+try { const w = JSON.parse(localStorage.getItem('sh_wish') || '[]'); state.wish = Array.isArray(w) ? w.filter(x => typeof x === 'string').slice(0, 200) : []; } catch (e) {}
 let adminDraft = null;
 
 function loadCart() { try { const c = JSON.parse(localStorage.getItem('sh_cart') || '[]'); return Array.isArray(c) ? c.filter(x => x && x.id && x.qty > 0) : []; } catch { return []; } }
 function saveCart() { try { localStorage.setItem('sh_cart', JSON.stringify(state.cart)); } catch {} }
-const cartQty = id => (state.cart.find(c => c.id === id) || {}).qty || 0;
-function hasPrice(p) { return Number(p.price) > 0; }
+const cartQty = (id, v) => state.cart.filter(c => c.id === id && (v === undefined || (c.v || '') === (v || ''))).reduce((s, c) => s + c.qty, 0);
+const variantsOf = p => Array.isArray(p.variants) ? p.variants.filter(v => v && v.label && Number(v.price) > 0) : [];
+const hasVariants = p => variantsOf(p).length > 0;
+const findVar = (p, label) => variantsOf(p).find(v => v.label === label);
+const vlabel = v => (LANG === 'en' && v.label_en) ? v.label_en : v.label;
+const unitPrice = (p, label) => hasVariants(p) ? (findVar(p, label) ? Number(findVar(p, label).price) : 0) : (Number(p.price) || 0);
+const unitOld = (p, label) => { const v = hasVariants(p) ? findVar(p, label) : p, o = v && Number(v.old_price), pr = v && Number(v.price); return (o && pr && o > pr) ? o : 0; };
+const minPrice = p => hasVariants(p) ? Math.min(...variantsOf(p).map(v => Number(v.price))) : (Number(p.price) || 0);
+function hasPrice(p) { return hasVariants(p) || Number(p.price) > 0; }
+const stockCap = p => (p.stock_qty !== null && p.stock_qty !== undefined) ? Math.max(0, Number(p.stock_qty)) : 50;
+const lowStock = p => p.in_stock && p.stock_qty !== null && p.stock_qty !== undefined && Number(p.stock_qty) > 0 && Number(p.stock_qty) <= (Number(state.design.low_stock) || 5);
 const waAsk = p => 'https://wa.me/' + digits(state.design.whatsapp) + '?text=' + encodeURIComponent((LANG === 'en' ? 'I would like to know the price of: ' : 'আমি এই পণ্যের দাম জানতে চাই: ') + pname(p));
-const cartLines = () => state.cart.map(c => { const p = state.products.find(p => p.id === c.id); return (p && p.in_stock && hasPrice(p)) ? { p, qty: c.qty } : null; }).filter(Boolean);
+const cartLines = () => state.cart.map(c => {
+  const p = state.products.find(p => p.id === c.id); if (!p || !p.in_stock || !hasPrice(p)) return null;
+  if (hasVariants(p) && !findVar(p, c.v)) return null;
+  const price = unitPrice(p, c.v); return price > 0 ? { p, qty: c.qty, v: hasVariants(p) ? c.v : '', price } : null;
+}).filter(Boolean);
 const cartCount = () => cartLines().reduce((s, l) => s + l.qty, 0);
 const isStaff = () => !!state.profile && (state.profile.role === 'admin' || state.profile.role === 'super_admin');
 const isSuper = () => !!state.profile && state.profile.role === 'super_admin';
 const can = k => isSuper() || (!!state.profile && state.profile.role === 'admin' && (state.profile.permissions || []).includes(k));
-const deliveryFor = area => Number(area === 'outside' ? state.design.delivery_outside : state.design.delivery_dhaka) || 0;
+const zones = () => {
+  const d = state.design, z = [{ id: 'dhaka', name: 'ঢাকার ভেতরে', name_en: 'Inside Dhaka', charge: d.delivery_dhaka }, { id: 'outside', name: 'ঢাকার বাইরে', name_en: 'Outside Dhaka', charge: d.delivery_outside }];
+  (Array.isArray(d.extra_zones) ? d.extra_zones : []).forEach(x => { if (x && x.id && String(x.name || '').trim()) z.push({ id: x.id, name: x.name, name_en: x.name_en, charge: x.charge }); });
+  return z;
+};
+const zoneLabel = id => { const z = zones().find(x => x.id === id); return z ? ((LANG === 'en' && z.name_en) ? z.name_en : z.name) : String(id || ''); };
+const freeMin = () => Number(state.design.free_delivery_min) || 0;
+const deliveryFor = (area, sub) => { const z = zones().find(x => x.id === area) || zones()[0]; return (freeMin() > 0 && (sub || 0) >= freeMin()) ? 0 : (Number(z.charge) || 0); };
+const pauseMsg = () => dx(state.design, 'pause_msg') || DEFAULT_DESIGN.pause_msg;
 
 /* ---------------------------- theme ---------------------------- */
 function applyTheme(c) {
@@ -530,7 +583,27 @@ async function loadProducts() {
   const { data, error } = await sb.from('products').select('*').order('sort_order', { ascending: true }).order('created_at', { ascending: false });
   if (error) { console.warn(error); toast('পণ্য লোড করা যায়নি', 'err'); return; }
   state.products = data || [];
+  state.feat = state.products.length ? ('variants' in state.products[0]) : true;
 }
+async function loadReviews() {
+  if (!sb) return;
+  const { data, error } = await sb.from('reviews').select('product_id,name,rating,body,created_at').eq('approved', true).order('created_at', { ascending: false }).limit(500);
+  state.reviews = error ? [] : (data || []);
+}
+const reviewsOf = id => state.reviews.filter(r => r.product_id === id);
+const ratingOf = id => { const r = reviewsOf(id); return { n: r.length, avg: r.length ? r.reduce((s, x) => s + x.rating, 0) / r.length : 0 }; };
+const stars = n => '<span class="text-amber-500 tracking-tight">' + '★'.repeat(Math.round(n)) + '<span class="text-gray-300">' + '★'.repeat(5 - Math.round(n)) + '</span></span>';
+const canReview = id => !!state.user && state.myOrders.some(o => o.status === 'delivered' && Array.isArray(o.items) && o.items.some(i => i.id === id));
+const wished = id => state.wish.includes(id);
+function toggleWish(id) {
+  state.wish = wished(id) ? state.wish.filter(x => x !== id) : state.wish.concat(id);
+  try { localStorage.setItem('sh_wish', JSON.stringify(state.wish)); } catch (e) {}
+  if (state.cat === 'wish' && !state.wish.length) state.cat = 'all';
+  renderHeader(); renderProducts();
+  if (state.modal === 'product' && state.viewId) renderProductModal();
+  toast(wished(id) ? (LANG === 'en' ? '♥ Saved to your wishlist' : '♥ পছন্দের তালিকায় যোগ হয়েছে') : (LANG === 'en' ? 'Removed from wishlist' : 'পছন্দের তালিকা থেকে সরানো হয়েছে'));
+}
+function openProduct(id) { state.viewId = id; state.galI = 0; state.selV = ''; renderProductModal(); }
 async function loadProfile() {
   if (!state.user) { state.profile = null; return; }
   const { data } = await sb.from('profiles').select('*').eq('id', state.user.id).maybeSingle();
@@ -588,7 +661,7 @@ function renderHeader() {
       <div class="md:hidden px-3 pb-2">${search('searchM')}</div>
     </div>
     <nav class="bg-brand"><div class="max-w-7xl mx-auto px-2 flex overflow-x-auto no-scrollbar">
-      ${navBtn('all', dx(state.design, 'all_label'))}${cats().map(c => navBtn(c.name, catLabel(c.name))).join('')}
+      ${navBtn('all', dx(state.design, 'all_label'))}${cats().map(c => navBtn(c.name, catLabel(c.name))).join('')}${state.wish.length ? navBtn('wish', '♥ ' + tr('পছন্দের') + ' (' + bn(state.wish.length) + ')') : ''}
     </div></nav>`;
   const w = $('#waFloat'); w.href = wa + '?text=' + encodeURIComponent(LANG === 'en' ? 'Hello, I would like to know about ' + d.brand_name + '.' : 'আসসালামু আলাইকুম, আমি ' + d.brand_name + ' সম্পর্কে জানতে চাই।');
 }
@@ -643,51 +716,60 @@ function renderAd() {
 
 function filteredProducts() {
   const q = state.search.trim().toLowerCase();
-  return state.products.filter(p => (state.cat === 'all' || p.category === state.cat) &&
+  return state.products.filter(p => (state.cat === 'all' || (state.cat === 'wish' ? wished(p.id) : p.category === state.cat)) &&
     (!q || (p.name + ' ' + (p.name_en || '') + ' ' + (p.description || '') + ' ' + (p.description_en || '') + ' ' + p.category + ' ' + (p.tag || '')).toLowerCase().includes(q)));
 }
 
 function productCard(p) {
-  const q = cartQty(p.id), disc = (p.old_price && Number(p.old_price) > Number(p.price)) ? Number(p.old_price) - Number(p.price) : 0;
-  const img = safeUrl(p.image_url);
+  const hv = hasVariants(p), q = cartQty(p.id), price = minPrice(p), old = hv ? 0 : unitOld(p, ''), disc = old ? old - price : 0;
+  const img = safeUrl(p.image_url), rt = ratingOf(p.id), w = wished(p.id);
   return `<div class="card bg-white rounded-xl overflow-hidden border border-gray-100 flex flex-col">
     <div class="relative aspect-square bg-gray-50 cursor-pointer" data-action="view" data-id="${esc(p.id)}">
       ${img ? `<img src="${esc(img)}" alt="${esc(pname(p))}" loading="lazy" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-5xl text-gold/50"><i class="fa-solid fa-jar-wheat"></i></div>`}
-      ${disc ? `<span class="absolute top-2 left-2 bg-cta text-white text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded">Save ${money(disc)}</span>` : ''}
+      ${disc ? `<span class="absolute top-2 left-2 bg-cta text-white text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded">Save ${money(disc)}</span>` : (p.is_combo ? `<span class="absolute top-2 left-2 bg-cta text-white text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded">${tr('কম্বো')}</span>` : '')}
+      <button type="button" data-action="wish" data-id="${esc(p.id)}" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 shadow flex items-center justify-center" aria-label="${tr('পছন্দের তালিকা')}"><i class="${w ? 'fa-solid text-red-500' : 'fa-regular text-gray-500'} fa-heart"></i></button>
       ${p.tag ? `<span class="absolute bottom-2 left-2 bg-brand text-gold text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded">${esc(p.tag)}</span>` : ''}
+      ${lowStock(p) ? `<span class="absolute bottom-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">${LANG === 'en' ? `Only ${p.stock_qty} left` : `মাত্র ${bn(p.stock_qty)}টি বাকি`}</span>` : ''}
       ${!p.in_stock ? `<div class="absolute inset-0 bg-white/70 flex items-center justify-center"><span class="bg-gray-800 text-white px-3 py-1 rounded-full text-sm font-semibold">স্টক শেষ</span></div>` : ''}
     </div>
     <div class="p-3 flex flex-col flex-1">
       <h3 class="font-semibold text-sm sm:text-base leading-snug line-clamp-2 cursor-pointer min-h-[2.5rem]" data-action="view" data-id="${esc(p.id)}">${esc(pname(p))}</h3>
-      ${p.weight ? `<div class="text-xs text-gray-500 mt-0.5">${esc(pweight(p))}</div>` : ''}
+      ${hv ? `<div class="text-xs text-gray-500 mt-0.5 truncate">${esc(variantsOf(p).map(vlabel).join(' • '))}</div>` : (p.weight ? `<div class="text-xs text-gray-500 mt-0.5">${esc(pweight(p))}</div>` : '')}
+      ${rt.n ? `<div class="text-xs mt-0.5">${stars(rt.avg)} <span class="text-gray-400">(${bn(rt.n)})</span></div>` : ''}
       <div class="mt-1.5 flex items-baseline gap-2 flex-wrap">
-        ${hasPrice(p) ? `<span class="text-base sm:text-lg font-bold text-brand">${money(p.price)}</span>` : '<span class="text-sm font-semibold text-cta">দাম জানতে মেসেজ করুন</span>'}
-        ${disc ? `<span class="text-xs text-gray-400 line-through">${money(p.old_price)}</span>` : ''}
+        ${hasPrice(p) ? `<span class="text-base sm:text-lg font-bold text-brand">${hv ? tr('থেকে') + ' ' : ''}${money(price)}</span>` : '<span class="text-sm font-semibold text-cta">দাম জানতে মেসেজ করুন</span>'}
+        ${disc ? `<span class="text-xs text-gray-400 line-through">${money(old)}</span>` : ''}
       </div>
       <div class="mt-auto pt-3">${cartControl(p, q)}</div>
     </div></div>`;
 }
 
-function cartControl(p, q) {
-  if (!p.in_stock) return `<button disabled class="btn btn-ghost w-full text-sm">স্টক শেষ</button>`;
+function cartControl(p, q, v, inModal) {
+  const vd = v ? ` data-v="${esc(v)}"` : '';
+  if (!p.in_stock) return `<button data-action="notify" data-id="${esc(p.id)}" class="btn btn-ghost w-full text-sm"><i class="fa-regular fa-bell"></i> ${tr('স্টকে এলে জানান')}</button>`;
   if (!hasPrice(p)) return `<a href="${esc(waAsk(p))}" target="_blank" rel="noopener noreferrer" class="btn btn-cta w-full text-sm"><i class="fa-brands fa-whatsapp"></i> দাম জানতে WhatsApp</a>`;
+  if (hasVariants(p) && !inModal) return `<button data-action="view" data-id="${esc(p.id)}" class="btn btn-cta w-full text-sm">${tr('বিকল্প বেছে নিন')}</button>`;
   if (q > 0) return `<div class="flex items-center justify-between border-2 border-gold rounded-lg overflow-hidden">
-    <button data-action="dec" data-id="${esc(p.id)}" class="w-10 h-9 text-brand font-bold hover:bg-amber-50" aria-label="কমান"><i class="fa-solid fa-minus"></i></button>
+    <button data-action="dec" data-id="${esc(p.id)}"${vd} class="w-10 h-9 text-brand font-bold hover:bg-amber-50" aria-label="কমান"><i class="fa-solid fa-minus"></i></button>
     <span class="font-bold">${bn(q)}</span>
-    <button data-action="inc" data-id="${esc(p.id)}" class="w-10 h-9 text-brand font-bold hover:bg-amber-50" aria-label="বাড়ান"><i class="fa-solid fa-plus"></i></button></div>`;
-  return `<button data-action="add" data-id="${esc(p.id)}" class="btn btn-cta w-full text-sm"><i class="fa-solid fa-plus text-xs"></i> কার্টে যোগ করুন</button>`;
+    <button data-action="inc" data-id="${esc(p.id)}"${vd} class="w-10 h-9 text-brand font-bold hover:bg-amber-50" aria-label="বাড়ান"><i class="fa-solid fa-plus"></i></button></div>`;
+  return `<button data-action="add" data-id="${esc(p.id)}"${vd} class="btn btn-cta w-full text-sm"><i class="fa-solid fa-plus text-xs"></i> কার্টে যোগ করুন</button>`;
 }
 
 function renderProducts() {
-  const list = filteredProducts();
-  const title = state.cat === 'all' ? dx(state.design, 'all_label') : catLabel(state.cat);
+  const list = filteredProducts(), plain = state.cat === 'all' && !state.search.trim();
+  const combos = plain ? list.filter(p => p.is_combo) : [], rest = plain ? list.filter(p => !p.is_combo) : list;
+  const title = state.cat === 'all' ? dx(state.design, 'all_label') : state.cat === 'wish' ? tr('আমার পছন্দের তালিকা') : catLabel(state.cat);
+  const grid = a => `<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">${a.map(productCard).join('')}</div>`;
   $('#products').innerHTML = `
+    ${combos.length ? `<div class="mb-8 rounded-2xl p-3 sm:p-5 border border-gold/40" style="background:linear-gradient(135deg,#fff7e6,#ffffff)">
+      <h2 class="text-xl sm:text-2xl font-bold text-brand mb-3"><i class="fa-solid fa-gift text-gold"></i> ${esc(dx(state.design, 'combo_title'))}</h2>${grid(combos)}</div>` : ''}
     <div class="flex items-center justify-between mb-4 gap-2">
       <h2 class="text-xl sm:text-2xl font-bold text-brand border-l-4 border-gold pl-3">${esc(title)}${state.search ? ` <span class="text-sm font-normal text-gray-500">— "${esc(state.search)}"</span>` : ''}</h2>
-      <span class="text-sm text-gray-500">${cnt(list.length)}</span>
+      <span class="text-sm text-gray-500">${cnt(rest.length)}</span>
     </div>
-    ${list.length ? `<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">${list.map(productCard).join('')}</div>`
-      : `<div class="text-center py-16 text-gray-500"><i class="fa-regular fa-face-frown text-4xl mb-3"></i><p>${state.products.length ? 'কোনো পণ্য পাওয়া যায়নি' : 'এখনো কোনো পণ্য যোগ করা হয়নি'}</p></div>`}`;
+    ${rest.length ? grid(rest)
+      : (combos.length ? '' : `<div class="text-center py-16 text-gray-500"><i class="fa-regular fa-face-frown text-4xl mb-3"></i><p>${state.products.length ? 'কোনো পণ্য পাওয়া যায়নি' : 'এখনো কোনো পণ্য যোগ করা হয়নি'}</p></div>`)}`;
 }
 
 function renderTesti() {
@@ -704,6 +786,22 @@ function renderTesti() {
     </div></div></div>`;
 }
 
+const pageTitle = k => k === 'faq' ? (LANG === 'en' ? 'FAQ' : 'প্রশ্নোত্তর (FAQ)') : dx(state.design.pages && state.design.pages[k], 'title');
+const pageBody = k => dx(state.design.pages && state.design.pages[k], 'body');
+const faqItems = () => (Array.isArray(state.design.faq) ? state.design.faq : []).map(f => ({ q: dx(f, 'q'), a: dx(f, 'a') })).filter(f => String(f.q).trim() && String(f.a).trim());
+const pageKeys = () => ['story', 'policy', 'faq'].filter(k => k === 'faq' ? faqItems().length : String(pageBody(k) || '').trim());
+function pageLinks() {
+  const ks = pageKeys(); if (!ks.length) return '';
+  return `<div class="max-w-7xl mx-auto px-4 pb-4 flex flex-wrap justify-center gap-x-5 gap-y-1 text-sm text-white/80">${ks.map(k => `<button data-action="page" data-k="${k}" class="hover:text-gold underline-offset-2 hover:underline">${esc(pageTitle(k))}</button>`).join('')}</div>`;
+}
+function openPage(k) {
+  if (!pageKeys().includes(k)) return;
+  const body = k === 'faq'
+    ? `<div class="p-4 space-y-2">${faqItems().map(f => `<details class="border rounded-xl p-3 group"><summary class="font-semibold cursor-pointer text-brand">${esc(f.q)}</summary><p class="mt-2 text-sm text-gray-700 whitespace-pre-line leading-relaxed">${esc(f.a)}</p></details>`).join('')}</div>`
+    : `<div class="p-5 text-sm text-gray-700 whitespace-pre-line leading-relaxed">${esc(pageBody(k))}</div>`;
+  openModal(`${modalHead(esc(pageTitle(k)))}${body}`, true);
+  state.modal = 'page';
+}
 function renderFooter() {
   const d = state.design;
   $('#footer').innerHTML = `<div class="bg-brand text-white mt-8"><div class="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -717,6 +815,7 @@ function renderFooter() {
       <li class="break-all"><i class="fa-solid fa-envelope w-5 text-gold"></i><a href="mailto:${esc(d.email)}" class="hover:text-gold">${esc(d.email)}</a></li>
       <li><i class="fa-solid fa-location-dot w-5 text-gold"></i>${esc(dx(d, 'address'))}</li></ul></div>
     </div>
+    ${pageLinks()}
     <div class="border-t border-white/10 py-4 text-center text-xs text-white/60">© ${bn(new Date().getFullYear())} ${esc(d.brand_name)}${LANG === 'en' ? '. All rights reserved.' : '। সর্বস্বত্ব সংরক্ষিত।'}</div></div>`;
 }
 
@@ -795,49 +894,107 @@ function refreshCartUI() {
   saveCart(); updateBadges(); renderProducts(); renderCart();
   if (state.modal === 'product' && state.viewId) renderProductModal();
 }
-function addToCart(id) {
+function addToCart(id, v) {
   const p = state.products.find(x => x.id === id); if (!p || !p.in_stock || !hasPrice(p)) return;
-  const c = state.cart.find(x => x.id === id);
-  if (c) c.qty = Math.min(50, c.qty + 1); else state.cart.push({ id, qty: 1 });
+  if (hasVariants(p)) { if (!findVar(p, v)) { state.viewId = id; renderProductModal(); return; } } else v = '';
+  const cap = Math.min(50, stockCap(p));
+  if (cartQty(id) >= cap) return toast(LANG === 'en' ? `Only ${cap} in stock` : `মাত্র ${bn(cap)}টি স্টকে আছে`, 'err');
+  const c = state.cart.find(x => x.id === id && (x.v || '') === (v || ''));
+  if (c) c.qty += 1; else state.cart.push({ id, qty: 1, v: v || '' });
   refreshCartUI();
 }
-function decCart(id) {
-  const c = state.cart.find(x => x.id === id); if (!c) return;
-  c.qty -= 1; if (c.qty <= 0) state.cart = state.cart.filter(x => x.id !== id);
+function decCart(id, v) {
+  const c = state.cart.find(x => x.id === id && (x.v || '') === (v || '')); if (!c) return;
+  c.qty -= 1; if (c.qty <= 0) state.cart = state.cart.filter(x => x !== c);
   refreshCartUI();
 }
-function removeCart(id) { state.cart = state.cart.filter(x => x.id !== id); refreshCartUI(); }
+function removeCart(id, v) { state.cart = state.cart.filter(x => !(x.id === id && (x.v || '') === (v || ''))); refreshCartUI(); }
 
 function renderCart() {
   const lines = cartLines();
   const items = $('#cartItems'), form = $('#checkoutForm'), foot = $('#cartFooter');
-  $('#chgDhaka').textContent = money(state.design.delivery_dhaka);
-  $('#chgOut').textContent = money(state.design.delivery_outside);
   if (!lines.length) {
     items.innerHTML = `<div class="text-center py-16 text-gray-500"><i class="fa-solid fa-bag-shopping text-5xl text-gray-300 mb-3"></i><p>আপনার কার্ট খালি</p>
       <button data-action="closeCartShop" class="btn btn-cta mt-4">কেনাকাটা শুরু করুন</button></div>`;
     form.classList.add('hidden'); foot.classList.add('hidden'); return;
   }
   form.classList.remove('hidden'); foot.classList.remove('hidden');
-  items.innerHTML = lines.map(({ p, qty }) => {
-    const img = safeUrl(p.image_url);
+  items.innerHTML = lines.map(({ p, qty, v, price }) => {
+    const img = safeUrl(p.image_url), vd = v ? `data-v="${esc(v)}"` : '', vv = v ? findVar(p, v) : null;
     return `<div class="flex gap-3 border rounded-xl p-2">
       <div class="w-16 h-16 rounded-lg bg-gray-50 overflow-hidden shrink-0 flex items-center justify-center">${img ? `<img src="${esc(img)}" alt="" class="w-full h-full object-cover">` : '<i class="fa-solid fa-jar-wheat text-gold/50 text-xl"></i>'}</div>
       <div class="flex-1 min-w-0"><div class="text-sm font-semibold leading-snug line-clamp-2">${esc(pname(p))}</div>
-        <div class="text-xs text-gray-500">${esc(pweight(p) || '')}</div>
+        <div class="text-xs text-gray-500">${esc(vv ? vlabel(vv) : (pweight(p) || ''))}</div>
         <div class="flex items-center justify-between mt-1">
-          <div class="flex items-center border rounded-lg overflow-hidden"><button data-action="dec" data-id="${esc(p.id)}" class="w-8 h-7 hover:bg-gray-100" aria-label="কমান"><i class="fa-solid fa-minus text-xs"></i></button><span class="w-8 text-center text-sm font-bold">${bn(qty)}</span><button data-action="inc" data-id="${esc(p.id)}" class="w-8 h-7 hover:bg-gray-100" aria-label="বাড়ান"><i class="fa-solid fa-plus text-xs"></i></button></div>
-          <span class="font-bold text-brand text-sm">${money(p.price * qty)}</span></div></div>
-      <button data-action="remove" data-id="${esc(p.id)}" class="self-start text-gray-400 hover:text-red-600 p-1" aria-label="মুছুন"><i class="fa-solid fa-trash-can text-sm"></i></button></div>`;
+          <div class="flex items-center border rounded-lg overflow-hidden"><button data-action="dec" data-id="${esc(p.id)}" ${vd} class="w-8 h-7 hover:bg-gray-100" aria-label="কমান"><i class="fa-solid fa-minus text-xs"></i></button><span class="w-8 text-center text-sm font-bold">${bn(qty)}</span><button data-action="inc" data-id="${esc(p.id)}" ${vd} class="w-8 h-7 hover:bg-gray-100" aria-label="বাড়ান"><i class="fa-solid fa-plus text-xs"></i></button></div>
+          <span class="font-bold text-brand text-sm">${money(price * qty)}</span></div></div>
+      <button data-action="remove" data-id="${esc(p.id)}" ${vd} class="self-start text-gray-400 hover:text-red-600 p-1" aria-label="মুছুন"><i class="fa-solid fa-trash-can text-sm"></i></button></div>`;
   }).join('');
+  renderAreaBox(); renderCouponBox();
+  const paused = !!state.design.orders_paused, pb = $('#placeBtn');
+  if (pb) pb.disabled = paused;
+  const pn = $('#pauseNote'); if (pn) { pn.textContent = paused ? pauseMsg() : ''; pn.classList.toggle('hidden', !paused); }
   updateSummary();
 }
-function currentArea() { const r = $('input[name="area"]:checked'); return r ? r.value : 'dhaka'; }
-function updateSummary() {
-  const sub = cartLines().reduce((s, l) => s + l.p.price * l.qty, 0), del = deliveryFor(currentArea());
-  $('#cartSummary').innerHTML = `<div class="flex justify-between"><span>সাবটোটাল</span><span>${money(sub)}</span></div>
-    <div class="flex justify-between"><span>ডেলিভারি চার্জ</span><span>${money(del)}</span></div>
-    <div class="flex justify-between font-bold text-base border-t pt-2 mt-1"><span>সর্বমোট</span><span class="text-brand">${money(sub + del)}</span></div>`;
+function currentArea() { const r = $('input[name="area"]:checked'); return r ? r.value : (state.area || 'dhaka'); }
+function renderAreaBox() {
+  const box = $('#areaBox'); if (!box) return;
+  if (!zones().some(z => z.id === state.area)) state.area = 'dhaka';
+  box.innerHTML = zones().map(z => `<label class="flex items-center gap-2 border rounded-lg px-3 py-2 cursor-pointer has-[:checked]:border-gold has-[:checked]:bg-amber-50">
+    <input type="radio" name="area" value="${esc(z.id)}" ${state.area === z.id ? 'checked' : ''} class="accent-[#C89B4B]"><span class="text-sm">${esc(zoneLabel(z.id))}<br><b>${money(z.charge)}</b></span></label>`).join('');
+}
+function cartTotals() {
+  const sub = cartLines().reduce((s, l) => s + l.price * l.qty, 0), delivery = deliveryFor(currentArea(), sub);
+  const c = (state.couponCode && state.coupon && state.coupon.ok) ? state.coupon : null;
+  const disc = c ? (Number(c.discount) || 0) : 0, dd = c ? Math.min(delivery, Number(c.delivery_discount) || 0) : 0;
+  return { sub, delivery, disc, dd, total: Math.max(0, sub - disc + delivery - dd) };
+}
+function paintSummary() {
+  const t = cartTotals(), fm = freeMin();
+  $('#cartSummary').innerHTML = `<div class="flex justify-between"><span>সাবটোটাল</span><span>${money(t.sub)}</span></div>
+    ${(t.disc + t.dd) > 0 ? `<div class="flex justify-between text-green-700"><span>${tr('কুপন ছাড়')} (${esc(state.couponCode)})</span><span>−${money(t.disc + t.dd)}</span></div>` : ''}
+    <div class="flex justify-between"><span>ডেলিভারি চার্জ</span><span>${t.delivery === 0 && fm > 0 && t.sub >= fm ? tr('ফ্রি') : money(t.delivery)}</span></div>
+    ${fm > 0 && t.sub < fm ? `<div class="text-[11px] text-green-700">${LANG === 'en' ? `Add ${money(fm - t.sub)} more for free delivery` : `আরও ${money(fm - t.sub)} এর পণ্য কিনলে ডেলিভারি ফ্রি`}</div>` : ''}
+    <div class="flex justify-between font-bold text-base border-t pt-2 mt-1"><span>সর্বমোট</span><span class="text-brand">${money(t.total)}</span></div>`;
+}
+function updateSummary() { paintSummary(); refreshCoupon(); }
+
+/* ---- coupons (customer side; validated on the server) ---- */
+function couponMsg(d) {
+  const en = LANG === 'en', c = d && d.code;
+  if (c === 'coupon_expired') return en ? 'This coupon has expired' : 'কুপনের মেয়াদ শেষ হয়ে গেছে';
+  if (c === 'coupon_used_up') return en ? 'This coupon can no longer be used' : 'কুপনটি আর ব্যবহার করা যাবে না';
+  if (c === 'coupon_min') return en ? `This coupon needs an order of at least ${money(d.amount)}` : `এই কুপনের জন্য কমপক্ষে ${money(d.amount)} এর পণ্য কিনতে হবে`;
+  return en ? 'This coupon code is not valid' : 'কুপন কোডটি সঠিক নয়';
+}
+function renderCouponBox() {
+  const box = $('#couponBox'); if (!box) return;
+  box.innerHTML = (state.couponCode && state.coupon && state.coupon.ok)
+    ? `<div class="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-3 py-2 text-sm"><span><i class="fa-solid fa-ticket text-green-600"></i> <b>${esc(state.couponCode)}</b> ${tr('প্রয়োগ হয়েছে')}</span><button type="button" data-action="couponRemove" class="text-xs text-red-600 font-semibold">${tr('সরান')}</button></div>`
+    : `<form data-form="coupon" class="flex gap-2"><input id="c_coupon" class="inp !py-2 uppercase" maxlength="30" placeholder="কুপন কোড (থাকলে)" autocomplete="off"><button class="btn btn-ghost whitespace-nowrap" type="submit">প্রয়োগ করুন</button></form>`;
+}
+async function refreshCoupon() {
+  if (!state.couponCode || !sb) return;
+  const sub = cartLines().reduce((s, l) => s + l.price * l.qty, 0); if (!sub) return;
+  const del = deliveryFor(currentArea(), sub), key = state.couponCode + '|' + sub + '|' + del;
+  if (state.couponKey === key) return; state.couponKey = key;
+  const { data, error } = await sb.rpc('check_coupon', { p_code: state.couponCode, p_subtotal: sub, p_delivery: del });
+  if (error || !data || !data.ok) {
+    const msg = data && !data.ok ? couponMsg(data) : null;
+    state.coupon = null; state.couponCode = ''; state.couponKey = ''; renderCouponBox(); paintSummary(); if (msg) toast(msg, 'err'); return;
+  }
+  state.coupon = data; paintSummary();
+}
+async function applyCoupon(raw) {
+  const code = String(raw || '').trim().toUpperCase(); if (!code) return;
+  if (!sb) return toast('ডেমো মোড', 'err');
+  const sub = cartLines().reduce((s, l) => s + l.price * l.qty, 0); if (!sub) return;
+  const del = deliveryFor(currentArea(), sub);
+  const { data, error } = await sb.rpc('check_coupon', { p_code: code, p_subtotal: sub, p_delivery: del });
+  if (error) { console.warn(error); return toast(LANG === 'en' ? 'Coupons are not available right now' : 'এখন কুপন ব্যবহার করা যাচ্ছে না', 'err'); }
+  if (!data || !data.ok) return toast(couponMsg(data), 'err');
+  state.couponCode = data.code; state.coupon = data; state.couponKey = data.code + '|' + sub + '|' + del;
+  renderCouponBox(); paintSummary(); toast(LANG === 'en' ? '✅ Coupon applied' : '✅ কুপন প্রয়োগ হয়েছে');
 }
 function openCart() {
   if (state.profile) {
@@ -853,43 +1010,87 @@ function lockScroll() { document.body.style.overflow = ($('#cartDrawer').classLi
 function waMessage(o) {
   const L = [`🛍️ *নতুন অর্ডার — ${state.design.brand_name}*`, `অর্ডার নং: ${o.order_no}`, '',
     `👤 নাম: ${o.customer_name}`, `📞 ফোন: ${o.phone}`, `📍 ঠিকানা: ${o.address}`,
-    `🚚 এলাকা: ${o.area === 'dhaka' ? 'ঢাকার ভেতরে' : 'ঢাকার বাইরে'}`, '', '*পণ্যের তালিকা:*'];
+    `🚚 এলাকা: ${zoneLabel(o.area)}`, '', '*পণ্যের তালিকা:*'];
   o.items.forEach((it, i) => L.push(`${bn(i + 1)}. ${it.name}${it.weight ? ' (' + it.weight + ')' : ''} × ${bn(it.qty)} = ${money(it.price * it.qty)}`));
-  L.push('', `সাবটোটাল: ${money(o.subtotal)}`, `ডেলিভারি চার্জ: ${money(o.delivery_charge)}`, `*সর্বমোট: ${money(o.total)}*`);
+  L.push('', `সাবটোটাল: ${money(o.subtotal)}`);
+  if (Number(o.discount) > 0) L.push(`কুপন ছাড় (${o.coupon_code}): −${money(o.discount)}`);
+  L.push(`ডেলিভারি চার্জ: ${money(o.delivery_charge)}`, `*সর্বমোট: ${money(o.total)}*`);
   if (o.note) L.push('', `📝 নোট: ${o.note}`);
   L.push('', 'অনুগ্রহ করে আমার অর্ডারটি নিশ্চিত করুন। ধন্যবাদ!');
   return L.join('\n');
 }
+function orderErrMsg(m) {
+  m = String(m || ''); const i = m.indexOf(':'), code = (i < 0 ? m : m.slice(0, i)).trim(), arg = i < 0 ? '' : m.slice(i + 1).trim(), en = LANG === 'en';
+  switch (code) {
+    case 'paused': return pauseMsg();
+    case 'stock': return en ? `Sorry, there is not enough stock of "${arg}". Please reduce the quantity.` : `দুঃখিত, "${arg}" এর পর্যাপ্ত স্টক নেই। পরিমাণ কমিয়ে দিন।`;
+    case 'unavailable': return en ? `Sorry, "${arg}" is not available right now.` : `দুঃখিত, "${arg}" এখন পাওয়া যাচ্ছে না।`;
+    case 'noprice': return en ? `The price of "${arg}" is not set. Please ask on WhatsApp.` : `"${arg}" এর দাম নির্ধারণ করা নেই। WhatsApp-এ জিজ্ঞাসা করুন।`;
+    case 'coupon_invalid': case 'coupon_expired': case 'coupon_used_up': case 'coupon_min': return couponMsg({ code, amount: arg });
+    default: return null;
+  }
+}
+const isMissingFn = e => !!e && (e.code === 'PGRST202' || e.code === '42883' || /could not find the function/i.test(e.message || ''));
 
 async function placeOrder() {
   const lines = cartLines();
   if (!lines.length) return toast('আপনার কার্ট খালি', 'err');
+  if (state.design.orders_paused) return toast(pauseMsg(), 'err');
   const name = $('#c_name').value.trim(), phone = normPhone($('#c_phone').value), address = $('#c_address').value.trim(), note = $('#c_note').value.trim();
   if (!name) return toast('অনুগ্রহ করে আপনার নাম লিখুন', 'err');
   if (!validPhone(phone)) return toast('সঠিক মোবাইল নম্বর দিন (যেমন: 01712345678)', 'err');
   if (address.length < 8) return toast('সম্পূর্ণ ঠিকানা লিখুন', 'err');
-  const area = currentArea();
-  const items = lines.map(({ p, qty }) => ({ id: p.id, name: p.name, price: Number(p.price), qty, weight: p.weight || '', name_en: p.name_en || '' }));
-  const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0), delivery = deliveryFor(area);
-  const d = new Date(), pad = n => String(n).padStart(2, '0');
-  const order = {
-    id: uuid(), order_no: `SH${String(d.getFullYear()).slice(2)}${pad(d.getMonth() + 1)}${pad(d.getDate())}-${Math.floor(1000 + Math.random() * 9000)}`,
-    user_id: state.user ? state.user.id : null, customer_name: name, phone, address, area, items,
-    subtotal, delivery_charge: delivery, total: subtotal + delivery, status: 'pending', note
-  };
-  const btn = $('#placeBtn'); btn.disabled = true;
+  const area = currentArea(), btn = $('#placeBtn'); btn.disabled = true;
   const w = window.open('about:blank', '_blank');   // opened synchronously so mobile browsers don't block it
+  let order = null;
   if (sb) {
-    const { error } = await sb.from('orders').insert(order);
-    if (error) { if (w) w.close(); btn.disabled = false; console.warn(error); return toast('অর্ডার সেভ করা যায়নি, আবার চেষ্টা করুন', 'err'); }
+    const payload = lines.map(l => ({ id: l.p.id, qty: l.qty, v: l.v || '' }));
+    const r = await sb.rpc('place_order', { p_name: name, p_phone: phone, p_address: address, p_area: area, p_items: payload, p_coupon: state.couponCode || '', p_note: note });
+    if (!r.error && r.data) order = r.data;
+    else if (isMissingFn(r.error)) {
+      // database not upgraded yet: fall back to the old direct insert (no coupons / variants)
+      const items = lines.map(l => ({ id: l.p.id, name: l.p.name, price: l.price, qty: l.qty, weight: l.v || l.p.weight || '', name_en: l.p.name_en || '' }));
+      const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0), delivery = deliveryFor(area, subtotal), d = new Date(), pad = n => String(n).padStart(2, '0');
+      const o = { id: uuid(), order_no: `SH${String(d.getFullYear()).slice(2)}${pad(d.getMonth() + 1)}${pad(d.getDate())}-${Math.floor(1000 + Math.random() * 9000)}`,
+        user_id: state.user ? state.user.id : null, customer_name: name, phone, address, area, items, subtotal, delivery_charge: delivery, total: subtotal + delivery, status: 'pending', note };
+      const { error } = await sb.from('orders').insert(o);
+      if (!error) order = o; else r.error = error;
+    }
+    if (!order) {
+      if (w) w.close(); btn.disabled = false; console.warn(r.error);
+      return toast(orderErrMsg(r.error && r.error.message) || 'অর্ডার সেভ করা যায়নি, আবার চেষ্টা করুন', 'err');
+    }
+  } else {
+    const items = lines.map(l => ({ id: l.p.id, name: l.p.name, price: l.price, qty: l.qty, weight: l.v || l.p.weight || '' }));
+    const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0), delivery = deliveryFor(area, subtotal);
+    order = { order_no: 'DEMO-0000', customer_name: name, phone, address, area, items, subtotal, delivery_charge: delivery, total: subtotal + delivery, note };
   }
   const url = `https://wa.me/${digits(state.design.whatsapp)}?text=${encodeURIComponent(waMessage(order))}`;
-  state.cart = []; saveCart(); btn.disabled = false;
+  state.cart = []; state.couponCode = ''; state.coupon = null; state.couponKey = ''; saveCart(); btn.disabled = false;
   $('#c_note').value = '';
-  closeCart(); refreshCartUI();
-  toast('✅ অর্ডার গ্রহণ করা হয়েছে! WhatsApp-এ নিশ্চিত করুন।');
+  closeCart();
+  if (sb) await loadProducts();
+  refreshCartUI();
+  openThanks(order, url);
   if (state.user) loadMyOrders();
-  if (w) w.location.href = url; else location.href = url;
+  if (w) w.location.href = url;
+}
+function openThanks(o, url) {
+  const eta = dx(state.design, 'delivery_eta');
+  openModal(`${modalHead(tr('অর্ডার সম্পন্ন'))}
+    <div class="p-6 text-center space-y-3">
+      <div class="w-16 h-16 mx-auto rounded-full bg-green-100 text-green-600 flex items-center justify-center text-3xl"><i class="fa-solid fa-check"></i></div>
+      <h3 class="text-xl font-bold text-brand">${tr('ধন্যবাদ! আপনার অর্ডার গ্রহণ করা হয়েছে')}</h3>
+      <div class="bg-cream rounded-xl p-3 text-sm space-y-1 text-left">
+        <div class="flex justify-between"><span>${tr('অর্ডার নং')}</span><b>${esc(o.order_no)}</b></div>
+        <div class="flex justify-between"><span>${tr('মোট')}</span><b class="text-brand">${money(o.total)}</b></div>
+        <div class="flex justify-between"><span>${tr('এলাকা')}</span><span>${esc(zoneLabel(o.area))}</span></div>
+        ${eta ? `<div class="flex justify-between"><span>${tr('আনুমানিক ডেলিভারি')}</span><span>${esc(eta)}</span></div>` : ''}</div>
+      <p class="text-sm text-gray-600">${tr('অর্ডার চূড়ান্ত করতে WhatsApp-এ বার্তাটি পাঠিয়ে দিন। না খুললে নিচের বাটন চাপুন।')}</p>
+      <a href="${esc(url)}" target="_blank" rel="noopener noreferrer" class="btn btn-cta w-full py-3"><i class="fa-brands fa-whatsapp text-lg"></i> ${tr('WhatsApp-এ নিশ্চিত করুন')}</a>
+      <button data-action="closeModal" class="btn btn-ghost w-full">${tr('কেনাকাটা চালিয়ে যান')}</button>
+    </div>`);
+  state.modal = 'thanks';
 }
 
 /* ---------------------------- MODAL ---------------------------- */
@@ -902,27 +1103,71 @@ function openModal(html, wide) {
 function closeModal() {
   const m = $('#modal'); m.classList.add('hidden'); m.classList.remove('flex');
   state.modal = null; state.viewId = null; lockScroll();
-  if (/^#p=/.test(location.hash)) { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} }
+  if (/^#(p|page)=/.test(location.hash)) { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} }
 }
 const modalHead = t => `<div class="sticky top-0 bg-brand text-white px-4 py-3 flex items-center justify-between z-10"><h3 class="font-bold">${t}</h3><button data-action="closeModal" class="w-8 h-8 rounded-full hover:bg-white/10" aria-label="বন্ধ করুন"><i class="fa-solid fa-xmark"></i></button></div>`;
 
 /* product detail */
 function renderProductModal() {
   const p = state.products.find(x => x.id === state.viewId); if (!p) return closeModal();
-  const img = safeUrl(p.image_url), disc = (p.old_price && Number(p.old_price) > Number(p.price)) ? Number(p.old_price) - Number(p.price) : 0;
+  const hv = hasVariants(p);
+  if (hv && !findVar(p, state.selV)) state.selV = variantsOf(p)[0].label;
+  const imgs = [p.image_url].concat(Array.isArray(p.images) ? p.images : []).filter(u => safeUrl(u)).map(safeUrl);
+  if (state.galI >= imgs.length) state.galI = 0;
+  const img = imgs[state.galI] || null, price = unitPrice(p, state.selV), old = unitOld(p, state.selV), disc = old ? old - price : 0;
+  const q = hv ? cartQty(p.id, state.selV) : cartQty(p.id), rt = ratingOf(p.id), rv = reviewsOf(p.id).slice(0, 6), w = wished(p.id);
+  const rel = state.products.filter(x => x.id !== p.id && x.in_stock && hasPrice(x))
+    .sort((a, b) => ((b.category !== p.category) - (a.category !== p.category))).slice(0, 4);
   openModal(`${modalHead(esc(pname(p)))}
     <div class="p-4 space-y-3">
       <div class="relative aspect-square max-h-72 w-full bg-gray-50 rounded-xl overflow-hidden flex items-center justify-center">
         ${img ? `<img src="${esc(img)}" alt="${esc(pname(p))}" class="w-full h-full object-contain">` : '<i class="fa-solid fa-jar-wheat text-6xl text-gold/50"></i>'}
+        <button type="button" data-action="wish" data-id="${esc(p.id)}" class="absolute top-2 right-2 w-9 h-9 rounded-full bg-white/90 shadow flex items-center justify-center" aria-label="${tr('পছন্দের তালিকা')}"><i class="${w ? 'fa-solid text-red-500' : 'fa-regular text-gray-500'} fa-heart"></i></button>
         ${!p.in_stock ? '<div class="absolute inset-0 bg-white/70 flex items-center justify-center"><span class="bg-gray-800 text-white px-4 py-1 rounded-full font-semibold">স্টক শেষ</span></div>' : ''}</div>
-      <div class="flex items-center gap-2 flex-wrap">${hasPrice(p) ? `<span class="text-2xl font-bold text-brand">${money(p.price)}</span>` : '<span class="text-lg font-bold text-cta">দাম জানতে মেসেজ করুন</span>'}
-        ${disc ? `<span class="text-gray-400 line-through">${money(p.old_price)}</span><span class="bg-cta text-white text-xs font-bold px-2 py-0.5 rounded">Save ${money(disc)}</span>` : ''}
-        ${p.weight ? `<span class="ml-auto text-sm text-gray-500">${esc(pweight(p))}</span>` : ''}</div>
+      ${imgs.length > 1 ? `<div class="flex gap-2 overflow-x-auto no-scrollbar">${imgs.map((u, i) => `<button type="button" data-action="galSel" data-i="${i}" class="w-14 h-14 shrink-0 rounded-lg overflow-hidden border-2 ${i === state.galI ? 'border-gold' : 'border-transparent'}"><img src="${esc(u)}" alt="" class="w-full h-full object-cover"></button>`).join('')}</div>` : ''}
+      ${rt.n ? `<div class="text-sm">${stars(rt.avg)} <span class="text-gray-500">${rt.avg.toFixed(1)} (${bn(rt.n)})</span></div>` : ''}
+      ${hv ? `<div><div class="lbl">${tr('ওজন / পরিমাণ বেছে নিন')}</div><div class="flex flex-wrap gap-2">${variantsOf(p).map(v => `<button type="button" data-action="selV" data-v="${esc(v.label)}" class="px-3 py-1.5 rounded-lg border-2 text-sm font-semibold ${v.label === state.selV ? 'border-gold bg-amber-50 text-brand' : 'border-gray-200 text-gray-600'}">${esc(vlabel(v))} <span class="font-normal">• ${money(v.price)}</span></button>`).join('')}</div></div>` : ''}
+      <div class="flex items-center gap-2 flex-wrap">${hasPrice(p) ? `<span class="text-2xl font-bold text-brand">${money(price)}</span>` : '<span class="text-lg font-bold text-cta">দাম জানতে মেসেজ করুন</span>'}
+        ${disc ? `<span class="text-gray-400 line-through">${money(old)}</span><span class="bg-cta text-white text-xs font-bold px-2 py-0.5 rounded">Save ${money(disc)}</span>` : ''}
+        ${!hv && p.weight ? `<span class="ml-auto text-sm text-gray-500">${esc(pweight(p))}</span>` : ''}</div>
+      ${lowStock(p) ? `<div class="text-sm font-semibold text-red-600">${LANG === 'en' ? `Only ${p.stock_qty} left in stock` : `মাত্র ${bn(p.stock_qty)}টি স্টকে আছে`}</div>` : ''}
       ${p.description ? `<p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">${esc(pdesc(p))}</p>` : ''}
-      ${cartControl(p, cartQty(p.id))}
+      ${cartControl(p, q, hv ? state.selV : '', true)}
       <button type="button" data-action="copyPLink" data-id="${esc(p.id)}" class="w-full text-xs text-gray-500 hover:text-brand py-1"><i class="fa-solid fa-link"></i> ${tr('পণ্যের লিঙ্ক কপি করুন')}</button>
+      ${(rv.length || canReview(p.id)) ? `<div class="border-t pt-3 space-y-2"><h4 class="font-bold text-brand">${tr('গ্রাহক রিভিউ')}</h4>
+        ${rv.map(r => `<div class="bg-gray-50 rounded-lg p-2.5 text-sm"><div class="flex items-center justify-between gap-2"><b>${esc(r.name)}</b>${stars(r.rating)}</div>${r.body ? `<p class="text-gray-700 mt-1 whitespace-pre-line">${esc(r.body)}</p>` : ''}</div>`).join('')}
+        ${canReview(p.id) ? `<form data-form="review" data-id="${esc(p.id)}" class="border rounded-xl p-3 space-y-2"><div class="text-sm font-semibold">${tr('আপনার রিভিউ দিন')}</div>
+          <select name="rating" class="inp !w-auto"><option value="5">★★★★★</option><option value="4">★★★★☆</option><option value="3">★★★☆☆</option><option value="2">★★☆☆☆</option><option value="1">★☆☆☆☆</option></select>
+          <textarea name="body" rows="2" maxlength="600" class="inp" placeholder="${esc(tr('পণ্য কেমন লেগেছে?'))}"></textarea>
+          <button class="btn btn-brand w-full" type="submit">${tr('রিভিউ জমা দিন')}</button>
+          <p class="text-[11px] text-gray-500">${tr('অনুমোদনের পর রিভিউ সাইটে দেখা যাবে।')}</p></form>` : ''}</div>` : ''}
+      ${rel.length ? `<div class="border-t pt-3"><h4 class="font-bold text-brand mb-2">${tr('এটাও কিনতে পারেন')}</h4><div class="grid grid-cols-2 gap-2">${rel.map(x => { const xi = safeUrl(x.image_url); return `<button type="button" data-action="view" data-id="${esc(x.id)}" class="text-left border rounded-xl overflow-hidden hover:shadow"><div class="aspect-square bg-gray-50 flex items-center justify-center">${xi ? `<img src="${esc(xi)}" alt="" class="w-full h-full object-cover" loading="lazy">` : '<i class="fa-solid fa-jar-wheat text-3xl text-gold/50"></i>'}</div><div class="p-2"><div class="text-xs font-semibold line-clamp-2">${esc(pname(x))}</div><div class="text-sm font-bold text-brand">${hasVariants(x) ? tr('থেকে') + ' ' : ''}${money(minPrice(x))}</div></div></button>`; }).join('')}</div></div>` : ''}
     </div>`);
   state.modal = 'product';
+}
+
+/* back-in-stock request + reviews */
+function openNotify(id) {
+  const p = state.products.find(x => x.id === id); if (!p) return;
+  openModal(`${modalHead(tr('স্টকে এলে জানান'))}<form data-form="notify" data-id="${esc(id)}" class="p-5 space-y-3">
+    <p class="text-sm text-gray-700"><b>${esc(pname(p))}</b> — ${tr('স্টকে এলে আমরা আপনার সঙ্গে যোগাযোগ করব। মোবাইল নম্বর দিন।')}</p>
+    <input name="phone" type="tel" inputmode="tel" class="inp" placeholder="01XXXXXXXXX" value="${esc((state.profile && state.profile.phone) || '')}">
+    <button class="btn btn-brand w-full" type="submit">${tr('অনুরোধ পাঠান')}</button></form>`);
+  state.modal = 'notify';
+}
+async function handleNotify(f) {
+  const phone = normPhone(new FormData(f).get('phone')); if (!validPhone(phone)) return toast('সঠিক মোবাইল নম্বর দিন (যেমন: 01712345678)', 'err');
+  if (!sb) return;
+  const { error } = await sb.from('stock_requests').insert({ product_id: f.dataset.id, phone });
+  if (error && error.code !== '23505') { console.warn(error); return toast(LANG === 'en' ? 'Could not send the request' : 'অনুরোধ পাঠানো যায়নি', 'err'); }
+  closeModal(); toast(LANG === 'en' ? '✅ Request received' : '✅ আপনার অনুরোধ নথিভুক্ত হয়েছে');
+}
+async function handleReview(f) {
+  const fd = new FormData(f), id = f.dataset.id; if (!sb) return;
+  const { error } = await sb.rpc('submit_review', { p_product: id, p_rating: Number(fd.get('rating')), p_body: String(fd.get('body') || '').trim() });
+  if (error) { console.warn(error); return toast(/not_buyer/.test(error.message) ? (LANG === 'en' ? 'Only customers with a delivered order can review' : 'শুধু ডেলিভারি পাওয়া গ্রাহকরা রিভিউ দিতে পারবেন') : (LANG === 'en' ? 'Could not submit the review' : 'রিভিউ জমা দেওয়া যায়নি'), 'err'); }
+  toast(LANG === 'en' ? '✅ Thank you! Your review will appear after approval.' : '✅ ধন্যবাদ! অনুমোদনের পর আপনার রিভিউ দেখা যাবে।');
+  f.reset();
 }
 
 /* auth */
@@ -970,6 +1215,8 @@ function renderAccount() {
         <div class="flex items-center justify-between gap-2"><b>${esc(o.order_no)}</b><span class="px-2 py-0.5 rounded-full text-xs font-semibold ${st.c}">${esc(st.l)}</span></div>
         <div class="text-xs text-gray-500 mt-0.5">${esc(fmtDate(o.created_at))}</div>
         <ul class="mt-2 space-y-0.5 text-gray-700">${(Array.isArray(o.items) ? o.items : []).map(i => `<li>• ${esc(LANG === 'en' && i.name_en ? i.name_en : i.name)} × ${bn(Number(i.qty) || 0)}</li>`).join('')}</ul>
+        ${o.tracking ? `<div class="mt-2 text-xs bg-indigo-50 text-indigo-900 rounded-lg p-2">🚚 ${tr('ডেলিভারি আপডেট')}: ${esc(o.tracking)}</div>` : ''}
+        ${Number(o.discount) > 0 ? `<div class="mt-2 text-xs text-green-700">${tr('কুপন ছাড়')} (${esc(o.coupon_code)}): −${money(o.discount)}</div>` : ''}
         <div class="mt-2 flex justify-between border-t pt-2"><span>${tr('ডেলিভারি')}: ${money(o.delivery_charge)}</span><b class="text-brand">${tr('মোট')}: ${money(o.total)}</b></div></div>`;
     }).join('') : '<div class="text-center text-gray-500 py-10"><i class="fa-solid fa-box-open text-4xl text-gray-300 mb-2"></i><p>এখনো কোনো অর্ডার নেই</p></div>'}</div>`;
   }
@@ -1031,14 +1278,31 @@ function subscribeMine() {
       loadMyOrders().then(() => { if (state.modal === 'account' && state.accTab === 'orders') renderAccount(); });
     }).subscribe();
 }
+const sndOn = () => { try { return localStorage.getItem('sh_snd') !== '0'; } catch (e) { return true; } };
+function beep() {
+  try {
+    const C = window.AudioContext || window.webkitAudioContext; if (!C) return;
+    const ctx = new C(), o = ctx.createOscillator(), g = ctx.createGain(); o.connect(g); g.connect(ctx.destination);
+    o.type = 'sine'; o.frequency.value = 880; g.gain.setValueAtTime(0.25, ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.7);
+    o.start(); o.stop(ctx.currentTime + 0.7); setTimeout(() => ctx.close(), 1000);
+  } catch (e) {}
+}
+let newOrderCount = 0; const baseTitle = document.title;
+function notifyNewOrder(o) {
+  toast('🔔 নতুন অর্ডার এসেছে!' + (o && o.order_no ? ' ' + o.order_no : ''));
+  if (sndOn()) beep();
+  try { if ('Notification' in window && Notification.permission === 'granted') new Notification('🔔 নতুন অর্ডার — ' + (state.design.brand_name || ''), { body: (o && o.customer_name ? o.customer_name + ' • ' : '') + (o && o.total ? money(o.total) : '') }); } catch (e) {}
+  if (document.hidden) { newOrderCount++; document.title = '🔔 (' + newOrderCount + ') ' + baseTitle; }
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { newOrderCount = 0; document.title = baseTitle; } });
 function subscribeAdmin() {
   if (!sb) return;
   if (adminCh) { sb.removeChannel(adminCh); adminCh = null; }
   if (!state.user || !can('orders')) return;
   adminCh = sb.channel('admin-orders')
     .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, payload => {
-      if (payload.eventType === 'INSERT') toast('🔔 নতুন অর্ডার এসেছে!');
-      if (state.adminTab === 'orders' && !$('#admin').classList.contains('hidden')) loadAdminOrders().then(renderAdminTab);
+      if (payload.eventType === 'INSERT') notifyNewOrder(payload.new);
+      if (['dash', 'orders', 'customers'].includes(state.adminTab) && !$('#admin').classList.contains('hidden')) loadAdminOrders().then(renderAdminTab);
     }).subscribe();
 }
 function afterAuth() {
@@ -1051,8 +1315,10 @@ function afterAuth() {
 function showStore() { $('#admin').classList.add('hidden'); $('#store').classList.remove('hidden'); applyTheme(); }
 function showAdmin() { $('#store').classList.add('hidden'); $('#admin').classList.remove('hidden'); window.scrollTo(0, 0); }
 function route() {
+  const pg = /^#page=(story|policy|faq)$/.exec(location.hash);
+  if (pg) { showStore(); if (state.ready && state.modal !== 'page') openPage(pg[1]); return; }
   const pm = /^#p=([\w-]{1,64})$/.exec(location.hash);
-  if (pm) { showStore(); if (state.ready && state.products.some(x => x.id === pm[1]) && state.viewId !== pm[1]) { closeModal(); state.viewId = pm[1]; renderProductModal(); } return; }
+  if (pm) { showStore(); if (state.ready && state.products.some(x => x.id === pm[1]) && state.viewId !== pm[1]) { closeModal(); openProduct(pm[1]); } return; }
   if (location.hash !== '#admin') { showStore(); return; }
   if (!state.ready) return;
   if (!state.user) { showStore(); if (state.modal !== 'auth') openAuth('signin'); return; }
@@ -1100,7 +1366,10 @@ async function handleUpload(input) {
   const target = input.dataset.upload, maxW = Number(input.dataset.maxw) || 1200;
   toast('ছবি আপলোড হচ্ছে...'); input.disabled = true;
   try {
-    if (target === '@product') {
+    if (target === '@gallery') {
+      if (state.pfImages.length >= 4) throw new Error('সর্বোচ্চ ৪টি অতিরিক্ত ছবি');
+      state.pfImages.push(await uploadImage(file, 'products', maxW)); const g = $('#pf_gal'); if (g) g.innerHTML = pfGalHtml();
+    } else if (target === '@product') {
       state.pfImage = await uploadImage(file, 'products', maxW);
       const pv = $('#pf_prev'); if (pv) pv.innerHTML = prevImg(state.pfImage);
     } else {
@@ -1108,7 +1377,7 @@ async function handleUpload(input) {
       setPath(adminDraft, target, await uploadImage(file, folder, maxW));
       renderAdminTab();
     }
-    toast(tr('✅ ছবি আপলোড হয়েছে') + (target === '@product' ? '' : ' — ' + tr('"সংরক্ষণ করুন" চাপুন')));
+    toast(tr('✅ ছবি আপলোড হয়েছে') + (target === '@product' || target === '@gallery' ? '' : ' — ' + tr('"সংরক্ষণ করুন" চাপুন')));
   } catch (e) { console.warn(e); toast(e.message || 'আপলোড ব্যর্থ হয়েছে', 'err'); }
   input.disabled = false; input.value = '';
 }
@@ -1169,16 +1438,21 @@ async function copyText(t) {
 
 /* ---------------------------- ADMIN ---------------------------- */
 const ADMIN_TABS = [
+  { k: 'dash', l: 'সারসংক্ষেপ', i: 'fa-chart-line' },
   { k: 'products', l: 'পণ্য', i: 'fa-box' },
   { k: 'orders', l: 'অর্ডার', i: 'fa-receipt' },
+  { k: 'customers', l: 'গ্রাহক', i: 'fa-address-book' },
+  { k: 'coupons', l: 'কুপন', i: 'fa-ticket' },
+  { k: 'reviews', l: 'রিভিউ ও অনুরোধ', i: 'fa-star' },
   { k: 'design', l: 'ডিজাইন ও থিম', i: 'fa-palette' },
+  { k: 'shop', l: 'দোকান সেটিংস', i: 'fa-sliders' },
   { k: 'ads', l: 'বিজ্ঞাপন', i: 'fa-bullhorn' },
   { k: 'qr', l: 'কিউআর কোড', i: 'fa-qrcode' },
   { k: 'chats', l: 'এআই চ্যাট', i: 'fa-robot' },
   { k: 'users', l: 'ইউজার ও রোল', i: 'fa-users-gear' }
 ];
-const visibleTabs = () => ADMIN_TABS.filter(t => t.k === 'users' ? isSuper() : t.k === 'chats' ? can('orders') : t.k === 'qr' ? can('products') : can(t.k));
-
+const TAB_PERM = { dash: 'orders', customers: 'orders', chats: 'orders', coupons: 'products', reviews: 'products', qr: 'products', shop: 'design' };
+const visibleTabs = () => ADMIN_TABS.filter(t => t.k === 'users' ? isSuper() : can(TAB_PERM[t.k] || t.k));
 function enterAdmin() {
   const tabs = visibleTabs();
   if (!tabs.length) { toast('আপনাকে কোনো পারমিশন দেওয়া হয়নি। সুপার অ্যাডমিনের সাথে যোগাযোগ করুন।', 'err'); location.hash = ''; return; }
@@ -1207,14 +1481,17 @@ function renderAdmin() {
 }
 async function loadForTab() {
   const t = state.adminTab;
-  if (t === 'orders') { await loadAdminOrders(); }
+  if (t === 'orders' || t === 'customers') { await loadAdminOrders(); }
+  if (t === 'dash') { await Promise.all([loadAdminOrders(), loadReviewsAdmin()]); }
+  if (t === 'coupons') { await loadCoupons(); }
+  if (t === 'reviews') { await loadReviewsAdmin(); }
   if (t === 'users') { await loadAdminUsers(); }
   if (t === 'chats') { await loadChatSessions(); }
   if (state.adminTab === t) renderAdminTab();
 }
 async function loadAdminOrders() {
   if (!sb) return;
-  const { data, error } = await sb.from('orders').select('*').order('created_at', { ascending: false }).limit(300);
+  const { data, error } = await sb.from('orders').select('*').order('created_at', { ascending: false }).limit(1000);
   if (error) { console.warn(error); toast('অর্ডার লোড করা যায়নি', 'err'); return; }
   state.adminOrders = data || [];
 }
@@ -1229,7 +1506,8 @@ function renderAdminTab() {
   const t = state.adminTab;
   // keep focus-free re-render; draft is always the source of truth
   const y = window.scrollY;
-  body.innerHTML = t === 'products' ? tabProducts() : t === 'orders' ? tabOrders() : t === 'design' ? tabDesign() : t === 'ads' ? tabAds() : t === 'chats' ? tabChats() : t === 'qr' ? tabQR() : tabUsers();
+  const TABF = { dash: tabDash, products: tabProducts, orders: tabOrders, customers: tabCustomers, coupons: tabCoupons, reviews: tabReviews, design: tabDesign, shop: tabShop, ads: tabAds, chats: tabChats, qr: tabQR };
+  body.innerHTML = (TABF[t] || tabUsers)();
   window.scrollTo(0, y); updateDirty();
 }
 
@@ -1250,14 +1528,16 @@ const sect = (title, icon, inner) => `<section class="bg-white rounded-xl shadow
 /* ---- PRODUCTS TAB ---- */
 function tabProducts() {
   if (!can('products')) return noPerm();
-  return `<div class="flex items-center justify-between mb-4 gap-2"><h2 class="text-lg font-bold text-brand">${tr('পণ্য তালিকা')} (${bn(state.products.length)})</h2>
-    <button data-action="a-newProduct" class="btn btn-cta"><i class="fa-solid fa-plus"></i> নতুন পণ্য</button></div>
+  return `${featBanner()}<div class="flex items-center justify-between mb-4 gap-2 flex-wrap"><h2 class="text-lg font-bold text-brand">${tr('পণ্য তালিকা')} (${bn(state.products.length)})</h2>
+    <div class="flex gap-2 flex-wrap"><button data-action="a-bulk" class="btn btn-ghost"><i class="fa-solid fa-table-list"></i> সব দাম একসাথে</button>
+    <button data-action="a-csvProducts" class="btn btn-ghost"><i class="fa-solid fa-file-csv"></i> CSV</button>
+    <button data-action="a-newProduct" class="btn btn-cta"><i class="fa-solid fa-plus"></i> নতুন পণ্য</button></div></div>
     <div class="space-y-2">${state.products.length ? state.products.map(p => `
       <div class="bg-white rounded-xl shadow-sm p-3 flex gap-3 items-center">
         <div class="w-16 h-16 rounded-lg bg-gray-50 overflow-hidden shrink-0 flex items-center justify-center">${prevImg(p.image_url)}</div>
         <div class="flex-1 min-w-0"><div class="font-semibold truncate">${esc(p.name)}</div>
-          <div class="text-xs text-gray-500">${esc(catLabel(p.category))} ${p.weight ? '• ' + esc(p.weight) : ''}</div>
-          <div class="text-sm">${Number(p.price) > 0 ? `<b class="text-brand">${money(p.price)}</b>` : '<b class="text-amber-600">দাম দেওয়া হয়নি</b>'}${p.old_price ? ` <span class="text-gray-400 line-through text-xs">${money(p.old_price)}</span>` : ''}</div></div>
+          <div class="text-xs text-gray-500">${esc(catLabel(p.category))} ${p.weight ? '• ' + esc(p.weight) : ''}${p.is_combo ? ' • <b class="text-cta">কম্বো</b>' : ''}${hasVariants(p) ? ' • ' + bn(variantsOf(p).length) + 'টি ওজন' : ''}${(p.stock_qty !== null && p.stock_qty !== undefined) ? ` • <b class="${Number(p.stock_qty) <= (Number(state.design.low_stock) || 5) ? 'text-red-600' : ''}">স্টক ${bn(p.stock_qty)}</b>` : ''}</div>
+          <div class="text-sm">${hasVariants(p) ? `<b class="text-brand">${tr('থেকে')} ${money(minPrice(p))}</b>` : Number(p.price) > 0 ? `<b class="text-brand">${money(p.price)}</b>` : '<b class="text-amber-600">দাম দেওয়া হয়নি</b>'}${p.old_price ? ` <span class="text-gray-400 line-through text-xs">${money(p.old_price)}</span>` : ''}</div></div>
         <div class="flex flex-col sm:flex-row gap-1.5 shrink-0">
           <button data-action="a-stock" data-id="${esc(p.id)}" class="btn btn-sm ${p.in_stock ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">${p.in_stock ? 'স্টকে আছে' : 'স্টক শেষ'}</button>
           <button data-action="a-editProduct" data-id="${esc(p.id)}" class="btn btn-sm btn-ghost"><i class="fa-solid fa-pen"></i></button>
@@ -1266,9 +1546,27 @@ function tabProducts() {
 }
 const noPerm = () => '<div class="bg-white rounded-xl p-10 text-center text-gray-500">এই সেকশনে প্রবেশের অনুমতি নেই।</div>';
 
+function variantsText(p) {
+  return p && Array.isArray(p.variants) ? p.variants.map(v => [v.label, v.price, v.label_en || '', v.old_price || ''].join(' | ').replace(/( \| )+$/, '')).join('\n') : '';
+}
+function parseVariants(txt) {
+  const out = [];
+  for (const line of String(txt || '').split('\n')) {
+    if (!line.trim()) continue;
+    const a = line.split('|').map(x => x.trim()), price = Number(enNum(a[1]));
+    if (!a[0] || !(price > 0)) return { error: `ওজনের লাইন ঠিক নয়: "${line.trim()}" — লেবেল ও দাম দিন` };
+    const v = { label: a[0], price }; if (a[2]) v.label_en = a[2]; const o = Number(enNum(a[3])); if (o > price) v.old_price = o; out.push(v);
+  }
+  if (new Set(out.map(v => v.label)).size !== out.length) return { error: 'একই ওজনের নাম দুইবার দেওয়া যাবে না' };
+  return out.length > 8 ? { error: 'সর্বোচ্চ ৮টি ওজন দেওয়া যাবে' } : { list: out };
+}
+function pfGalHtml() {
+  return state.pfImages.map((u, i) => `<div class="relative w-16 h-16 rounded-lg overflow-hidden border">${prevImg(u)}<button type="button" data-action="a-pfGalDel" data-i="${i}" class="absolute top-0 right-0 w-5 h-5 bg-red-600 text-white text-xs rounded-bl" aria-label="মুছুন">×</button></div>`).join('')
+    + (state.pfImages.length < 4 ? `<label class="btn btn-ghost btn-sm cursor-pointer"><i class="fa-solid fa-plus"></i> ছবি<input type="file" accept="image/*" class="hidden" data-upload="@gallery" data-maxw="1000"></label>` : '');
+}
 function openProductForm(id) {
   const p = id ? state.products.find(x => x.id === id) : null;
-  state.pfId = id || null; state.pfImage = p ? (p.image_url || '') : '';
+  state.pfId = id || null; state.pfImage = p ? (p.image_url || '') : ''; state.pfImages = p && Array.isArray(p.images) ? p.images.slice(0, 4) : [];
   state.modal = 'pform';
   openModal(`${modalHead(p ? 'পণ্য সম্পাদনা' : 'নতুন পণ্য যোগ করুন')}
     <form data-form="product" class="p-5 space-y-3">
@@ -1277,11 +1575,16 @@ function openProductForm(id) {
       <div class="grid grid-cols-2 gap-3">
         <label class="block"><span class="lbl">ক্যাটেগরি *</span><select name="category" class="inp">${cats().concat(p && !cats().some(c => c.name === p.category) ? [{ name: p.category }] : []).map(c => `<option value="${esc(c.name)}" ${p && p.category === c.name ? 'selected' : ''}>${esc(catLabel(c.name))}</option>`).join('')}</select></label>
         <label class="block"><span class="lbl">ওজন/পরিমাণ</span><input name="weight" class="inp" placeholder="যেমন: ১ কেজি" value="${esc(p ? p.weight : '')}"></label>
-        <label class="block"><span class="lbl">বিক্রয় মূল্য (৳) *</span><input name="price" type="number" min="0" step="1" required class="inp" value="${esc(p ? p.price : '')}"></label>
+        <label class="block"><span class="lbl">বিক্রয় মূল্য (৳) *</span><input name="price" type="number" min="0" step="1" class="inp" value="${esc(p ? p.price : '')}"></label>
         <label class="block"><span class="lbl">পুরনো মূল্য (৳)</span><input name="old_price" type="number" min="0" step="1" class="inp" value="${esc(p && p.old_price ? p.old_price : '')}"></label>
         <label class="block"><span class="lbl">ট্যাগ</span><input name="tag" class="inp" placeholder="Best Selling" value="${esc(p ? p.tag : '')}"></label>
         <label class="block"><span class="lbl">ক্রম (ছোট আগে)</span><input name="sort_order" type="number" step="1" class="inp" value="${esc(p ? p.sort_order : 0)}"></label>
       </div>
+      ${state.feat ? `<label class="block"><span class="lbl">ওজন অনুযায়ী আলাদা দাম (ঐচ্ছিক) — প্রতি লাইনে একটি</span><textarea name="variants" rows="3" class="inp" placeholder="৫০০ গ্রাম | 600 | 500 g&#10;১ কেজি | 1100 | 1 kg">${esc(variantsText(p))}</textarea></label>
+      <p class="text-xs text-gray-500 -mt-1">ফরম্যাট: <b>লেবেল | দাম | ইংরেজি লেবেল (ঐচ্ছিক) | পুরনো দাম (ঐচ্ছিক)</b>। এটা দিলে উপরের "বিক্রয় মূল্য" ও "ওজন" ব্যবহার হবে না।</p>
+      <div class="grid grid-cols-2 gap-3"><label class="block"><span class="lbl">স্টক সংখ্যা (ঐচ্ছিক)</span><input name="stock_qty" type="number" min="0" step="1" class="inp" placeholder="ফাঁকা = সীমাহীন" value="${esc(p && p.stock_qty !== null && p.stock_qty !== undefined ? p.stock_qty : '')}"></label>
+        <label class="flex items-center justify-between py-1 cursor-pointer self-end"><span class="text-sm font-medium">কম্বো / অফার প্যাক</span><span class="toggle"><input type="checkbox" name="is_combo" ${p && p.is_combo ? 'checked' : ''}><span></span></span></label></div>
+      <p class="text-xs text-gray-500 -mt-1">স্টক সংখ্যা দিলে অর্ডারে নিজে থেকে কমবে, ০ হলে "স্টক শেষ" হবে এবং অর্ডার বাতিল করলে ফিরে আসবে।</p>` : ''}
       <p class="text-xs text-gray-500 -mt-1">দাম ০ রাখলে সাইটে "দাম জানতে মেসেজ করুন" দেখাবে এবং কার্টে যোগ করা যাবে না।</p>
       <label class="block"><span class="lbl">বিবরণ</span><textarea name="description" rows="3" class="inp">${esc(p ? p.description : '')}</textarea></label>
       <label class="block"><span class="lbl">বিবরণ (ইংরেজি)</span><textarea name="description_en" rows="3" class="inp">${esc(p ? p.description_en : '')}</textarea></label>
@@ -1289,6 +1592,7 @@ function openProductForm(id) {
         <div id="pf_prev" class="w-24 h-24 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center border shrink-0">${prevImg(state.pfImage)}</div>
         <div class="flex flex-col gap-1.5"><label class="btn btn-ghost btn-sm cursor-pointer"><i class="fa-solid fa-upload"></i> ছবি আপলোড<input type="file" accept="image/*" class="hidden" data-upload="@product" data-maxw="1000"></label>
         <button type="button" data-action="a-pfRemoveImg" class="btn btn-sm text-red-600 border border-red-200 bg-white"><i class="fa-solid fa-trash-can"></i> ছবি মুছুন</button></div></div></div>
+      ${state.feat ? `<div><span class="lbl">অতিরিক্ত ছবি (সর্বোচ্চ ৪টি)</span><div id="pf_gal" class="flex flex-wrap gap-2 items-center">${pfGalHtml()}</div></div>` : ''}
       <label class="flex items-center justify-between py-1 cursor-pointer"><span class="text-sm font-medium">স্টকে আছে</span><span class="toggle"><input type="checkbox" name="in_stock" ${!p || p.in_stock ? 'checked' : ''}><span></span></span></label>
       <div class="flex gap-2 pt-2"><button type="button" data-action="closeModal" class="btn btn-ghost flex-1">বাতিল</button><button type="submit" class="btn btn-brand flex-1"><i class="fa-solid fa-floppy-disk"></i> সংরক্ষণ</button></div>
     </form>`, true);
@@ -1303,12 +1607,263 @@ async function saveProduct(f) {
     in_stock: fd.get('in_stock') === 'on', image_url: state.pfImage || null,
     name_en: (fd.get('name_en') || '').trim(), description_en: (fd.get('description_en') || '').trim()
   };
+  if (state.feat) {
+    const vr = parseVariants(fd.get('variants')); if (vr.error) return toast(vr.error, 'err');
+    row.variants = vr.list; row.images = state.pfImages.slice(0, 4); row.is_combo = fd.get('is_combo') === 'on';
+    const sq = String(fd.get('stock_qty') ?? '').trim(); row.stock_qty = sq === '' ? null : Math.max(0, parseInt(enNum(sq), 10) || 0);
+    if (row.stock_qty !== null) row.in_stock = row.stock_qty > 0;
+    if (vr.list.length) { row.price = Math.min(...vr.list.map(v => v.price)); row.old_price = null; row.weight = ''; }
+  }
   const btn = $('button[type=submit]', f); btn.disabled = true;
   const q = state.pfId ? sb.from('products').update(row).eq('id', state.pfId) : sb.from('products').insert(row);
   const { error } = await q; btn.disabled = false;
   if (error) { console.warn(error); return toast('সংরক্ষণ ব্যর্থ: ' + error.message, 'err'); }
   toast('✅ পণ্য সংরক্ষিত হয়েছে'); closeModal();
   await loadProducts(); renderProducts(); updateBadges(); renderAdminTab();
+}
+
+
+/* ---------------------------- NEW ADMIN FEATURES ---------------------------- */
+const featBanner = () => state.feat ? '' : `<div class="bg-amber-50 border border-amber-300 text-amber-900 rounded-xl p-3 mb-4 text-sm"><b>নতুন ফিচারের ডাটাবেস আপডেট বাকি আছে।</b> Supabase → SQL Editor-এ <code>supabase-features.sql</code> চালালে কুপন, ওজন অনুযায়ী দাম, স্টক সংখ্যা, রিভিউ ইত্যাদি কাজ করবে।</div>`;
+const enNum = x => String(x == null ? '' : x).replace(/[০-৯]/g, d => '০১২৩৪৫৬৭৮৯'.indexOf(d));
+const waPhone = ph => 'https://wa.me/88' + digits(normPhone(ph));
+function csvDownload(name, rows) {
+  const cell = v => { let t = String(v == null ? '' : v); if (/^[=+\-@]/.test(t)) t = "'" + t; return '"' + t.replace(/"/g, '""') + '"'; };
+  const blob = new Blob(['﻿' + rows.map(r => r.map(cell).join(',')).join('\r\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+const dateOnly = d => { try { return new Date(d).toLocaleDateString(LANG === 'en' ? 'en-GB' : 'bn-BD'); } catch (e) { return ''; } };
+
+/* ---- DASHBOARD ---- */
+function tabDash() {
+  if (!can('orders')) return noPerm();
+  const DAY = 864e5, t0 = new Date().setHours(0, 0, 0, 0), live = state.adminOrders.filter(o => o.status !== 'cancelled');
+  const since = days => live.filter(o => new Date(o.created_at).getTime() >= t0 - (days - 1) * DAY);
+  const sum = a => a.reduce((x, o) => x + (Number(o.total) || 0), 0);
+  const today = since(1), week = since(7), month = since(30);
+  const pending = state.adminOrders.filter(o => o.status === 'pending').length;
+  const days = [6, 5, 4, 3, 2, 1, 0].map(i => { const a = t0 - i * DAY, o = live.filter(x => { const t = new Date(x.created_at).getTime(); return t >= a && t < a + DAY; }); return { a, n: o.length, rev: sum(o) }; });
+  const maxRev = Math.max(1, ...days.map(d => d.rev));
+  const top = {}; month.forEach(o => (o.items || []).forEach(i => { const k = i.name; top[k] = top[k] || { q: 0, r: 0 }; top[k].q += Number(i.qty) || 0; top[k].r += (Number(i.price) || 0) * (Number(i.qty) || 0); }));
+  const topList = Object.entries(top).sort((a, b) => b[1].q - a[1].q).slice(0, 5);
+  const low = state.products.filter(p => p.stock_qty !== null && p.stock_qty !== undefined && Number(p.stock_qty) <= (Number(state.design.low_stock) || 5)).sort((a, b) => a.stock_qty - b.stock_qty);
+  const reqCount = state.adminRequests.length, pendRev = state.adminReviews.filter(r => !r.approved).length;
+  const card = (l, v, sub, ic, act, f) => `<button type="button" ${act ? `data-action="${act}" data-f="${f || 'all'}"` : ''} class="text-left bg-white rounded-xl shadow-sm p-3 ${act ? 'hover:shadow-md active:scale-95 transition' : 'cursor-default'}"><i class="fa-solid ${ic} text-gold"></i><div class="text-xl font-bold text-brand mt-1">${v}</div><div class="text-xs text-gray-500">${l}</div>${sub ? `<div class="text-[11px] text-gray-400">${sub}</div>` : ''}</button>`;
+  const notifOk = 'Notification' in window && Notification.permission === 'granted';
+  return `${featBanner()}
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+      ${card('আজকের অর্ডার', bn(today.length), money(sum(today)), 'fa-calendar-day', 'a-goOrders', 'all')}
+      ${card('গত ৭ দিন', bn(week.length), money(sum(week)), 'fa-calendar-week', 'a-goOrders', 'all')}
+      ${card('গত ৩০ দিন', bn(month.length), money(sum(month)), 'fa-calendar', 'a-goOrders', 'all')}
+      ${card('অপেক্ষমাণ অর্ডার', bn(pending), 'দেখতে চাপুন', 'fa-hourglass-half', 'a-goOrders', 'pending')}</div>
+    <p class="text-[11px] text-gray-500 -mt-2 mb-4">বিক্রির অঙ্কে বাতিল অর্ডার ধরা হয়নি।</p>
+    <div class="grid lg:grid-cols-2 gap-4">
+      <section class="bg-white rounded-xl shadow-sm p-4"><h3 class="font-bold text-brand mb-3"><i class="fa-solid fa-chart-column text-gold"></i> গত ৭ দিনের বিক্রি</h3>
+        <div class="flex items-end gap-1.5 h-36">${days.map(d => `<div class="flex-1 flex flex-col items-center justify-end gap-1 h-full"><div class="text-[10px] text-gray-500">${d.n ? bn(d.n) : ''}</div><div class="w-full rounded-t bg-gold/80" style="height:${d.rev ? Math.max(6, Math.round(d.rev / maxRev * 85)) : 2}px" title="${esc(money(d.rev))}"></div><div class="text-[10px] text-gray-500">${esc(new Date(d.a).toLocaleDateString(LANG === 'en' ? 'en-GB' : 'bn-BD', { weekday: 'short' }))}</div></div>`).join('')}</div></section>
+      <section class="bg-white rounded-xl shadow-sm p-4"><h3 class="font-bold text-brand mb-3"><i class="fa-solid fa-fire text-gold"></i> সবচেয়ে বেশি বিক্রি (৩০ দিন)</h3>
+        ${topList.length ? `<ol class="space-y-1.5 text-sm">${topList.map(([n, v], i) => `<li class="flex justify-between gap-2"><span class="truncate">${bn(i + 1)}. ${esc(n)}</span><span class="shrink-0 text-gray-600">${bn(v.q)} পিস • ${money(v.r)}</span></li>`).join('')}</ol>` : '<p class="text-sm text-gray-500">এখনো কোনো বিক্রি নেই।</p>'}</section>
+      <section class="bg-white rounded-xl shadow-sm p-4"><h3 class="font-bold text-brand mb-3"><i class="fa-solid fa-triangle-exclamation text-gold"></i> কম স্টক (${bn(low.length)})</h3>
+        ${low.length ? `<ul class="space-y-1 text-sm">${low.map(p => `<li class="flex justify-between gap-2"><span class="truncate">${esc(p.name)}</span><b class="${Number(p.stock_qty) === 0 ? 'text-red-600' : 'text-amber-600'}">${Number(p.stock_qty) === 0 ? 'শেষ' : bn(p.stock_qty) + ' বাকি'}</b></li>`).join('')}</ul>` : '<p class="text-sm text-gray-500">সংখ্যা দিয়ে স্টক রাখলে এখানে কম স্টকের পণ্য দেখাবে (পণ্য সম্পাদনায় "স্টক সংখ্যা")।</p>'}</section>
+      <section class="bg-white rounded-xl shadow-sm p-4"><h3 class="font-bold text-brand mb-3"><i class="fa-solid fa-bell text-gold"></i> করণীয়</h3>
+        <ul class="space-y-2 text-sm"><li><button data-action="a-goTab" data-tab="reviews" class="underline text-brand">${bn(pendRev)}টি রিভিউ অনুমোদনের অপেক্ষায়</button></li>
+        <li><button data-action="a-goTab" data-tab="reviews" class="underline text-brand">${bn(reqCount)}টি "স্টকে এলে জানান" অনুরোধ</button></li></ul>
+        <div class="mt-4 pt-3 border-t space-y-2"><div class="text-xs font-semibold text-gray-600">নতুন অর্ডারের নোটিফিকেশন (এই পেজ খোলা থাকলে)</div>
+          <div class="flex gap-2 flex-wrap"><button data-action="a-sndToggle" class="btn btn-sm btn-ghost"><i class="fa-solid ${sndOn() ? 'fa-volume-high' : 'fa-volume-xmark'}"></i> শব্দ ${sndOn() ? 'চালু' : 'বন্ধ'}</button>
+          <button data-action="a-notifPerm" class="btn btn-sm btn-ghost" ${notifOk ? 'disabled' : ''}><i class="fa-solid fa-bell"></i> ${notifOk ? 'ব্রাউজার নোটিফিকেশন চালু' : 'ব্রাউজার নোটিফিকেশন চালু করুন'}</button></div></div></section>
+    </div>
+    <section class="bg-white rounded-xl shadow-sm p-4 mt-4"><h3 class="font-bold text-brand mb-3">সাম্প্রতিক অর্ডার</h3>
+      ${state.adminOrders.slice(0, 6).map(o => { const st = STATUS[o.status] || STATUS.pending; return `<div class="flex items-center justify-between gap-2 py-1.5 border-b last:border-0 text-sm"><span class="truncate"><b>${esc(o.order_no)}</b> • ${esc(o.customer_name)}</span><span class="shrink-0 flex items-center gap-2"><b class="text-brand">${money(o.total)}</b><span class="px-2 py-0.5 rounded-full text-[11px] ${st.c}">${esc(tr(st.l))}</span></span></div>`; }).join('') || '<p class="text-sm text-gray-500">কোনো অর্ডার নেই।</p>'}</section>`;
+}
+
+/* ---- CUSTOMERS ---- */
+function customersList() {
+  const m = new Map();
+  state.adminOrders.forEach(o => {
+    const k = normPhone(o.phone) || String(o.phone);
+    let c = m.get(k); if (!c) { c = { phone: k, name: o.customer_name, orders: 0, spend: 0, last: o.created_at, reg: false }; m.set(k, c); }
+    if (o.status !== 'cancelled') { c.orders++; c.spend += Number(o.total) || 0; }
+    if (new Date(o.created_at) > new Date(c.last)) { c.last = o.created_at; c.name = o.customer_name; }
+    if (o.user_id) c.reg = true;
+  });
+  return [...m.values()].sort((a, b) => b.spend - a.spend);
+}
+function custRows() {
+  const q = state.custQ.trim().toLowerCase(), list = customersList().filter(c => !q || c.name.toLowerCase().includes(q) || c.phone.includes(q));
+  return list.length ? list.map(c => `<div class="bg-white rounded-xl shadow-sm p-3 flex items-center gap-3">
+      <div class="w-10 h-10 rounded-full bg-brand text-gold flex items-center justify-center font-bold shrink-0">${esc((c.name || '?').trim().charAt(0))}</div>
+      <div class="flex-1 min-w-0"><div class="font-semibold truncate">${esc(c.name)} ${c.orders >= 2 ? '<span class="text-[10px] bg-green-100 text-green-800 px-1.5 rounded">পুরনো গ্রাহক</span>' : ''} ${c.reg ? '<span class="text-[10px] bg-gray-100 px-1.5 rounded">নিবন্ধিত</span>' : ''}</div>
+        <div class="text-xs text-gray-500">${esc(c.phone)} • ${bn(c.orders)}টি অর্ডার • ${money(c.spend)} • শেষ: ${esc(dateOnly(c.last))}</div></div>
+      <a href="${esc(waPhone(c.phone))}" target="_blank" rel="noopener noreferrer" class="btn btn-sm bg-green-100 text-green-800 shrink-0" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+      <a href="tel:${esc(c.phone)}" class="btn btn-sm btn-ghost shrink-0" aria-label="কল"><i class="fa-solid fa-phone"></i></a></div>`).join('')
+    : '<div class="bg-white rounded-xl p-10 text-center text-gray-500">কোনো গ্রাহক পাওয়া যায়নি</div>';
+}
+function tabCustomers() {
+  if (!can('orders')) return noPerm();
+  const all = customersList(), rep2 = all.filter(c => c.orders >= 2).length;
+  return `<div class="grid grid-cols-3 gap-3 mb-4">
+      <div class="bg-white rounded-xl shadow-sm p-3"><div class="text-xl font-bold text-brand">${bn(all.length)}</div><div class="text-xs text-gray-500">মোট গ্রাহক</div></div>
+      <div class="bg-white rounded-xl shadow-sm p-3"><div class="text-xl font-bold text-brand">${bn(rep2)}</div><div class="text-xs text-gray-500">পুনরায় কিনেছেন</div></div>
+      <div class="bg-white rounded-xl shadow-sm p-3"><div class="text-xl font-bold text-brand">${money(all.reduce((s, c) => s + c.spend, 0))}</div><div class="text-xs text-gray-500">মোট বিক্রি</div></div></div>
+    <div class="flex gap-2 mb-3"><input data-custq class="inp" type="search" placeholder="নাম বা ফোন দিয়ে খুঁজুন" value="${esc(state.custQ)}"><button data-action="a-csvCust" class="btn btn-ghost whitespace-nowrap"><i class="fa-solid fa-file-csv"></i> CSV</button></div>
+    <p class="text-[11px] text-gray-500 mb-2">গ্রাহক তালিকা অর্ডার থেকে তৈরি (সর্বশেষ ১০০০টি অর্ডার)। ফোন নম্বর দিয়ে একই গ্রাহকের অর্ডার মেলানো হয়।</p>
+    <div id="custList" class="space-y-2">${custRows()}</div>`;
+}
+
+/* ---- COUPONS ---- */
+async function loadCoupons() {
+  if (!sb) return;
+  const { data, error } = await sb.from('coupons').select('*').order('created_at', { ascending: false });
+  state.couponsErr = !!error; state.adminCoupons = data || [];
+}
+function couponDesc(c) {
+  const k = c.kind === 'percent' ? `${bn(Number(c.value))}% ছাড়${c.max_discount ? ` (সর্বোচ্চ ${money(c.max_discount)})` : ''}` : c.kind === 'fixed' ? `${money(c.value)} ছাড়` : 'ফ্রি ডেলিভারি';
+  return k + (Number(c.min_order) > 0 ? ` • ন্যূনতম ${money(c.min_order)}` : '') + (c.expires_at ? ` • মেয়াদ ${dateOnly(c.expires_at)}` : '');
+}
+function tabCoupons() {
+  if (!can('products')) return noPerm();
+  const now = Date.now();
+  return `${featBanner()}${state.couponsErr ? '<div class="bg-red-50 text-red-700 rounded-xl p-3 mb-4 text-sm">কুপন লোড করা যায়নি। <code>supabase-features.sql</code> চালানো হয়েছে কি?</div>' : ''}
+    <div class="flex items-center justify-between mb-3 gap-2"><h2 class="text-lg font-bold text-brand">কুপন ও ছাড় কোড (${bn(state.adminCoupons.length)})</h2>
+      <button data-action="a-newCoupon" class="btn btn-cta"><i class="fa-solid fa-plus"></i> নতুন কুপন</button></div>
+    <div class="space-y-2">${state.adminCoupons.length ? state.adminCoupons.map(c => { const exp = c.expires_at && new Date(c.expires_at) < now, used = c.max_uses && c.used_count >= c.max_uses;
+      return `<div class="bg-white rounded-xl shadow-sm p-3 flex items-center gap-3 flex-wrap">
+        <div class="flex-1 min-w-[180px]"><div class="font-bold text-brand tracking-wide">${esc(c.code)} ${!c.active ? '<span class="text-[10px] bg-gray-200 px-1.5 rounded">বন্ধ</span>' : exp ? '<span class="text-[10px] bg-red-100 text-red-700 px-1.5 rounded">মেয়াদ শেষ</span>' : used ? '<span class="text-[10px] bg-red-100 text-red-700 px-1.5 rounded">সীমা শেষ</span>' : '<span class="text-[10px] bg-green-100 text-green-800 px-1.5 rounded">চালু</span>'}</div>
+          <div class="text-xs text-gray-600">${esc(couponDesc(c))}</div><div class="text-xs text-gray-500">ব্যবহার: ${bn(c.used_count)}${c.max_uses ? ' / ' + bn(c.max_uses) : ''}${c.note ? ' • ' + esc(c.note) : ''}</div></div>
+        <div class="flex gap-1.5"><button data-action="a-couponToggle" data-id="${esc(c.id)}" class="btn btn-sm btn-ghost">${c.active ? 'বন্ধ করুন' : 'চালু করুন'}</button>
+          <button data-action="a-editCoupon" data-id="${esc(c.id)}" class="btn btn-sm btn-ghost"><i class="fa-solid fa-pen"></i></button>
+          <button data-action="a-delCoupon" data-id="${esc(c.id)}" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash-can"></i></button></div></div>`; }).join('')
+      : '<div class="bg-white rounded-xl p-10 text-center text-gray-500">এখনো কোনো কুপন নেই। "নতুন কুপন" চেপে শুরু করুন।</div>'}</div>`;
+}
+function openCouponForm(id) {
+  const c = id ? state.adminCoupons.find(x => x.id === id) : null; state.cfId = id || null;
+  const exp = c && c.expires_at ? new Date(c.expires_at).toISOString().slice(0, 10) : '';
+  state.modal = 'cform';
+  openModal(`${modalHead(c ? 'কুপন সম্পাদনা' : 'নতুন কুপন')}<form data-form="coupon-admin" class="p-5 space-y-3">
+    <label class="block"><span class="lbl">কুপন কোড * (ইংরেজি অক্ষর/সংখ্যা)</span><input name="code" required maxlength="30" class="inp uppercase" placeholder="SAR10" value="${esc(c ? c.code : '')}"></label>
+    <label class="block"><span class="lbl">ধরন</span><select name="kind" class="inp"><option value="percent" ${c && c.kind === 'percent' ? 'selected' : ''}>শতাংশ ছাড় (%)</option><option value="fixed" ${c && c.kind === 'fixed' ? 'selected' : ''}>নির্দিষ্ট টাকা ছাড় (৳)</option><option value="free_delivery" ${c && c.kind === 'free_delivery' ? 'selected' : ''}>ফ্রি ডেলিভারি</option></select></label>
+    <div class="grid grid-cols-2 gap-3">
+      <label class="block"><span class="lbl">ছাড়ের পরিমাণ (% বা ৳)</span><input name="value" type="number" min="0" step="1" class="inp" value="${esc(c ? c.value : '')}"></label>
+      <label class="block"><span class="lbl">সর্বোচ্চ ছাড় (৳, % এর ক্ষেত্রে)</span><input name="max_discount" type="number" min="0" step="1" class="inp" value="${esc(c && c.max_discount ? c.max_discount : '')}"></label>
+      <label class="block"><span class="lbl">ন্যূনতম অর্ডার (৳)</span><input name="min_order" type="number" min="0" step="1" class="inp" value="${esc(c ? c.min_order : 0)}"></label>
+      <label class="block"><span class="lbl">কতবার ব্যবহার করা যাবে</span><input name="max_uses" type="number" min="1" step="1" class="inp" placeholder="ফাঁকা = সীমাহীন" value="${esc(c && c.max_uses ? c.max_uses : '')}"></label></div>
+    <label class="block"><span class="lbl">মেয়াদ শেষের তারিখ (ঐচ্ছিক)</span><input name="expires" type="date" class="inp" value="${esc(exp)}"></label>
+    <label class="block"><span class="lbl">নিজের জন্য নোট (ঐচ্ছিক)</span><input name="note" class="inp" value="${esc(c ? c.note : '')}"></label>
+    <label class="flex items-center justify-between py-1 cursor-pointer"><span class="text-sm font-medium">চালু আছে</span><span class="toggle"><input type="checkbox" name="active" ${!c || c.active ? 'checked' : ''}><span></span></span></label>
+    <div class="flex gap-2 pt-2"><button type="button" data-action="closeModal" class="btn btn-ghost flex-1">বাতিল</button><button type="submit" class="btn btn-brand flex-1"><i class="fa-solid fa-floppy-disk"></i> সংরক্ষণ</button></div></form>`);
+}
+async function saveCoupon(f) {
+  const fd = new FormData(f), code = String(fd.get('code') || '').trim().toUpperCase(), kind = fd.get('kind'), value = Number(enNum(fd.get('value')) || 0);
+  if (!/^[A-Z0-9_-]{2,30}$/.test(code)) return toast('কোডে শুধু ইংরেজি অক্ষর, সংখ্যা, - বা _ ব্যবহার করুন', 'err');
+  if (kind === 'percent' && !(value > 0 && value <= 100)) return toast('শতাংশ ১ থেকে ১০০ এর মধ্যে দিন', 'err');
+  if (kind === 'fixed' && !(value > 0)) return toast('ছাড়ের টাকার পরিমাণ দিন', 'err');
+  const num = k => { const v = String(fd.get(k) || '').trim(); return v === '' ? null : Number(enNum(v)); };
+  const ex = String(fd.get('expires') || '');
+  const row = { code, kind, value: kind === 'free_delivery' ? 0 : value, max_discount: kind === 'percent' ? num('max_discount') : null, min_order: num('min_order') || 0, max_uses: num('max_uses'),
+    expires_at: ex ? new Date(ex + 'T23:59:59+06:00').toISOString() : null, active: fd.get('active') === 'on', note: String(fd.get('note') || '').trim() };
+  const btn = $('button[type=submit]', f); btn.disabled = true;
+  const { error } = state.cfId ? await sb.from('coupons').update(row).eq('id', state.cfId) : await sb.from('coupons').insert(row);
+  btn.disabled = false;
+  if (error) return toast(error.code === '23505' ? 'এই কোড আগেই আছে' : 'সংরক্ষণ ব্যর্থ: ' + error.message, 'err');
+  toast('✅ কুপন সংরক্ষিত হয়েছে'); closeModal(); await loadCoupons(); renderAdminTab();
+}
+
+/* ---- REVIEWS + STOCK REQUESTS ---- */
+async function loadReviewsAdmin() {
+  if (!sb) return;
+  const [r, q] = await Promise.all([
+    sb.from('reviews').select('*').order('created_at', { ascending: false }).limit(300),
+    sb.from('stock_requests').select('*').order('created_at', { ascending: false }).limit(500)]);
+  state.adminReviews = r.error ? [] : (r.data || []); state.adminRequests = q.error ? [] : (q.data || []);
+}
+function tabReviews() {
+  if (!can('products')) return noPerm();
+  const pn = id => { const p = state.products.find(x => x.id === id); return p ? p.name : '(মুছে ফেলা পণ্য)'; };
+  const rv = [...state.adminReviews].sort((a, b) => (a.approved - b.approved) || (new Date(b.created_at) - new Date(a.created_at)));
+  const grp = {}; state.adminRequests.forEach(r => { (grp[r.product_id] = grp[r.product_id] || []).push(r); });
+  return `${featBanner()}<h2 class="text-lg font-bold text-brand mb-3">গ্রাহক রিভিউ (${bn(rv.length)})</h2>
+    <p class="text-xs text-gray-500 mb-3">শুধু ডেলিভারি পাওয়া গ্রাহকরা রিভিউ দিতে পারেন। আপনি অনুমোদন করলে তবেই সাইটে দেখাবে।</p>
+    <div class="space-y-2 mb-6">${rv.length ? rv.map(r => `<div class="bg-white rounded-xl shadow-sm p-3 ${r.approved ? '' : 'ring-2 ring-amber-300'}">
+      <div class="flex items-center justify-between gap-2 flex-wrap"><div class="text-sm"><b>${esc(r.name)}</b> • ${esc(pn(r.product_id))} ${stars(r.rating)}</div>
+        <span class="text-[11px] px-2 py-0.5 rounded-full ${r.approved ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}">${r.approved ? 'প্রকাশিত' : 'অনুমোদনের অপেক্ষায়'}</span></div>
+      ${r.body ? `<p class="text-sm text-gray-700 mt-1 whitespace-pre-line">${esc(r.body)}</p>` : ''}
+      <div class="flex gap-1.5 mt-2"><button data-action="a-revToggle" data-id="${esc(r.id)}" class="btn btn-sm ${r.approved ? 'btn-ghost' : 'btn-brand'}">${r.approved ? 'লুকান' : 'অনুমোদন দিন'}</button>
+        <button data-action="a-revDel" data-id="${esc(r.id)}" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash-can"></i></button></div></div>`).join('')
+      : '<div class="bg-white rounded-xl p-8 text-center text-gray-500">এখনো কোনো রিভিউ নেই</div>'}</div>
+    <h2 class="text-lg font-bold text-brand mb-3">"স্টকে এলে জানান" অনুরোধ (${bn(state.adminRequests.length)})</h2>
+    <div class="space-y-2">${Object.keys(grp).length ? Object.entries(grp).map(([pid, a]) => `<div class="bg-white rounded-xl shadow-sm p-3">
+      <div class="flex items-center justify-between gap-2"><b class="text-sm">${esc(pn(pid))}</b><button data-action="a-reqClear" data-id="${esc(pid)}" class="btn btn-sm btn-ghost">সব সরান</button></div>
+      <div class="flex flex-wrap gap-2 mt-2">${a.map(r => `<a href="${esc(waPhone(r.phone))}?text=${encodeURIComponent((LANG === 'en' ? 'Assalamu Alaikum! ' : 'আসসালামু আলাইকুম! ') + pn(pid) + (LANG === 'en' ? ' is back in stock.' : ' এখন স্টকে আছে।'))}" target="_blank" rel="noopener noreferrer" class="btn btn-sm bg-green-100 text-green-800"><i class="fa-brands fa-whatsapp"></i> ${esc(r.phone)}</a>`).join('')}</div></div>`).join('')
+      : '<div class="bg-white rounded-xl p-8 text-center text-gray-500">কোনো অনুরোধ নেই</div>'}</div>`;
+}
+
+/* ---- SHOP SETTINGS (delivery rules, holiday mode, pages, FAQ) ---- */
+function tabShop() {
+  if (!can('design')) return noPerm();
+  const F = FLD;
+  return `<div class="space-y-4 pb-24">
+    ${sect('অর্ডার চালু/বন্ধ (ছুটির মোড)', 'fa-power-off', F.toggle('নতুন অর্ডার সাময়িক বন্ধ রাখুন', 'design.orders_paused') + F.area('গ্রাহককে দেখানো বার্তা (বাংলা)', 'design.pause_msg', 2) + F.area('বার্তা (ইংরেজি)', 'design.pause_msg_en', 2) + '<p class="text-xs text-gray-500">চালু করলে কার্ট থেকে অর্ডার নেওয়া বন্ধ হবে (সার্ভারেও আটকানো থাকবে)। গ্রাহক তখনও পণ্য দেখতে ও WhatsApp-এ কথা বলতে পারবেন।</p>')}
+    ${sect('ডেলিভারি নিয়ম', 'fa-truck-fast', F.num('এর বেশি কিনলে ডেলিভারি ফ্রি (৳) — ০ = বন্ধ', 'design.free_delivery_min') + `<div class="grid sm:grid-cols-2 gap-3">${F.text('আনুমানিক ডেলিভারি সময় (বাংলা)', 'design.delivery_eta', 'যেমন: ১–৩ কার্যদিবস')}${F.text('আনুমানিক ডেলিভারি সময় (ইংরেজি)', 'design.delivery_eta_en', 'e.g. 1–3 working days')}</div>`
+      + '<div class="text-sm font-semibold mt-2">অতিরিক্ত ডেলিভারি এলাকা (ঢাকার ভেতর/বাইরের চার্জ "ডিজাইন ও থিম" ট্যাবে)</div>'
+      + [0, 1, 2].map(i => `<div class="grid sm:grid-cols-3 gap-2 border rounded-lg p-3">${F.text('এলাকার নাম (বাংলা)', `design.extra_zones.${i}.name`, 'যেমন: সাভার')}${F.text('এলাকার নাম (ইংরেজি)', `design.extra_zones.${i}.name_en`)}${F.num('চার্জ (৳)', `design.extra_zones.${i}.charge`)}</div>`).join('')
+      + '<p class="text-xs text-gray-500">নাম ফাঁকা রাখলে ওই এলাকা কার্টে দেখাবে না।</p>')}
+    ${sect('স্টক ও কম্বো', 'fa-boxes-stacked', F.num('এর কম থাকলে "মাত্র N টি বাকি" দেখাবে ও কম স্টক সতর্কতা', 'design.low_stock') + `<div class="grid sm:grid-cols-2 gap-3">${F.text('কম্বো সেকশনের শিরোনাম (বাংলা)', 'design.combo_title')}${F.text('কম্বো সেকশনের শিরোনাম (ইংরেজি)', 'design.combo_title_en')}</div><p class="text-xs text-gray-500">পণ্য সম্পাদনায় "কম্বো/অফার প্যাক" চালু করলে সেই পণ্য সাইটের ওপরে এই সেকশনে দেখাবে।</p>`)}
+    ${['story', 'policy'].map(k => sect(k === 'story' ? 'আমাদের গল্প পেজ' : 'ডেলিভারি ও রিটার্ন নীতি পেজ', 'fa-file-lines', `<div class="grid sm:grid-cols-2 gap-3">${F.text('শিরোনাম (বাংলা)', `design.pages.${k}.title`)}${F.text('শিরোনাম (ইংরেজি)', `design.pages.${k}.title_en`)}</div>${F.area('লেখা (বাংলা)', `design.pages.${k}.body`, 6)}${F.area('লেখা (ইংরেজি)', `design.pages.${k}.body_en`, 6)}<p class="text-xs text-gray-500">লেখা ফাঁকা থাকলে ফুটারে এই পেজের লিঙ্ক দেখাবে না। শুধু সত্য তথ্য লিখুন।</p>`)).join('')}
+    ${sect('প্রশ্নোত্তর (FAQ)', 'fa-circle-question', [0, 1, 2, 3, 4, 5].map(i => `<div class="border rounded-lg p-3 space-y-2 bg-gray-50"><div class="grid sm:grid-cols-2 gap-2">${F.text('প্রশ্ন (বাংলা)', `design.faq.${i}.q`)}${F.text('প্রশ্ন (ইংরেজি)', `design.faq.${i}.q_en`)}</div><div class="grid sm:grid-cols-2 gap-2">${F.area('উত্তর (বাংলা)', `design.faq.${i}.a`, 2)}${F.area('উত্তর (ইংরেজি)', `design.faq.${i}.a_en`, 2)}</div></div>`).join('') + '<p class="text-xs text-gray-500">প্রশ্ন বা উত্তর ফাঁকা থাকলে সেটি দেখাবে না।</p>')}
+    ${saveBar('a-saveDesign')}</div>`;
+}
+
+/* ---- ORDER PRINT / CSV / BULK PRICES ---- */
+function printOrder(id) {
+  const o = state.adminOrders.find(x => x.id === id); if (!o) return;
+  const w = window.open('', '_blank'); if (!w) return toast('পপ-আপ ব্লক করা আছে। অনুমতি দিন।', 'err');
+  const d = state.design, rows = (o.items || []).map(i => `<tr><td>${esc(i.name)}${i.weight ? ' (' + esc(i.weight) + ')' : ''}</td><td style="text-align:center">${esc(i.qty)}</td><td style="text-align:right">${esc(i.price)}</td><td style="text-align:right">${esc((Number(i.price) || 0) * (Number(i.qty) || 0))}</td></tr>`).join('');
+  w.document.write(`<!doctype html><meta charset="utf-8"><title>${esc(o.order_no)}</title><style>body{font-family:sans-serif;max-width:560px;margin:16px auto;color:#111;font-size:14px}h2{margin:0}table{width:100%;border-collapse:collapse;margin:10px 0}td,th{border-bottom:1px solid #ccc;padding:5px;text-align:left}.r{text-align:right}.box{border:2px solid #000;padding:8px;margin-top:10px}@media print{button{display:none}}</style>
+    <h2>${esc(d.brand_name)}</h2><div>${esc(d.phone)} • ${esc(d.email)}</div><hr>
+    <div><b>অর্ডার নং:</b> ${esc(o.order_no)} &nbsp; <b>তারিখ:</b> ${esc(fmtDate(o.created_at))}</div>
+    <div class="box"><b>${esc(o.customer_name)}</b><br>ফোন: <b>${esc(o.phone)}</b><br>ঠিকানা: ${esc(o.address)}<br>এলাকা: ${esc(zoneLabel(o.area))}${o.note ? '<br>নোট: ' + esc(o.note) : ''}</div>
+    <table><tr><th>পণ্য</th><th style="text-align:center">পরিমাণ</th><th class="r">দাম</th><th class="r">মোট</th></tr>${rows}</table>
+    <div class="r">সাবটোটাল: ৳${esc(o.subtotal)}</div>${Number(o.discount) > 0 ? `<div class="r">কুপন ছাড় (${esc(o.coupon_code)}): −৳${esc(o.discount)}</div>` : ''}<div class="r">ডেলিভারি: ৳${esc(o.delivery_charge)}</div><div class="r" style="font-size:18px"><b>সর্বমোট (ক্যাশ গ্রহণযোগ্য): ৳${esc(o.total)}</b></div>
+    <p style="text-align:center;margin-top:20px">ধন্যবাদ! ${esc(d.brand_name)}</p><button onclick="print()">Print</button><script>onload=()=>setTimeout(()=>print(),400)<\/script>`);
+  w.document.close();
+}
+function exportOrdersCsv() {
+  csvDownload('orders.csv', [['অর্ডার নং', 'তারিখ', 'নাম', 'ফোন', 'ঠিকানা', 'এলাকা', 'পণ্য', 'সাবটোটাল', 'ছাড়', 'কুপন', 'ডেলিভারি', 'মোট', 'স্ট্যাটাস', 'ট্র্যাকিং', 'নোট']]
+    .concat(state.adminOrders.map(o => [o.order_no, new Date(o.created_at).toISOString().slice(0, 16).replace('T', ' '), o.customer_name, o.phone, o.address, zoneLabel(o.area),
+      (o.items || []).map(i => `${i.name}${i.weight ? ' (' + i.weight + ')' : ''} x${i.qty}`).join('; '), o.subtotal, o.discount || 0, o.coupon_code || '', o.delivery_charge, o.total, (STATUS[o.status] || {}).l || o.status, o.tracking || '', o.note || ''])));
+}
+function openBulk() {
+  state.modal = 'bulk';
+  openModal(`${modalHead('সব পণ্যের দাম একসাথে')}<form data-form="bulk" class="p-4 space-y-2">
+    <p class="text-xs text-gray-500">দাম, পুরনো দাম, ওজন${state.feat ? ' ও স্টক সংখ্যা' : ''} এখানে বদলে একবারে সংরক্ষণ করুন। ওজন অনুযায়ী দামের পণ্যের দাম পণ্য সম্পাদনা থেকে বদলাতে হবে।</p>
+    <div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="text-left text-xs text-gray-500"><th class="p-1">পণ্য</th><th class="p-1">ওজন</th><th class="p-1">দাম ৳</th><th class="p-1">পুরনো ৳</th>${state.feat ? '<th class="p-1">স্টক</th>' : ''}</tr></thead><tbody>
+    ${state.products.map(p => { const hv = hasVariants(p), n = esc(p.id); return `<tr class="border-t" data-bk="${n}"><td class="p-1 min-w-[140px]">${esc(p.name)}</td>
+      <td class="p-1"><input name="w_${n}" class="inp !py-1 !w-24" value="${esc(p.weight || '')}" ${hv ? 'disabled' : ''}></td>
+      <td class="p-1"><input name="p_${n}" type="number" min="0" class="inp !py-1 !w-24" value="${esc(p.price)}" ${hv ? 'disabled title="ওজন অনুযায়ী দাম"' : ''}></td>
+      <td class="p-1"><input name="o_${n}" type="number" min="0" class="inp !py-1 !w-24" value="${esc(p.old_price || '')}" ${hv ? 'disabled' : ''}></td>
+      ${state.feat ? `<td class="p-1"><input name="s_${n}" type="number" min="0" class="inp !py-1 !w-20" placeholder="∞" value="${esc(p.stock_qty ?? '')}"></td>` : ''}</tr>`; }).join('')}</tbody></table></div>
+    <div class="flex gap-2 pt-2"><button type="button" data-action="closeModal" class="btn btn-ghost flex-1">বাতিল</button><button type="submit" class="btn btn-brand flex-1"><i class="fa-solid fa-floppy-disk"></i> সব সংরক্ষণ</button></div></form>`, true);
+}
+async function saveBulk(f) {
+  const fd = new FormData(f), jobs = [];
+  state.products.forEach(p => {
+    const n = p.id, row = {};
+    if (!hasVariants(p)) {
+      const w = String(fd.get('w_' + n) ?? '').trim(), pr = Number(enNum(fd.get('p_' + n)) || 0), od = String(fd.get('o_' + n) ?? '').trim();
+      if (w !== (p.weight || '')) row.weight = w;
+      if (pr !== Number(p.price)) row.price = pr;
+      const o2 = od === '' ? null : Number(enNum(od)); if (o2 !== (p.old_price === null || p.old_price === undefined ? null : Number(p.old_price))) row.old_price = o2;
+    }
+    if (state.feat) {
+      const sv = String(fd.get('s_' + n) ?? '').trim(), s2 = sv === '' ? null : Math.max(0, parseInt(enNum(sv), 10) || 0);
+      if (s2 !== (p.stock_qty === undefined ? null : p.stock_qty)) { row.stock_qty = s2; if (s2 !== null) row.in_stock = s2 > 0; }
+    }
+    if (Object.keys(row).length) jobs.push(sb.from('products').update(row).eq('id', n));
+  });
+  if (!jobs.length) return toast('কোনো পরিবর্তন নেই');
+  const btn = $('button[type=submit]', f); btn.disabled = true;
+  const res = await Promise.all(jobs); btn.disabled = false;
+  const bad = res.find(r => r.error); if (bad) { console.warn(bad.error); return toast('কিছু পণ্য সংরক্ষণ হয়নি: ' + bad.error.message, 'err'); }
+  toast(`✅ ${bn(jobs.length)}টি পণ্য আপডেট হয়েছে`); closeModal(); await loadProducts(); renderProducts(); updateBadges(); renderAdminTab();
 }
 
 /* ---- ORDERS TAB ---- */
@@ -1327,7 +1882,7 @@ function tabOrders() {
       ${card('মোট অর্ডার', bn(all.length), 'fa-receipt', 'all')}${card('অপেক্ষমাণ', bn(count('pending')), 'fa-hourglass-half', 'pending')}${card('ডেলিভারি সম্পন্ন', bn(count('delivered')), 'fa-circle-check', 'delivered')}${card('আয় (ডেলিভারি)', money(revenue), 'fa-sack-dollar', '')}</div>
     <div class="flex gap-2 overflow-x-auto no-scrollbar mb-4 pb-1">${chip('all', 'সব', all.length)}${Object.keys(STATUS).map(k => chip(k, STATUS[k].l, count(k))).join('')}
       <button data-action="a-reloadOrders" class="btn btn-sm btn-ghost ml-auto"><i class="fa-solid fa-rotate"></i></button></div>
-    <div class="flex items-center justify-between mb-2"><h3 class="font-bold text-brand">${esc(heading)} (${bn(list.length)})</h3></div>
+    <div class="flex items-center justify-between mb-2"><h3 class="font-bold text-brand">${esc(heading)} (${bn(list.length)})</h3><button data-action="a-csvOrders" class="btn btn-sm btn-ghost"><i class="fa-solid fa-file-csv"></i> CSV</button></div>
     <div id="orderList" class="space-y-3 scroll-mt-32">${list.length ? list.map(o => {
       const st = STATUS[o.status] || STATUS.pending;
       return `<div class="bg-white rounded-xl shadow-sm p-4">
@@ -1337,12 +1892,14 @@ function tabOrders() {
           <div><div class="font-semibold">${esc(o.customer_name)} ${o.user_id ? '<span class="text-[10px] bg-gray-100 px-1.5 rounded">নিবন্ধিত</span>' : '<span class="text-[10px] bg-gray-100 px-1.5 rounded">গেস্ট</span>'}</div>
             <a href="tel:${esc(o.phone)}" class="text-cta"><i class="fa-solid fa-phone text-xs"></i> ${esc(o.phone)}</a>
             <div class="text-gray-600 mt-1">${esc(o.address)}</div>
-            <div class="text-xs text-gray-500 mt-1">${o.area === 'dhaka' ? 'ঢাকার ভেতরে' : 'ঢাকার বাইরে'}</div>
+            <div class="text-xs text-gray-500 mt-1">${esc(zoneLabel(o.area))}</div>
             ${o.note ? `<div class="text-xs mt-1 bg-amber-50 rounded p-1.5">📝 ${esc(o.note)}</div>` : ''}</div>
           <div><ul class="space-y-0.5">${(Array.isArray(o.items) ? o.items : []).map(i => `<li>• ${esc(i.name)}${i.weight ? ' (' + esc(i.weight) + ')' : ''} × ${bn(Number(i.qty) || 0)} <span class="text-gray-500">= ${money((Number(i.price) || 0) * (Number(i.qty) || 0))}</span></li>`).join('')}</ul>
-            <div class="mt-2 border-t pt-2 text-xs text-gray-600">${tr('ডেলিভারি')}: ${money(o.delivery_charge)}</div><div class="font-bold text-brand">${tr('মোট')}: ${money(o.total)}</div></div></div>
-        <div class="flex gap-2 mt-3 pt-3 border-t items-center">
+            ${Number(o.discount) > 0 ? `<div class="mt-2 border-t pt-2 text-xs text-green-700">${tr('কুপন ছাড়')} (${esc(o.coupon_code)}): −${money(o.discount)}</div>` : ''}<div class="mt-2 border-t pt-2 text-xs text-gray-600">${tr('ডেলিভারি')}: ${money(o.delivery_charge)}</div><div class="font-bold text-brand">${tr('মোট')}: ${money(o.total)}</div></div></div>
+        <div class="flex flex-wrap gap-2 mt-3 pt-3 border-t items-center">
           <select data-order-status="${esc(o.id)}" class="inp !w-auto !py-1.5 text-sm">${Object.keys(STATUS).map(k => `<option value="${k}" ${o.status === k ? 'selected' : ''}>${esc(STATUS[k].l)}</option>`).join('')}</select>
+          <input data-order-track="${esc(o.id)}" class="inp !w-auto !py-1.5 text-sm flex-1 min-w-[150px]" maxlength="200" placeholder="কুরিয়ার/ট্র্যাকিং তথ্য (গ্রাহক দেখবেন)" value="${esc(o.tracking || '')}">
+          <button data-action="a-printOrder" data-id="${esc(o.id)}" class="btn btn-sm btn-ghost"><i class="fa-solid fa-print"></i> প্রিন্ট</button>
           <button data-action="a-delOrder" data-id="${esc(o.id)}" class="btn btn-sm btn-danger ml-auto"><i class="fa-solid fa-trash-can"></i> মুছুন</button></div></div>`;
     }).join('') : '<div class="bg-white rounded-xl p-10 text-center text-gray-500">কোনো অর্ডার নেই</div>'}</div>`;
 }
@@ -1398,7 +1955,7 @@ function tabAds() {
 
 /* ---- save feedback: buttons stay dim until there is something to save ---- */
 let saving = false;
-const DIRTY_KEYS = { design: 'design', ads: 'ads', chats: 'chat' };
+const DIRTY_KEYS = { design: 'design', shop: 'design', ads: 'ads', chats: 'chat' };
 function isDirty() {
   const k = DIRTY_KEYS[state.adminTab]; if (!k || !adminDraft) return false;
   return JSON.stringify(adminDraft[k]) !== JSON.stringify(k === 'chat' ? state.chatCfg : state[k]);
@@ -1561,10 +2118,16 @@ document.addEventListener('click', async e => {
     case 'home': e.preventDefault(); state.cat = 'all'; state.search = ''; if (location.hash === '#admin') location.hash = ''; showStore(); renderStore(); window.scrollTo({ top: 0, behavior: 'smooth' }); break;
     case 'shop': goShop(); break;
     case 'cat': setCat(el.dataset.cat); break;
-    case 'add': case 'inc': addToCart(id); break;
-    case 'dec': decCart(id); break;
-    case 'remove': removeCart(id); break;
-    case 'view': state.viewId = id; renderProductModal(); break;
+    case 'add': case 'inc': addToCart(id, el.dataset.v); break;
+    case 'dec': decCart(id, el.dataset.v); break;
+    case 'remove': removeCart(id, el.dataset.v); break;
+    case 'couponRemove': state.couponCode = ''; state.coupon = null; state.couponKey = ''; renderCouponBox(); paintSummary(); break;
+    case 'view': openProduct(id); break;
+    case 'wish': toggleWish(id); break;
+    case 'galSel': state.galI = Number(el.dataset.i) || 0; renderProductModal(); break;
+    case 'selV': state.selV = el.dataset.v; renderProductModal(); break;
+    case 'notify': openNotify(id); break;
+    case 'page': location.hash = '#page=' + el.dataset.k; break;
     case 'openCart': openCart(); break;
     case 'closeCart': closeCart(); break;
     case 'closeCartShop': goShop(); break;
@@ -1583,6 +2146,23 @@ document.addEventListener('click', async e => {
       if (isDirty() && !confirm(tr('অসংরক্ষিত পরিবর্তন আছে। সংরক্ষণ না করেই চলে যাবেন?'))) break;
       applyTheme(); state.adminTab = el.dataset.tab; adminDraft = { design: clone(state.design), ads: clone(state.ads), chat: clone(state.chatCfg) }; renderAdmin(); window.scrollTo(0, 0); break;
     case 'a-newProduct': openProductForm(null); break;
+    case 'a-goOrders': state.orderFilter = el.dataset.f || 'all'; state.adminTab = 'orders'; renderAdmin(); window.scrollTo(0, 0); break;
+    case 'a-goTab': state.adminTab = el.dataset.tab; renderAdmin(); window.scrollTo(0, 0); break;
+    case 'a-sndToggle': try { localStorage.setItem('sh_snd', sndOn() ? '0' : '1'); } catch (e) {} if (sndOn()) beep(); renderAdminTab(); break;
+    case 'a-notifPerm': if ('Notification' in window) { await Notification.requestPermission(); renderAdminTab(); } break;
+    case 'a-printOrder': printOrder(id); break;
+    case 'a-csvOrders': exportOrdersCsv(); break;
+    case 'a-csvCust': csvDownload('customers.csv', [['নাম', 'ফোন', 'অর্ডার', 'মোট বিক্রি', 'শেষ অর্ডার']].concat(customersList().map(c => [c.name, c.phone, c.orders, c.spend, new Date(c.last).toISOString().slice(0, 10)]))); break;
+    case 'a-csvProducts': csvDownload('products.csv', [['নাম', 'ক্যাটেগরি', 'দাম', 'পুরনো দাম', 'ওজন', 'স্টক সংখ্যা', 'স্টকে আছে']].concat(state.products.map(p => [p.name, p.category, hasVariants(p) ? variantsOf(p).map(v => v.label + ':' + v.price).join('; ') : p.price, p.old_price || '', p.weight || '', p.stock_qty ?? '', p.in_stock ? 'হ্যাঁ' : 'না']))); break;
+    case 'a-bulk': openBulk(); break;
+    case 'a-pfGalDel': state.pfImages.splice(Number(el.dataset.i), 1); { const g = $('#pf_gal'); if (g) g.innerHTML = pfGalHtml(); } break;
+    case 'a-newCoupon': openCouponForm(null); break;
+    case 'a-editCoupon': openCouponForm(id); break;
+    case 'a-couponToggle': { const c = state.adminCoupons.find(x => x.id === id); if (!c) break; const { error } = await sb.from('coupons').update({ active: !c.active }).eq('id', id); if (error) return toast('আপডেট ব্যর্থ', 'err'); c.active = !c.active; renderAdminTab(); break; }
+    case 'a-delCoupon': { if (!confirm('এই কুপনটি মুছে ফেলবেন?')) break; const { error } = await sb.from('coupons').delete().eq('id', id); if (error) return toast('মুছতে ব্যর্থ', 'err'); await loadCoupons(); renderAdminTab(); break; }
+    case 'a-revToggle': { const r = state.adminReviews.find(x => x.id === id); if (!r) break; const { error } = await sb.from('reviews').update({ approved: !r.approved }).eq('id', id); if (error) return toast('আপডেট ব্যর্থ', 'err'); r.approved = !r.approved; await loadReviews(); renderProducts(); renderAdminTab(); break; }
+    case 'a-revDel': { if (!confirm('এই রিভিউটি মুছে ফেলবেন?')) break; const { error } = await sb.from('reviews').delete().eq('id', id); if (error) return toast('মুছতে ব্যর্থ', 'err'); state.adminReviews = state.adminReviews.filter(x => x.id !== id); await loadReviews(); renderProducts(); renderAdminTab(); break; }
+    case 'a-reqClear': { const { error } = await sb.from('stock_requests').delete().eq('product_id', id); if (error) return toast('মুছতে ব্যর্থ', 'err'); state.adminRequests = state.adminRequests.filter(x => x.product_id !== id); renderAdminTab(); break; }
     case 'a-editProduct': openProductForm(id); break;
     case 'a-pfRemoveImg': state.pfImage = ''; $('#pf_prev').innerHTML = prevImg(''); break;
     case 'a-stock': {
@@ -1598,6 +2178,7 @@ document.addEventListener('click', async e => {
       const { error } = await sb.from('products').delete().eq('id', id);
       if (error) return toast('মুছতে ব্যর্থ', 'err');
       if (p.image_url) deleteImage(p.image_url);
+      (Array.isArray(p.images) ? p.images : []).forEach(u => deleteImage(u));
       state.cart = state.cart.filter(c => c.id !== id); saveCart();
       await loadProducts(); renderProducts(); updateBadges(); renderAdminTab(); toast('পণ্য মুছে ফেলা হয়েছে'); break;
     }
@@ -1639,6 +2220,11 @@ document.addEventListener('submit', async e => {
   e.preventDefault();
   switch (f.dataset.form) {
     case 'checkout': placeOrder(); break;
+    case 'coupon': applyCoupon($('#c_coupon').value); break;
+    case 'review': handleReview(f); break;
+    case 'coupon-admin': saveCoupon(f); break;
+    case 'bulk': saveBulk(f); break;
+    case 'notify': handleNotify(f); break;
     case 'chat': { const i = $('#chatInput'); const v = i.value; i.value = ''; sendChat(v); break; }
     case 'signin': handleSignin(f); break;
     case 'signup': handleSignup(f); break;
@@ -1650,6 +2236,7 @@ document.addEventListener('submit', async e => {
 document.addEventListener('input', e => {
   const t = e.target;
   if (t.classList.contains('search-inp')) return setSearch(t.value, t);
+  if (t.dataset && t.dataset.custq !== undefined) { state.custQ = t.value; const l = $('#custList'); if (l) l.innerHTML = custRows(); return; }
   if (t.dataset && t.dataset.path && adminDraft) {
     const v = t.type === 'checkbox' ? t.checked : t.type === 'number' ? (t.value === '' ? 0 : Number(t.value)) : t.value;
     setPath(adminDraft, t.dataset.path, v);
@@ -1663,8 +2250,14 @@ document.addEventListener('input', e => {
 
 document.addEventListener('change', async e => {
   const t = e.target, d = t.dataset || {};
-  if (t.name === 'area') return updateSummary();
+  if (t.name === 'area') { state.area = t.value; return updateSummary(); }
   if (d.upload) return handleUpload(t);
+  if (d.orderTrack) {
+    const { error } = await sb.from('orders').update({ tracking: t.value.trim().slice(0, 200) }).eq('id', d.orderTrack);
+    if (error) { toast('সংরক্ষণ ব্যর্থ — supabase-features.sql চালানো হয়েছে কি?', 'err'); return; }
+    const o = state.adminOrders.find(x => x.id === d.orderTrack); if (o) o.tracking = t.value.trim();
+    toast('✅ ট্র্যাকিং তথ্য সংরক্ষিত'); return;
+  }
   if (d.orderStatus) {
     const { error } = await sb.from('orders').update({ status: t.value }).eq('id', d.orderStatus);
     if (error) { toast('স্ট্যাটাস আপডেট ব্যর্থ', 'err'); return; }
@@ -1693,16 +2286,16 @@ async function init() {
   translateAll();
   renderStore();
   if (sb) {
-    await Promise.all([loadSettings(), loadProducts()]);
+    await Promise.all([loadSettings(), loadProducts(), loadReviews()]);
     try {
       const { data } = await sb.auth.getSession();
-      if (data && data.session) { state.user = data.session.user; await loadProfile(); }
+      if (data && data.session) { state.user = data.session.user; await loadProfile(); loadMyOrders(); }
     } catch (e) { console.warn(e); }
     sb.auth.onAuthStateChange((ev, session) => {
       if (ev === 'INITIAL_SESSION' || ev === 'TOKEN_REFRESHED') return;
       setTimeout(async () => {
         state.user = session ? session.user : null;
-        if (state.user) await loadProfile(); else { state.profile = null; state.myOrders = []; }
+        if (state.user) { await loadProfile(); loadMyOrders(); } else { state.profile = null; state.myOrders = []; }
         afterAuth();
       }, 0);
     });
