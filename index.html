@@ -19,6 +19,7 @@
   body{font-family:'Hind Siliguri',system-ui,sans-serif;background:var(--c-bg);color:#1f2937;-webkit-tap-highlight-color:transparent}
   .brand-font{font-family:'Playfair Display','Hind Siliguri',serif}
   .bg-brand{background-color:var(--c-primary)}.text-brand{color:var(--c-primary)}.border-brand{border-color:var(--c-primary)}
+  .bg-gold\/80{background-color:color-mix(in srgb,var(--c-secondary) 80%,transparent)}.border-gold\/40{border-color:color-mix(in srgb,var(--c-secondary) 40%,transparent)}.text-gold\/50{color:color-mix(in srgb,var(--c-secondary) 50%,transparent)}
   .bg-gold{background-color:var(--c-secondary)}.text-gold{color:var(--c-secondary)}.border-gold{border-color:var(--c-secondary)}
   .bg-cta{background-color:var(--c-accent)}.text-cta{color:var(--c-accent)}
   .bg-cream{background-color:var(--c-bg)}
@@ -51,13 +52,18 @@
   .toggle span:before{content:"";position:absolute;height:18px;width:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
   .toggle input:checked + span{background:var(--c-accent)}
   .toggle input:checked + span:before{transform:translateX(20px)}
-@keyframes addpop{0%{opacity:0;transform:scale(.5)}20%{opacity:1;transform:scale(1.08)}35%{transform:scale(1)}80%{opacity:1}100%{opacity:0;transform:scale(.9)}}
-@keyframes addcart{0%{transform:translateX(-18px)}50%{transform:translateX(4px)}100%{transform:translateX(0)}}
-@keyframes addchk{0%,30%{transform:scale(0)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
-#addPop.show .addbox{animation:addpop 1.25s ease forwards}#addPop.show .addcart{animation:addcart .5s ease-out}#addPop.show .addchk{animation:addchk .7s ease-out}
+@keyframes addpop{0%{opacity:0;transform:translateY(14px) scale(.7)}18%{opacity:1;transform:translateY(0) scale(1.05)}30%{transform:scale(1)}82%{opacity:1;transform:scale(1)}100%{opacity:0;transform:translateY(-8px) scale(.95)}}
+@keyframes addcart{0%{transform:translateX(-26px) rotate(-12deg)}55%{transform:translateX(5px) rotate(4deg)}100%{transform:translateX(0) rotate(0)}}
+@keyframes addchk{0%,35%{transform:scale(0)}65%{transform:scale(1.3)}100%{transform:scale(1)}}
+@keyframes addring{0%{transform:scale(.8);opacity:.8}100%{transform:scale(1.9);opacity:0}}
+.addpulse{position:absolute;inset:0;border-radius:9999px;border:3px solid var(--c-secondary);opacity:0}
+#addPop.show .addbox{animation:addpop 1.5s ease forwards}#addPop.show .addcart{animation:addcart .55s ease-out}#addPop.show .addchk{animation:addchk .8s ease-out}
+#addPop.show .addpulse{animation:addring .9s ease-out}#addPop.show .addpulse.p2{animation-delay:.25s}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
+<div id="splash" style="position:fixed;inset:0;z-index:100;background:#fff;display:flex;align-items:center;justify-content:center"><div style="width:42px;height:42px;border:4px solid #eee;border-top-color:#C89B4B;border-radius:50%;animation:spin .8s linear infinite"></div></div>
 
 <!-- ===================== STOREFRONT ===================== -->
 <div id="store" class="pb-16 md:pb-0">
@@ -80,7 +86,7 @@
      class="hidden fixed left-4 bottom-20 md:bottom-6 z-40 w-14 h-14 rounded-full bg-brand text-gold items-center justify-center text-2xl shadow-xl hover:scale-105 transition border-2 border-gold">
     <i class="fa-solid fa-comment-dots"></i>
   </button>
-  <div id="addPop" class="hidden fixed inset-0 z-[80] items-center justify-center pointer-events-none"><div class="addbox bg-white rounded-2xl shadow-2xl border border-gold/40 px-8 py-5 flex flex-col items-center gap-1.5"><span class="relative inline-block"><i class="addcart fa-solid fa-cart-shopping text-6xl text-brand"></i><span class="addchk absolute -top-2 -right-3 w-7 h-7 rounded-full bg-green-500 text-white flex items-center justify-center text-sm"><i class="fa-solid fa-check"></i></span></span><span id="addPopTx" class="font-bold text-sm text-brand"></span></div></div>
+  <div id="addPop" class="hidden fixed inset-0 z-[80] items-center justify-center pointer-events-none"><div class="addbox bg-white rounded-3xl shadow-2xl border border-gold/40 px-7 py-5 flex flex-col items-center gap-1 min-w-[210px] max-w-[260px]"><span class="relative inline-flex w-20 h-20 mb-1"><span class="addpulse"></span><span class="addpulse p2"></span><span class="relative w-20 h-20 rounded-full bg-brand flex items-center justify-center shadow-lg border-2 border-gold"><i class="addcart fa-solid fa-cart-shopping text-3xl text-white"></i></span><span class="addchk absolute -top-1 -right-1 w-7 h-7 rounded-full bg-green-500 text-white flex items-center justify-center text-sm border-2 border-white"><i class="fa-solid fa-check"></i></span></span><span id="addPopName" class="text-xs text-gray-500 text-center line-clamp-2 leading-snug"></span><span id="addPopTx" class="font-bold text-lg text-brand leading-tight"></span><span id="addPopSub" class="text-xs font-semibold text-cta"></span></div></div>
   <button id="cartPill" data-action="openCart" aria-label="কার্ট" class="hidden fixed right-0 top-[42%] z-40 flex-col items-center justify-center gap-0.5 bg-cta text-white font-bold rounded-l-xl w-[58px] py-2 shadow-xl"><i class="fa-solid fa-basket-shopping text-xl"></i><span id="cartPillN" class="text-[11px] leading-tight"></span><span id="cartPillTx" class="text-[11px] leading-tight bg-white/20 rounded px-1"></span></button>
   <div id="chatTeaser" class="hidden fixed left-4 bottom-[8.25rem] md:bottom-24 z-40 max-w-[230px] bg-white border border-gold rounded-2xl rounded-bl-sm shadow-xl pl-3 pr-7 py-2 text-sm text-gray-800 cursor-pointer" data-action="chatToggle"><span id="chatTeaserTx"></span><button type="button" data-action="teaserClose" class="absolute top-1 right-1 w-6 h-6 text-gray-400 hover:text-gray-700" aria-label="বন্ধ করুন"><i class="fa-solid fa-xmark text-xs"></i></button></div>
   <div id="chatPanel" class="hidden fixed z-50 left-2 right-2 bottom-2 sm:left-4 sm:right-auto sm:bottom-4 sm:w-[370px] h-[78vh] max-h-[580px] bg-white rounded-2xl shadow-2xl flex-col overflow-hidden border border-gray-200">
@@ -127,13 +133,13 @@
         <div id="payBox" class="space-y-2"></div>
         <label id="termsBox" class="hidden flex items-start gap-2 text-sm cursor-pointer"><input type="checkbox" id="c_terms" class="mt-1 w-4 h-4 accent-[#C89B4B]"><span id="termsTx"></span></label>
       </form>
+      <div id="cartExtra" class="px-4 pb-4 space-y-3 hidden"><div id="couponBox"></div><div id="cartSummary" class="text-sm space-y-1"></div></div>
     </div>
-    <div id="cartFooter" class="border-t p-4 bg-gray-50 space-y-3 hidden">
-      <div id="couponBox"></div>
-      <div id="cartSummary" class="text-sm space-y-1"></div>
+    <div id="cartFooter" class="border-t p-3 bg-gray-50 space-y-2 hidden">
       <div id="pauseNote" class="hidden text-sm bg-red-50 text-red-700 border border-red-200 rounded-lg p-2"></div>
+      <div class="flex justify-between items-baseline font-bold"><span>সর্বমোট</span><span id="cartTotalBar" class="text-brand text-lg"></span></div>
       <button type="submit" form="checkoutForm" id="placeBtn" class="btn btn-cta w-full text-base py-3"><i class="fa-brands fa-whatsapp text-lg"></i> অর্ডার নিশ্চিত করুন (WhatsApp)</button>
-      <p class="text-[11px] text-gray-500 text-center">অর্ডার সেভ হওয়ার পর WhatsApp-এ অর্ডার বিবরণ খুলবে — শুধু "Send" চাপুন।</p>
+      <p class="text-[10px] text-gray-500 text-center leading-tight">অর্ডার সেভ হওয়ার পর WhatsApp-এ অর্ডার বিবরণ খুলবে — শুধু "Send" চাপুন।</p>
     </div>
   </aside>
 </div>
@@ -469,11 +475,24 @@ const cnt = n => LANG === 'en' ? `${n} ${n === 1 ? 'product' : 'products'}` : `$
 const BN_RE = /[ঀ-৿]/;
 const SKIP_TAGS = { SCRIPT: 1, STYLE: 1, TEXTAREA: 1 };
 const TXT_ATTRS = ['placeholder', 'title', 'aria-label'];
+Object.assign(EN, {"আজকের অর্ডার": "Today's orders", "গত ৭ দিন": "Last 7 days", "গত ৩০ দিন": "Last 30 days", "অপেক্ষমাণ অর্ডার": "Pending orders", "দেখতে চাপুন": "Tap to view", "বিক্রির অঙ্কে বাতিল অর্ডার ধরা হয়নি।": "Cancelled orders are not counted in sales.", "গত ৭ দিনের বিক্রি": "Sales in the last 7 days", "সবচেয়ে বেশি বিক্রি (৩০ দিন)": "Top sellers (30 days)", "কম স্টক": "Low stock", "করণীয়": "To do", "নতুন অর্ডারের নোটিফিকেশন (এই পেজ খোলা থাকলে)": "New order notifications (while this page is open)", "শব্দ চালু": "Sound on", "শব্দ বন্ধ": "Sound off", "ব্রাউজার নোটিফিকেশন চালু করুন": "Enable browser notifications", "সাম্প্রতিক অর্ডার": "Recent orders", "সব দাম একসাথে": "Bulk prices", "প্রিন্ট": "Print", "কুরিয়ার/ট্র্যাকিং তথ্য (গ্রাহক দেখবেন)": "Courier / tracking info (customer can see)", "মোট গ্রাহক": "Total customers", "পুনরায় কিনেছেন": "Repeat buyers", "মোট বিক্রি": "Total sales", "নাম বা ফোন দিয়ে খুঁজুন": "Search by name or phone", "কুপন ও ছাড় কোড": "Coupons & discount codes", "নতুন কুপন": "New coupon", "এখনো কোনো কুপন নেই। \"নতুন কুপন\" চেপে শুরু করুন।": "No coupons yet. Tap \"New coupon\" to start.", "গ্রাহক রিভিউ": "Customer reviews", "এখনো কোনো রিভিউ নেই": "No reviews yet", "\"স্টকে এলে জানান\" অনুরোধ": "\"Notify me\" requests", "কোনো অনুরোধ নেই": "No requests", "অর্ডার চালু/বন্ধ (ছুটির মোড)": "Orders on/off (holiday mode)", "নতুন অর্ডার সাময়িক বন্ধ রাখুন": "Pause new orders", "গ্রাহককে দেখানো বার্তা (বাংলা)": "Message shown to customers (Bengali)", "বার্তা (ইংরেজি)": "Message (English)", "ডেলিভারি নিয়ম": "Delivery rules", "এর বেশি কিনলে ডেলিভারি ফ্রি (৳) — ০ = বন্ধ": "Free delivery above (৳) — 0 = off", "আনুমানিক ডেলিভারি সময় (বাংলা)": "Estimated delivery time (Bengali)", "আনুমানিক ডেলিভারি সময় (ইংরেজি)": "Estimated delivery time (English)", "এলাকার নাম (বাংলা)": "Area name (Bengali)", "এলাকার নাম (ইংরেজি)": "Area name (English)", "চার্জ (৳)": "Charge (৳)", "নাম ফাঁকা রাখলে ওই এলাকা কার্টে দেখাবে না।": "If the name is left empty, that area will not show in the cart.", "স্টক ও কম্বো": "Stock & combos", "এর কম থাকলে \"মাত্র N টি বাকি\" দেখাবে ও কম স্টক সতর্কতা": "Show \"Only N left\" and low-stock warning at or below this number", "কম্বো সেকশনের শিরোনাম (বাংলা)": "Combo section title (Bengali)", "কম্বো সেকশনের শিরোনাম (ইংরেজি)": "Combo section title (English)", "হোম পেজ, কার্ট ও চেকআউট": "Home page, cart & checkout", "হোম পেজে ক্যাটেগরি অনুযায়ী আলাদা সেকশন (\"সব দেখুন →\" সহ)": "Separate home page section per category (with \"View all →\")", "\"বেশি বিক্রিত\" ব্যাজ দেখান": "Show \"Best Selling\" badge", "\"বেশি বিক্রিত\" সেকশনের নাম (বাংলা)": "\"Best Selling\" section name (Bengali)", "ইংরেজি": "English", "কার্টে যোগ করলে মাঝখানে বড় কার্ট আইকনের পপআপ (বন্ধ থাকলে ছোট সবুজ বার্তা)": "Big centered cart popup when adding to cart (small green message if off)", "ডানপাশে ভাসমান বাস্কেট (আইটেম ও মোট টাকা)": "Floating basket on the right (items & total)", "কার্টে \"এটাও কিনতে পারেন\" দেখান": "Show \"You may also like\" in the cart", "অর্ডারের সময় শর্তাবলীর টিক বাধ্যতামূলক": "Require the terms checkbox when ordering", "শর্তাবলীর লেখা (বাংলা)": "Terms text (Bengali)", "শর্তাবলীর লেখা (ইংরেজি)": "Terms text (English)", "পেমেন্ট অপশন ১ (বাংলা)": "Payment option 1 (Bengali)", "পেমেন্ট অপশন ১ (ইংরেজি)": "Payment option 1 (English)", "পেমেন্ট অপশন ২ দেখান (WhatsApp-এ কথা বলে)": "Show payment option 2 (talk on WhatsApp)", "পেমেন্ট অপশন ২ (বাংলা)": "Payment option 2 (Bengali)", "পেমেন্ট অপশন ২ (ইংরেজি)": "Payment option 2 (English)", "আমাদের গল্প পেজ": "Our Story page", "শিরোনাম (বাংলা)": "Title (Bengali)", "লেখা (বাংলা)": "Text (Bengali)", "লেখা (ইংরেজি)": "Text (English)", "ডেলিভারি ও রিটার্ন নীতি পেজ": "Delivery & Return Policy page", "প্রশ্নোত্তর (FAQ)": "FAQ", "প্রশ্ন (বাংলা)": "Question (Bengali)", "প্রশ্ন (ইংরেজি)": "Question (English)", "উত্তর (বাংলা)": "Answer (Bengali)", "উত্তর (ইংরেজি)": "Answer (English)", "প্রশ্ন বা উত্তর ফাঁকা থাকলে সেটি দেখাবে না।": "Empty questions or answers are not shown.", "যেমন: ১–৩ কার্যদিবস": "e.g. 1–3 working days", "যেমন: সাভার": "e.g. Savar", "কিউআর লাইব্রেরি লোড হয়নি। ইন্টারনেট সংযোগ দেখে পেজ রিফ্রেশ করুন।": "QR library did not load. Check your connection and refresh.", "চ্যাটের নাম (বাংলা)": "Chat name (Bengali)", "চ্যাটের নাম (ইংরেজি)": "Chat name (English)", "নামের নিচের লেখা (বাংলা)": "Text under the name (Bengali)", "নামের নিচের লেখা (ইংরেজি)": "Text under the name (English)", "চ্যাটের আইকন": "Chat icon", "হেডসেট (সাপোর্ট)": "Headset (support)", "চ্যাট": "Chat", "ব্যক্তি": "Person", "দোকান": "Shop", "হার্ট": "Heart", "রোবট": "Robot", "স্বাগত বার্তা (ইংরেজি)": "Welcome message (English)", "স্বাগত বার্তা (বাংলা) — {brand} লিখলে দোকানের নাম বসবে": "Welcome message (Bengali) — {brand} is replaced by the shop name", "৪টি কুইক বাটন": "4 quick buttons", "(৪র্থ বাটনটি সবসময় WhatsApp খোলে, বাকি তিনটি লেখা চ্যাটে পাঠায়)": "(The 4th button always opens WhatsApp; the other three send their text to the chat)", "চ্যাট আইকনের পাশে ছোট বাবল দেখান": "Show a small bubble next to the chat icon", "বাবলের লেখা (বাংলা)": "Bubble text (Bengali)", "বাবলের লেখা (ইংরেজি)": "Bubble text (English)", "চ্যাটের নিচের ছোট লেখা (বাংলা)": "Small note under the chat (Bengali)", "চ্যাটের নিচের ছোট লেখা (ইংরেজি)": "Small note under the chat (English)", "যেমন: কাস্টমার সাপোর্ট": "e.g. Customer Support", "বাতিল করুন": "Cancel"});
+const EN_PAT = [
+  [/^(.+?) \((\d+)\)$/, (m) => EN[m[1]] !== undefined ? `${EN[m[1]]} (${m[2]})` : null],
+  [/^বাটন (\d+) \((বাংলা|ইংরেজি)\)$/, m => `Button ${m[1]} (${m[2] === 'বাংলা' ? 'Bengali' : 'English'})`],
+  [/^(\d+) পিস • (.*)$/, m => `${m[1]} pcs • ${m[2]}`],
+  [/^(\d+) বাকি$/, m => `${m[1]} left`],
+  [/^স্টক (\d+)$/, m => `Stock ${m[1]}`],
+  [/^(\d+)টি রিভিউ অনুমোদনের অপেক্ষায়$/, m => `${m[1]} review(s) awaiting approval`],
+  [/^(\d+)টি "স্টকে এলে জানান" অনুরোধ$/, m => `${m[1]} "Notify me" request(s)`],
+  [/^(.*) • (\d+)টি অর্ডার • (.*) • শেষ: (.*)$/, m => `${m[1]} • ${m[2]} order(s) • ${m[3]} • Last: ${m[4]}`]
+];
+function enPattern(k) { for (const [re, f] of EN_PAT) { const m = re.exec(k); if (m) { const v = f(m); if (v) return v; } } return undefined; }
+Object.assign(EN, {"গ্রাহক তালিকা অর্ডার থেকে তৈরি (সর্বশেষ ১০০০টি অর্ডার)। ফোন নম্বর দিয়ে একই গ্রাহকের অর্ডার মেলানো হয়।": "The customer list is built from orders (latest 1000). Orders are matched to a customer by phone number.", "শুধু ডেলিভারি পাওয়া গ্রাহকরা রিভিউ দিতে পারেন। আপনি অনুমোদন করলে তবেই সাইটে দেখাবে।": "Only customers who received a delivery can leave a review. It shows on the site only after you approve it.", "চালু করলে কার্ট থেকে অর্ডার নেওয়া বন্ধ হবে (সার্ভারেও আটকানো থাকবে)। গ্রাহক তখনও পণ্য দেখতে ও WhatsApp-এ কথা বলতে পারবেন।": "When on, ordering from the cart is stopped (also blocked on the server). Customers can still browse and talk to you on WhatsApp.", "অতিরিক্ত ডেলিভারি এলাকা (ঢাকার ভেতর/বাইরের চার্জ \"ডিজাইন ও থিম\" ট্যাবে)": "Extra delivery areas (Inside/Outside Dhaka charges are in the \"Design & Theme\" tab)", "পণ্য সম্পাদনায় \"কম্বো/অফার প্যাক\" চালু করলে সেই পণ্য সাইটের ওপরে এই সেকশনে দেখাবে।": "Turn on \"Combo / offer pack\" when editing a product to show it in this section at the top of the site.", "পণ্যের শেয়ার/QR লিংক খুললে সেই পণ্যের পপআপ নিজে থেকে খুলুক (বন্ধ থাকলে লিংক খুললে সাধারণ হোম পেজ দেখাবে)": "Open the product popup automatically when a product share/QR link is opened (if off, the link shows the normal home page)", "সাইটে অনলাইন পেমেন্ট নেওয়া হয় না। গ্রাহক যা বেছে নেন তা অর্ডারের নোট ও WhatsApp বার্তায় যায়। \"বেশি বিক্রিত\" নির্বাচন হয় পণ্য সম্পাদনার সুইচ থেকে।": "Online payment is not taken on the site. The customer's choice goes into the order note and the WhatsApp message. \"Best Selling\" is chosen with the switch when editing a product.", "লেখা ফাঁকা থাকলে ফুটারে এই পেজের লিঙ্ক দেখাবে না। শুধু সত্য তথ্য লিখুন।": "If left empty, the footer link for this page is hidden. Write only true information.", "চ্যাটটি স্বয়ংক্রিয়, তাই \"১ মিনিটে উত্তর\" ধরনের সময়ের প্রতিশ্রুতি লেখা এড়িয়ে চলুন।": "The chat is automated, so avoid promising reply times like \"answer in 1 minute\".", "খাবারের ঐতিহ্য ও গল্প (AI গ্রাহককে বলবে; শুধু সত্য তথ্য লিখুন, যেমন: ঘি কীভাবে তৈরি হয়, মধু কোথা থেকে আসে)": "Food heritage & story (the AI tells customers; write only true facts, e.g. how ghee is made, where honey comes from)", "কথোপকথন": "Conversations"});
 function xlateText(n) {
   const p = n.parentNode; if (p && SKIP_TAGS[p.nodeName]) return;
   if (n.__bn === undefined || n.data !== n.__tr) n.__bn = n.data;
   let out = n.__bn;
-  if (LANG === 'en' && BN_RE.test(out)) { const k = out.trim(), v = EN[k]; if (v !== undefined) out = out.replace(k, () => v); }
+  if (LANG === 'en' && BN_RE.test(out)) { const k = out.trim(), v = EN[k] !== undefined ? EN[k] : enPattern(k); if (v !== undefined) out = out.replace(k, () => v); }
   n.__tr = out;
   if (n.data !== out) n.data = out;
 }
@@ -914,9 +933,10 @@ function renderChat() {
   const tz = $('#chatTeaser'); if (tz) {
     const tx = teaserText(), show = on && !chat.open && teaserReady && !teaserShut && cc.teaser_on !== false && !!tx;
     tz.classList.toggle('hidden', !show); $('#chatTeaserTx').textContent = tx;
+    if (show && !teaserTimer) teaserTimer = setTimeout(closeTeaser, 9000);
   }
 }
-let teaserReady = false, teaserShut = false;
+let teaserReady = false, teaserShut = false, teaserTimer = 0;
 try { teaserShut = sessionStorage.getItem('sh_teaser_shut') === '1'; } catch (e) {}
 setTimeout(() => { teaserReady = true; try { renderChat(); } catch (e) {} }, 5000);
 function teaserText() { const c = state.chatCfg || {}; return String((LANG === 'en' ? (c.teaser_en || c.teaser) : c.teaser) || '').trim(); }
@@ -951,15 +971,18 @@ function addToCart(id, v) {
   const c = state.cart.find(x => x.id === id && (x.v || '') === (v || ''));
   if (c) c.qty += 1; else state.cart.push({ id, qty: 1, v: v || '' });
   refreshCartUI();
-  showAddPop();
+  showAddPop(p);
 }
 let addPopT = 0;
-function showAddPop() {
+function showAddPop(p) {
   const el = $('#addPop'); if (!el) return;
   if (state.design.add_popup === false) return toast('✅ ' + tr('কার্টে যোগ হয়েছে'));
   $('#addPopTx').textContent = tr('কার্টে যোগ হয়েছে');
+  $('#addPopName').textContent = p ? pname(p) : '';
+  const c = cartCount(), tot = cartLines().reduce((s2, l) => s2 + l.price * l.qty, 0);
+  $('#addPopSub').textContent = LANG === 'en' ? `${c} item${c > 1 ? 's' : ''} in cart · ${money(tot)}` : `কার্টে ${bn(c)} আইটেম · ${money(tot)}`;
   el.classList.remove('show'); el.classList.remove('hidden'); el.classList.add('flex'); void el.offsetWidth; el.classList.add('show');
-  clearTimeout(addPopT); addPopT = setTimeout(() => { el.classList.remove('show', 'flex'); el.classList.add('hidden'); }, 1250);
+  clearTimeout(addPopT); addPopT = setTimeout(() => { el.classList.remove('show', 'flex'); el.classList.add('hidden'); }, 1500);
 }
 function decCart(id, v) {
   const c = state.cart.find(x => x.id === id && (x.v || '') === (v || '')); if (!c) return;
@@ -974,9 +997,9 @@ function renderCart() {
   if (!lines.length) {
     items.innerHTML = `<div class="text-center py-16 text-gray-500"><i class="fa-solid fa-bag-shopping text-5xl text-gray-300 mb-3"></i><p>আপনার কার্ট খালি</p>
       <button data-action="closeCartShop" class="btn btn-cta mt-4">কেনাকাটা শুরু করুন</button></div>`;
-    form.classList.add('hidden'); foot.classList.add('hidden'); return;
+    form.classList.add('hidden'); foot.classList.add('hidden'); $('#cartExtra').classList.add('hidden'); return;
   }
-  form.classList.remove('hidden'); foot.classList.remove('hidden');
+  form.classList.remove('hidden'); foot.classList.remove('hidden'); $('#cartExtra').classList.remove('hidden');
   items.innerHTML = lines.map(({ p, qty, v, price }) => {
     const img = safeUrl(p.image_url), vd = v ? `data-v="${esc(v)}"` : '', vv = v ? findVar(p, v) : null;
     return `<div class="flex gap-3 border rounded-xl p-2">
@@ -1045,6 +1068,7 @@ function paintSummary() {
     <div class="flex justify-between"><span>ডেলিভারি চার্জ</span><span>${t.delivery === 0 && fm > 0 && t.sub >= fm ? tr('ফ্রি') : money(t.delivery)}</span></div>
     ${fm > 0 && t.sub < fm ? `<div class="text-[11px] text-green-700">${LANG === 'en' ? `Add ${money(fm - t.sub)} more for free delivery` : `আরও ${money(fm - t.sub)} এর পণ্য কিনলে ডেলিভারি ফ্রি`}</div>` : ''}
     <div class="flex justify-between font-bold text-base border-t pt-2 mt-1"><span>সর্বমোট</span><span class="text-brand">${money(t.total)}</span></div>`;
+  const tb = $('#cartTotalBar'); if (tb) tb.textContent = money(t.total);
 }
 function updateSummary() { paintSummary(); refreshCoupon(); }
 
@@ -1689,7 +1713,7 @@ function openProductForm(id) {
         <button type="button" data-action="a-pfRemoveImg" class="btn btn-sm text-red-600 border border-red-200 bg-white"><i class="fa-solid fa-trash-can"></i> ছবি মুছুন</button></div></div></div>
       ${state.feat ? `<div><span class="lbl">অতিরিক্ত ছবি (সর্বোচ্চ ৪টি)</span><div id="pf_gal" class="flex flex-wrap gap-2 items-center">${pfGalHtml()}</div></div>` : ''}
       <label class="flex items-center justify-between py-1 cursor-pointer"><span class="text-sm font-medium">স্টকে আছে</span><span class="toggle"><input type="checkbox" name="in_stock" ${!p || p.in_stock ? 'checked' : ''}><span></span></span></label>
-      <div class="flex gap-2 pt-2"><button type="button" data-action="closeModal" class="btn btn-ghost flex-1">বাতিল</button><button type="submit" class="btn btn-brand flex-1"><i class="fa-solid fa-floppy-disk"></i> সংরক্ষণ</button></div>
+      <div class="flex gap-2 pt-2"><button type="button" data-action="closeModal" class="btn btn-ghost flex-1">বাতিল করুন</button><button type="submit" class="btn btn-brand flex-1"><i class="fa-solid fa-floppy-disk"></i> সংরক্ষণ</button></div>
     </form>`, true);
 }
 async function saveProduct(f) {
@@ -1845,7 +1869,7 @@ function openCouponForm(id) {
     <label class="block"><span class="lbl">মেয়াদ শেষের তারিখ (ঐচ্ছিক)</span><input name="expires" type="date" class="inp" value="${esc(exp)}"></label>
     <label class="block"><span class="lbl">নিজের জন্য নোট (ঐচ্ছিক)</span><input name="note" class="inp" value="${esc(c ? c.note : '')}"></label>
     <label class="flex items-center justify-between py-1 cursor-pointer"><span class="text-sm font-medium">চালু আছে</span><span class="toggle"><input type="checkbox" name="active" ${!c || c.active ? 'checked' : ''}><span></span></span></label>
-    <div class="flex gap-2 pt-2"><button type="button" data-action="closeModal" class="btn btn-ghost flex-1">বাতিল</button><button type="submit" class="btn btn-brand flex-1"><i class="fa-solid fa-floppy-disk"></i> সংরক্ষণ</button></div></form>`);
+    <div class="flex gap-2 pt-2"><button type="button" data-action="closeModal" class="btn btn-ghost flex-1">বাতিল করুন</button><button type="submit" class="btn btn-brand flex-1"><i class="fa-solid fa-floppy-disk"></i> সংরক্ষণ</button></div></form>`);
 }
 async function saveCoupon(f) {
   const fd = new FormData(f), code = String(fd.get('code') || '').trim().toUpperCase(), kind = fd.get('kind'), value = Number(enNum(fd.get('value')) || 0);
@@ -1938,7 +1962,7 @@ function openBulk() {
       <td class="p-1"><input name="p_${n}" type="number" min="0" class="inp !py-1 !w-24" value="${esc(p.price)}" ${hv ? 'disabled title="ওজন অনুযায়ী দাম"' : ''}></td>
       <td class="p-1"><input name="o_${n}" type="number" min="0" class="inp !py-1 !w-24" value="${esc(p.old_price || '')}" ${hv ? 'disabled' : ''}></td>
       ${state.feat ? `<td class="p-1"><input name="s_${n}" type="number" min="0" class="inp !py-1 !w-20" placeholder="∞" value="${esc(p.stock_qty ?? '')}"></td>` : ''}</tr>`; }).join('')}</tbody></table></div>
-    <div class="flex gap-2 pt-2"><button type="button" data-action="closeModal" class="btn btn-ghost flex-1">বাতিল</button><button type="submit" class="btn btn-brand flex-1"><i class="fa-solid fa-floppy-disk"></i> সব সংরক্ষণ</button></div></form>`, true);
+    <div class="flex gap-2 pt-2"><button type="button" data-action="closeModal" class="btn btn-ghost flex-1">বাতিল করুন</button><button type="submit" class="btn btn-brand flex-1"><i class="fa-solid fa-floppy-disk"></i> সব সংরক্ষণ</button></div></form>`, true);
 }
 async function saveBulk(f) {
   const fd = new FormData(f), jobs = [];
@@ -2073,7 +2097,7 @@ function setSaving(on) {
   updateDirty();
 }
 const saveBtns = act => `<span id="saveState" class="mr-auto text-xs sm:text-sm font-semibold"></span>
-      <button data-save-ui data-action="a-discard" class="btn btn-ghost">বাতিল</button>
+      <button data-save-ui data-action="a-discard" class="btn btn-ghost">বাতিল করুন</button>
       <button data-save-ui id="saveBtn" data-action="${act}" class="btn btn-cta px-8"><i class="fa-solid fa-floppy-disk"></i> <span>সংরক্ষণ করুন</span></button>`;
 const saveBar = act => `<div class="fixed bottom-0 inset-x-0 bg-white border-t p-3 z-20"><div class="max-w-6xl mx-auto flex gap-2 items-center justify-end">${saveBtns(act)}</div></div>`;
 
@@ -2410,7 +2434,10 @@ async function init() {
   state.cart = state.cart.filter(c => state.products.some(p => p.id === c.id)); saveCart();
   state.ready = true;
   renderStore(); subscribeMine(); route();
+  hideSplash();
 }
+function hideSplash() { const sp = $('#splash'); if (!sp) return; sp.style.transition = 'opacity .25s'; sp.style.opacity = '0'; setTimeout(() => sp.remove(), 300); }
+setTimeout(hideSplash, 8000);
 init();
 })();
 </script>
