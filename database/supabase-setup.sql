@@ -453,6 +453,7 @@ alter table public.products add column if not exists images   jsonb   not null d
 alter table public.products add column if not exists variants jsonb   not null default '[]'::jsonb;
 alter table public.products add column if not exists stock_qty integer;
 alter table public.products add column if not exists is_combo boolean not null default false;
+alter table public.products add column if not exists is_best  boolean not null default false;
 alter table public.products drop constraint if exists products_stock_qty_check;
 alter table public.products add constraint products_stock_qty_check check (stock_qty is null or stock_qty >= 0);
 
