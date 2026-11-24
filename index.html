@@ -51,6 +51,10 @@
   .toggle span:before{content:"";position:absolute;height:18px;width:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
   .toggle input:checked + span{background:var(--c-accent)}
   .toggle input:checked + span:before{transform:translateX(20px)}
+@keyframes addpop{0%{opacity:0;transform:scale(.5)}20%{opacity:1;transform:scale(1.08)}35%{transform:scale(1)}80%{opacity:1}100%{opacity:0;transform:scale(.9)}}
+@keyframes addcart{0%{transform:translateX(-18px)}50%{transform:translateX(4px)}100%{transform:translateX(0)}}
+@keyframes addchk{0%,30%{transform:scale(0)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
+#addPop.show .addbox{animation:addpop 1.25s ease forwards}#addPop.show .addcart{animation:addcart .5s ease-out}#addPop.show .addchk{animation:addchk .7s ease-out}
 </style>
 </head>
 <body>
@@ -76,6 +80,7 @@
      class="hidden fixed left-4 bottom-20 md:bottom-6 z-40 w-14 h-14 rounded-full bg-brand text-gold items-center justify-center text-2xl shadow-xl hover:scale-105 transition border-2 border-gold">
     <i class="fa-solid fa-comment-dots"></i>
   </button>
+  <div id="addPop" class="hidden fixed inset-0 z-[80] items-center justify-center pointer-events-none"><div class="addbox bg-white rounded-2xl shadow-2xl border border-gold/40 px-8 py-5 flex flex-col items-center gap-1.5"><span class="relative inline-block"><i class="addcart fa-solid fa-cart-shopping text-6xl text-brand"></i><span class="addchk absolute -top-2 -right-3 w-7 h-7 rounded-full bg-green-500 text-white flex items-center justify-center text-sm"><i class="fa-solid fa-check"></i></span></span><span id="addPopTx" class="font-bold text-sm text-brand"></span></div></div>
   <button id="cartPill" data-action="openCart" aria-label="কার্ট" class="hidden fixed right-0 top-[42%] z-40 flex-col items-center justify-center gap-0.5 bg-cta text-white font-bold rounded-l-xl w-[58px] py-2 shadow-xl"><i class="fa-solid fa-basket-shopping text-xl"></i><span id="cartPillN" class="text-[11px] leading-tight"></span><span id="cartPillTx" class="text-[11px] leading-tight bg-white/20 rounded px-1"></span></button>
   <div id="chatTeaser" class="hidden fixed left-4 bottom-[8.25rem] md:bottom-24 z-40 max-w-[230px] bg-white border border-gold rounded-2xl rounded-bl-sm shadow-xl pl-3 pr-7 py-2 text-sm text-gray-800 cursor-pointer" data-action="chatToggle"><span id="chatTeaserTx"></span><button type="button" data-action="teaserClose" class="absolute top-1 right-1 w-6 h-6 text-gray-400 hover:text-gray-700" aria-label="বন্ধ করুন"><i class="fa-solid fa-xmark text-xs"></i></button></div>
   <div id="chatPanel" class="hidden fixed z-50 left-2 right-2 bottom-2 sm:left-4 sm:right-auto sm:bottom-4 sm:w-[370px] h-[78vh] max-h-[580px] bg-white rounded-2xl shadow-2xl flex-col overflow-hidden border border-gray-200">
@@ -237,7 +242,7 @@ const DEFAULT_DESIGN = {
   low_stock: 5,
   combo_title: 'কম্বো ও বিশেষ অফার', combo_title_en: 'Combo & Special Offers',
   home_sections: true, best_title: 'বেশি বিক্রিত', best_title_en: 'Best Selling', best_badge: true,
-  cart_pill: true, upsell: true, open_shared_product: false,
+  cart_pill: true, upsell: true, add_popup: true, open_shared_product: false,
   terms_on: true, terms_text: 'আমি শর্তাবলী ও রিটার্ন নীতি পড়েছি এবং মেনে নিচ্ছি', terms_text_en: 'I have read and accept the terms and return policy',
   pay_wa: true, pay_cod_label: 'ক্যাশ অন ডেলিভারি', pay_cod_label_en: 'Cash on Delivery',
   pay_wa_label: 'বিকাশ / নগদ — WhatsApp-এ কথা বলে', pay_wa_label_en: 'bKash / Nagad — talk to us on WhatsApp',
@@ -946,7 +951,15 @@ function addToCart(id, v) {
   const c = state.cart.find(x => x.id === id && (x.v || '') === (v || ''));
   if (c) c.qty += 1; else state.cart.push({ id, qty: 1, v: v || '' });
   refreshCartUI();
-  if (!$('#cartDrawer').classList.contains('open')) toast('✅ ' + tr('কার্টে যোগ হয়েছে'));
+  showAddPop();
+}
+let addPopT = 0;
+function showAddPop() {
+  const el = $('#addPop'); if (!el) return;
+  if (state.design.add_popup === false) return toast('✅ ' + tr('কার্টে যোগ হয়েছে'));
+  $('#addPopTx').textContent = tr('কার্টে যোগ হয়েছে');
+  el.classList.remove('show'); el.classList.remove('hidden'); el.classList.add('flex'); void el.offsetWidth; el.classList.add('show');
+  clearTimeout(addPopT); addPopT = setTimeout(() => { el.classList.remove('show', 'flex'); el.classList.add('hidden'); }, 1250);
 }
 function decCart(id, v) {
   const c = state.cart.find(x => x.id === id && (x.v || '') === (v || '')); if (!c) return;
@@ -1890,7 +1903,7 @@ function tabShop() {
       + [0, 1, 2].map(i => `<div class="grid sm:grid-cols-3 gap-2 border rounded-lg p-3">${F.text('এলাকার নাম (বাংলা)', `design.extra_zones.${i}.name`, 'যেমন: সাভার')}${F.text('এলাকার নাম (ইংরেজি)', `design.extra_zones.${i}.name_en`)}${F.num('চার্জ (৳)', `design.extra_zones.${i}.charge`)}</div>`).join('')
       + '<p class="text-xs text-gray-500">নাম ফাঁকা রাখলে ওই এলাকা কার্টে দেখাবে না।</p>')}
     ${sect('স্টক ও কম্বো', 'fa-boxes-stacked', F.num('এর কম থাকলে "মাত্র N টি বাকি" দেখাবে ও কম স্টক সতর্কতা', 'design.low_stock') + `<div class="grid sm:grid-cols-2 gap-3">${F.text('কম্বো সেকশনের শিরোনাম (বাংলা)', 'design.combo_title')}${F.text('কম্বো সেকশনের শিরোনাম (ইংরেজি)', 'design.combo_title_en')}</div><p class="text-xs text-gray-500">পণ্য সম্পাদনায় "কম্বো/অফার প্যাক" চালু করলে সেই পণ্য সাইটের ওপরে এই সেকশনে দেখাবে।</p>`)}
-    ${sect('হোম পেজ, কার্ট ও চেকআউট', 'fa-house', F.toggle('হোম পেজে ক্যাটেগরি অনুযায়ী আলাদা সেকশন ("সব দেখুন →" সহ)', 'design.home_sections') + F.toggle('"বেশি বিক্রিত" ব্যাজ দেখান', 'design.best_badge') + `<div class="grid sm:grid-cols-2 gap-3">${F.text('"বেশি বিক্রিত" সেকশনের নাম (বাংলা)', 'design.best_title')}${F.text('ইংরেজি', 'design.best_title_en')}</div>` + F.toggle('ডানপাশে ভাসমান বাস্কেট (আইটেম ও মোট টাকা)', 'design.cart_pill') + F.toggle('পণ্যের শেয়ার/QR লিংক খুললে সেই পণ্যের পপআপ নিজে থেকে খুলুক (বন্ধ থাকলে লিংক খুললে সাধারণ হোম পেজ দেখাবে)', 'design.open_shared_product') + F.toggle('কার্টে "এটাও কিনতে পারেন" দেখান', 'design.upsell') + F.toggle('অর্ডারের সময় শর্তাবলীর টিক বাধ্যতামূলক', 'design.terms_on') + `<div class="grid sm:grid-cols-2 gap-3">${F.text('শর্তাবলীর লেখা (বাংলা)', 'design.terms_text')}${F.text('শর্তাবলীর লেখা (ইংরেজি)', 'design.terms_text_en')}${F.text('পেমেন্ট অপশন ১ (বাংলা)', 'design.pay_cod_label')}${F.text('পেমেন্ট অপশন ১ (ইংরেজি)', 'design.pay_cod_label_en')}</div>` + F.toggle('পেমেন্ট অপশন ২ দেখান (WhatsApp-এ কথা বলে)', 'design.pay_wa') + `<div class="grid sm:grid-cols-2 gap-3">${F.text('পেমেন্ট অপশন ২ (বাংলা)', 'design.pay_wa_label')}${F.text('পেমেন্ট অপশন ২ (ইংরেজি)', 'design.pay_wa_label_en')}</div><p class="text-xs text-gray-500">সাইটে অনলাইন পেমেন্ট নেওয়া হয় না। গ্রাহক যা বেছে নেন তা অর্ডারের নোট ও WhatsApp বার্তায় যায়। "বেশি বিক্রিত" নির্বাচন হয় পণ্য সম্পাদনার সুইচ থেকে।</p>`)}
+    ${sect('হোম পেজ, কার্ট ও চেকআউট', 'fa-house', F.toggle('হোম পেজে ক্যাটেগরি অনুযায়ী আলাদা সেকশন ("সব দেখুন →" সহ)', 'design.home_sections') + F.toggle('"বেশি বিক্রিত" ব্যাজ দেখান', 'design.best_badge') + `<div class="grid sm:grid-cols-2 gap-3">${F.text('"বেশি বিক্রিত" সেকশনের নাম (বাংলা)', 'design.best_title')}${F.text('ইংরেজি', 'design.best_title_en')}</div>` + F.toggle('কার্টে যোগ করলে মাঝখানে বড় কার্ট আইকনের পপআপ (বন্ধ থাকলে ছোট সবুজ বার্তা)', 'design.add_popup') + F.toggle('ডানপাশে ভাসমান বাস্কেট (আইটেম ও মোট টাকা)', 'design.cart_pill') + F.toggle('পণ্যের শেয়ার/QR লিংক খুললে সেই পণ্যের পপআপ নিজে থেকে খুলুক (বন্ধ থাকলে লিংক খুললে সাধারণ হোম পেজ দেখাবে)', 'design.open_shared_product') + F.toggle('কার্টে "এটাও কিনতে পারেন" দেখান', 'design.upsell') + F.toggle('অর্ডারের সময় শর্তাবলীর টিক বাধ্যতামূলক', 'design.terms_on') + `<div class="grid sm:grid-cols-2 gap-3">${F.text('শর্তাবলীর লেখা (বাংলা)', 'design.terms_text')}${F.text('শর্তাবলীর লেখা (ইংরেজি)', 'design.terms_text_en')}${F.text('পেমেন্ট অপশন ১ (বাংলা)', 'design.pay_cod_label')}${F.text('পেমেন্ট অপশন ১ (ইংরেজি)', 'design.pay_cod_label_en')}</div>` + F.toggle('পেমেন্ট অপশন ২ দেখান (WhatsApp-এ কথা বলে)', 'design.pay_wa') + `<div class="grid sm:grid-cols-2 gap-3">${F.text('পেমেন্ট অপশন ২ (বাংলা)', 'design.pay_wa_label')}${F.text('পেমেন্ট অপশন ২ (ইংরেজি)', 'design.pay_wa_label_en')}</div><p class="text-xs text-gray-500">সাইটে অনলাইন পেমেন্ট নেওয়া হয় না। গ্রাহক যা বেছে নেন তা অর্ডারের নোট ও WhatsApp বার্তায় যায়। "বেশি বিক্রিত" নির্বাচন হয় পণ্য সম্পাদনার সুইচ থেকে।</p>`)}
     ${['story', 'policy'].map(k => sect(k === 'story' ? 'আমাদের গল্প পেজ' : 'ডেলিভারি ও রিটার্ন নীতি পেজ', 'fa-file-lines', `<div class="grid sm:grid-cols-2 gap-3">${F.text('শিরোনাম (বাংলা)', `design.pages.${k}.title`)}${F.text('শিরোনাম (ইংরেজি)', `design.pages.${k}.title_en`)}</div>${F.area('লেখা (বাংলা)', `design.pages.${k}.body`, 6)}${F.area('লেখা (ইংরেজি)', `design.pages.${k}.body_en`, 6)}<p class="text-xs text-gray-500">লেখা ফাঁকা থাকলে ফুটারে এই পেজের লিঙ্ক দেখাবে না। শুধু সত্য তথ্য লিখুন।</p>`)).join('')}
     ${sect('প্রশ্নোত্তর (FAQ)', 'fa-circle-question', [0, 1, 2, 3, 4, 5].map(i => `<div class="border rounded-lg p-3 space-y-2 bg-gray-50"><div class="grid sm:grid-cols-2 gap-2">${F.text('প্রশ্ন (বাংলা)', `design.faq.${i}.q`)}${F.text('প্রশ্ন (ইংরেজি)', `design.faq.${i}.q_en`)}</div><div class="grid sm:grid-cols-2 gap-2">${F.area('উত্তর (বাংলা)', `design.faq.${i}.a`, 2)}${F.area('উত্তর (ইংরেজি)', `design.faq.${i}.a_en`, 2)}</div></div>`).join('') + '<p class="text-xs text-gray-500">প্রশ্ন বা উত্তর ফাঁকা থাকলে সেটি দেখাবে না।</p>')}
     ${saveBar('a-saveDesign')}</div>`;
