@@ -675,7 +675,20 @@ function renderStore() {
   updateBadges(); renderCart(); renderChat();
 }
 
-function renderHeader() {
+function hKeep(rootSel, scrSel, fn) {
+  const root = $(rootSel), pos = root ? $$(scrSel, root).map(e => e.scrollLeft) : [];
+  fn();
+  const r2 = $(rootSel); if (!r2) return;
+  $$(scrSel, r2).forEach((e, i) => { if (pos[i]) e.scrollLeft = pos[i]; });
+}
+function revealActive(rootSel, activeSel) {
+  const root = $(rootSel); if (!root) return;
+  const nav = $('.no-scrollbar', root), b = $(activeSel, root); if (!nav || !b) return;
+  const l = b.offsetLeft - nav.offsetLeft, r = l + b.offsetWidth;
+  if (l < nav.scrollLeft || r > nav.scrollLeft + nav.clientWidth) nav.scrollLeft = l - (nav.clientWidth - b.offsetWidth) / 2;
+}
+function renderHeader() { hKeep('#hdr', '.no-scrollbar', renderHeaderRaw); revealActive('#hdr', 'nav .text-gold'); }
+function renderHeaderRaw() {
   const d = state.design;
   $('#announce').innerHTML = (d.announcement_show && d.announcement_text)
     ? `<div class="bg-gold text-brand font-semibold text-center text-xs sm:text-sm py-1.5 px-3">${esc(dx(d, 'announcement_text'))}</div>` : '';
@@ -732,7 +745,8 @@ function renderHero() {
   $('#hero').innerHTML = `<div class="grid grid-cols-1 lg:grid-cols-12 gap-3">${main}${side}</div>`;
 }
 
-function renderCats() {
+function renderCats() { hKeep('#cats', '.no-scrollbar', renderCatsRaw); }
+function renderCatsRaw() {
   const el = $('#cats');
   if (!state.design.show_categories) { el.innerHTML = ''; return; }
   el.innerHTML = `<div class="pt-6"><h2 class="text-lg sm:text-xl font-bold text-brand text-center mb-4">${esc(dx(state.design, 'cats_title'))}</h2>
@@ -1118,7 +1132,31 @@ function openCart() {
   renderCart(); $('#cartDrawer').classList.add('open'); lockScroll();
 }
 function closeCart() { $('#cartDrawer').classList.remove('open'); lockScroll(); }
-function lockScroll() { document.body.style.overflow = ($('#cartDrawer').classList.contains('open') || state.modal) ? 'hidden' : ''; }
+function lockScroll() { document.body.style.overflow = ($('#cartDrawer').classList.contains('open') || state.modal) ? 'hidden' : ''; guardSync(); }
+/* phone Back button: close the top popup / cart / admin sub-tab instead of leaving the site */
+let guardOn = false, guardHref = '', ignorePop = 0, guardT = 0;
+const cartIsOpen = () => $('#cartDrawer').classList.contains('open');
+const modalIsOpen = () => !$('#modal').classList.contains('hidden');
+const adminIsDeep = () => !$('#admin').classList.contains('hidden') && state.adminTab !== 'dash';
+function guardSync() { clearTimeout(guardT); guardT = setTimeout(guardRun, 0); }
+function guardRun() {
+  const need = cartIsOpen() || modalIsOpen() || adminIsDeep();
+  if (need && !guardOn) { try { history.pushState({ sh: 1 }, '', location.href); guardOn = true; guardHref = location.href; } catch (e) {} }
+  else if (!need && guardOn) {
+    guardOn = false;
+    if (location.href === guardHref) { ignorePop++; history.back(); }
+  }
+}
+window.addEventListener('popstate', () => {
+  if (ignorePop > 0) { ignorePop--; return; }
+  if (!guardOn) return;
+  guardOn = false;
+  if (modalIsOpen()) closeModal();
+  else if (cartIsOpen()) closeCart();
+  else if (adminIsDeep()) { applyTheme(); state.adminTab = 'dash'; adminDraft = { design: clone(state.design), ads: clone(state.ads), chat: clone(state.chatCfg) }; renderAdmin(); window.scrollTo(0, 0); }
+  guardSync();
+});
+window.addEventListener('hashchange', () => { if (guardOn && location.href !== guardHref) guardOn = false; });
 
 function waMessage(o) {
   const L = [`🛍️ *নতুন অর্ডার — ${state.design.brand_name}*`, `অর্ডার নং: ${o.order_no}`, '',
@@ -1221,7 +1259,7 @@ function openModal(html, wide) {
 function closeModal() {
   const m = $('#modal'); m.classList.add('hidden'); m.classList.remove('flex');
   state.modal = null; state.viewId = null; lockScroll();
-  if (/^#(p|page)=/.test(location.hash)) { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} }
+  if (/^#(p|page)=/.test(location.hash)) { try { history.replaceState(history.state, '', location.pathname + location.search); guardHref = location.href; } catch (e) {} }
 }
 const modalHead = t => `<div class="sticky top-0 bg-brand text-white px-4 py-3 flex items-center justify-between z-10"><h3 class="font-bold">${t}</h3><button data-action="closeModal" class="w-8 h-8 rounded-full hover:bg-white/10" aria-label="বন্ধ করুন"><i class="fa-solid fa-xmark"></i></button></div>`;
 
@@ -1430,8 +1468,8 @@ function afterAuth() {
 }
 
 /* ---------------------------- ROUTER ---------------------------- */
-function showStore() { $('#admin').classList.add('hidden'); $('#store').classList.remove('hidden'); applyTheme(); }
-function showAdmin() { $('#store').classList.add('hidden'); $('#admin').classList.remove('hidden'); window.scrollTo(0, 0); }
+function showStore() { $('#admin').classList.add('hidden'); $('#store').classList.remove('hidden'); applyTheme(); guardSync(); }
+function showAdmin() { $('#store').classList.add('hidden'); $('#admin').classList.remove('hidden'); window.scrollTo(0, 0); guardSync(); }
 function route() {
   const pg = /^#page=(story|policy|faq)$/.exec(location.hash);
   if (pg) { showStore(); if (state.ready && state.modal !== 'page') openPage(pg[1]); return; }
@@ -1579,7 +1617,8 @@ function enterAdmin() {
   subscribeAdmin();
   renderAdmin();
 }
-function renderAdmin() {
+function renderAdmin() { hKeep('#admin', 'nav.no-scrollbar', renderAdminRaw); revealActive('#admin', 'nav .border-gold'); guardSync(); }
+function renderAdminRaw() {
   const tabs = visibleTabs(), pr = state.profile || {};
   $('#admin').innerHTML = `
     <header class="bg-brand text-white sticky top-0 z-30 shadow">
@@ -2250,7 +2289,7 @@ document.addEventListener('click', async e => {
     case 'galSel': state.galI = Number(el.dataset.i) || 0; renderProductModal(); break;
     case 'selV': state.selV = el.dataset.v; renderProductModal(); break;
     case 'notify': openNotify(id); break;
-    case 'page': location.hash = '#page=' + el.dataset.k; break;
+    case 'page': openPage(el.dataset.k); break;
     case 'openCart': openCart(); break;
     case 'teaserClose': closeTeaser(); break;
     case 'loginFromCart': closeCart(); openAccount(); break;
