@@ -76,6 +76,8 @@
      class="hidden fixed left-4 bottom-20 md:bottom-6 z-40 w-14 h-14 rounded-full bg-brand text-gold items-center justify-center text-2xl shadow-xl hover:scale-105 transition border-2 border-gold">
     <i class="fa-solid fa-comment-dots"></i>
   </button>
+  <button id="cartPill" data-action="openCart" class="hidden fixed left-1/2 -translate-x-1/2 bottom-[4.75rem] md:bottom-6 z-40 items-center gap-2 bg-cta text-white font-bold text-sm rounded-full pl-3 pr-4 py-2.5 shadow-xl whitespace-nowrap"><i class="fa-solid fa-bag-shopping"></i><span id="cartPillTx"></span></button>
+  <div id="chatTeaser" class="hidden fixed left-4 bottom-[8.25rem] md:bottom-24 z-40 max-w-[230px] bg-white border border-gold rounded-2xl rounded-bl-sm shadow-xl pl-3 pr-7 py-2 text-sm text-gray-800 cursor-pointer" data-action="chatToggle"><span id="chatTeaserTx"></span><button type="button" data-action="teaserClose" class="absolute top-1 right-1 w-6 h-6 text-gray-400 hover:text-gray-700" aria-label="বন্ধ করুন"><i class="fa-solid fa-xmark text-xs"></i></button></div>
   <div id="chatPanel" class="hidden fixed z-50 left-2 right-2 bottom-2 sm:left-4 sm:right-auto sm:bottom-4 sm:w-[370px] h-[78vh] max-h-[580px] bg-white rounded-2xl shadow-2xl flex-col overflow-hidden border border-gray-200">
     <div class="bg-brand text-white px-4 py-3 flex items-center gap-2">
       <span class="w-9 h-9 rounded-full bg-gold text-brand flex items-center justify-center shrink-0"><i id="chatIcon" class="fa-solid fa-headset"></i></span>
@@ -108,6 +110,7 @@
       <div id="cartItems" class="p-4 space-y-3"></div>
       <form id="checkoutForm" data-form="checkout" class="px-4 pb-4 space-y-3 hidden" novalidate>
         <h3 class="font-bold text-brand border-t pt-4">ডেলিভারির তথ্য</h3>
+        <div id="loginHint" class="hidden text-sm bg-amber-50 border border-amber-200 rounded-lg px-3 py-2"></div>
         <label class="block"><span class="lbl">আপনার নাম *</span><input id="c_name" class="inp" autocomplete="name" placeholder="পূর্ণ নাম"></label>
         <label class="block"><span class="lbl">মোবাইল নম্বর *</span><input id="c_phone" class="inp" type="tel" inputmode="tel" autocomplete="tel" placeholder="01XXXXXXXXX"></label>
         <label class="block"><span class="lbl">সম্পূর্ণ ঠিকানা *</span><textarea id="c_address" class="inp" rows="2" autocomplete="street-address" placeholder="বাসা/রোড, থানা, জেলা"></textarea></label>
@@ -116,6 +119,8 @@
           <div id="areaBox" class="grid grid-cols-2 gap-2"></div>
         </div>
         <label class="block"><span class="lbl">অতিরিক্ত নোট (ঐচ্ছিক)</span><input id="c_note" class="inp" placeholder="কোনো বিশেষ নির্দেশনা থাকলে লিখুন"></label>
+        <div id="payBox" class="space-y-2"></div>
+        <label id="termsBox" class="hidden flex items-start gap-2 text-sm cursor-pointer"><input type="checkbox" id="c_terms" class="mt-1 w-4 h-4 accent-[#C89B4B]"><span id="termsTx"></span></label>
       </form>
     </div>
     <div id="cartFooter" class="border-t p-4 bg-gray-50 space-y-3 hidden">
@@ -231,6 +236,11 @@ const DEFAULT_DESIGN = {
   orders_paused: false, pause_msg: 'আমরা সাময়িকভাবে নতুন অর্ডার নিচ্ছি না। অনুগ্রহ করে পরে আবার চেষ্টা করুন বা WhatsApp-এ মেসেজ করুন।', pause_msg_en: 'We are temporarily not accepting new orders. Please try again later or message us on WhatsApp.',
   low_stock: 5,
   combo_title: 'কম্বো ও বিশেষ অফার', combo_title_en: 'Combo & Special Offers',
+  home_sections: true, best_title: 'বেশি বিক্রিত', best_title_en: 'Best Selling', best_badge: true,
+  cart_pill: true, upsell: true,
+  terms_on: true, terms_text: 'আমি শর্তাবলী ও রিটার্ন নীতি পড়েছি এবং মেনে নিচ্ছি', terms_text_en: 'I have read and accept the terms and return policy',
+  pay_wa: true, pay_cod_label: 'ক্যাশ অন ডেলিভারি', pay_cod_label_en: 'Cash on Delivery',
+  pay_wa_label: 'বিকাশ / নগদ — WhatsApp-এ কথা বলে', pay_wa_label_en: 'bKash / Nagad — talk to us on WhatsApp',
   pages: {
     story: { title: 'আমাদের গল্প', title_en: 'Our Story', body: '', body_en: '' },
     policy: { title: 'ডেলিভারি ও রিটার্ন নীতি', title_en: 'Delivery & Return Policy', body: '', body_en: '' }
@@ -295,6 +305,7 @@ const DEFAULT_CHAT = {
   welcome_en: "Assalamu Alaikum wa Rahmatullah! Warm welcome to {brand}. How may I have the pleasure of assisting you today with our pure products, pricing, or orders? Please let me know.",
   chips: ['আজকের তাজা পণ্য ও দাম', 'ডেলিভারি চার্জ কত?', 'কম্বো ও বিশেষ অফার', 'WhatsApp-এ কথা বলুন'],
   chips_en: ["Today's Fresh Items & Prices", 'Delivery Charge?', 'Combo & Special Offers', 'Chat on WhatsApp'],
+  teaser_on: true, teaser: 'কিছু জানতে চান? এখানে জিজ্ঞাসা করুন 👋', teaser_en: 'Want to know something? Ask here 👋',
   heritage: '',
   note: 'স্বয়ংক্রিয় সহায়তা। ফোন নম্বর বা ঠিকানা এখানে লিখবেন না। দাম ও স্টক নিশ্চিত হতে বা অর্ডারের জন্য কার্ট বা WhatsApp ব্যবহার করুন।',
   note_en: 'Automated assistance. Do not share your phone number or address here. To confirm price/stock or to order, use the cart or WhatsApp.'
@@ -312,6 +323,10 @@ const PERM_L = { products: 'পণ্য', orders: 'অর্ডার', design:
 
 /* ---------------------------- i18n (Bengali / English) ---------------------------- */
 const EN = {
+  'বেশি বিক্রিত': 'Best Selling', 'সব দেখুন': 'View all', 'অন্যান্য': 'Others', 'আইটেম': 'items', 'আইটেম ': 'items ',
+  'অ্যাকাউন্ট আছে?': 'Have an account?', 'লগইন করুন': 'Log in', 'পেমেন্ট পদ্ধতি': 'Payment method',
+  'অনুগ্রহ করে শর্তাবলীতে সম্মতি দিন': 'Please accept the terms to continue', 'শর্তাবলী দেখুন': 'View terms',
+  'পেমেন্ট': 'Payment', 'কার্টে যোগ করুন': 'Add to cart',
   /* v2 features */
   'কম্বো': 'Combo', 'পছন্দের তালিকা': 'Wishlist', 'থেকে': 'From', 'বিকল্প বেছে নিন': 'Choose option', 'স্টকে এলে জানান': 'Notify me when in stock',
   'আমার পছন্দের তালিকা': 'My Wishlist', 'পছন্দের': 'Wishlist', 'ওজন / পরিমাণ বেছে নিন': 'Choose size / quantity', 'গ্রাহক রিভিউ': 'Customer Reviews',
@@ -584,6 +599,7 @@ async function loadProducts() {
   if (error) { console.warn(error); toast('পণ্য লোড করা যায়নি', 'err'); return; }
   state.products = data || [];
   state.feat = state.products.length ? ('variants' in state.products[0]) : true;
+  state.featBest = state.products.length ? ('is_best' in state.products[0]) : true;
 }
 async function loadReviews() {
   if (!sb) return;
@@ -726,7 +742,7 @@ function productCard(p) {
   return `<div class="card bg-white rounded-xl overflow-hidden border border-gray-100 flex flex-col">
     <div class="relative aspect-square bg-gray-50 cursor-pointer" data-action="view" data-id="${esc(p.id)}">
       ${img ? `<img src="${esc(img)}" alt="${esc(pname(p))}" loading="lazy" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-5xl text-gold/50"><i class="fa-solid fa-jar-wheat"></i></div>`}
-      ${disc ? `<span class="absolute top-2 left-2 bg-cta text-white text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded">Save ${money(disc)}</span>` : (p.is_combo ? `<span class="absolute top-2 left-2 bg-cta text-white text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded">${tr('কম্বো')}</span>` : '')}
+      <div class="absolute top-2 left-2 flex flex-col items-start gap-1">${disc ? `<span class="bg-cta text-white text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded">Save ${money(disc)}</span>` : (p.is_combo ? `<span class="bg-cta text-white text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded">${tr('কম্বো')}</span>` : '')}${p.is_best && state.design.best_badge !== false ? `<span class="bg-gold text-brand text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded"><i class="fa-solid fa-fire text-[10px]"></i> ${esc(dx(state.design, 'best_title'))}</span>` : ''}</div>
       <button type="button" data-action="wish" data-id="${esc(p.id)}" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 shadow flex items-center justify-center" aria-label="${tr('পছন্দের তালিকা')}"><i class="${w ? 'fa-solid text-red-500' : 'fa-regular text-gray-500'} fa-heart"></i></button>
       ${p.tag ? `<span class="absolute bottom-2 left-2 bg-brand text-gold text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded">${esc(p.tag)}</span>` : ''}
       ${lowStock(p) ? `<span class="absolute bottom-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">${LANG === 'en' ? `Only ${p.stock_qty} left` : `মাত্র ${bn(p.stock_qty)}টি বাকি`}</span>` : ''}
@@ -761,15 +777,28 @@ function renderProducts() {
   const combos = plain ? list.filter(p => p.is_combo) : [], rest = plain ? list.filter(p => !p.is_combo) : list;
   const title = state.cat === 'all' ? dx(state.design, 'all_label') : state.cat === 'wish' ? tr('আমার পছন্দের তালিকা') : catLabel(state.cat);
   const grid = a => `<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">${a.map(productCard).join('')}</div>`;
-  $('#products').innerHTML = `
-    ${combos.length ? `<div class="mb-8 rounded-2xl p-3 sm:p-5 border border-gold/40" style="background:linear-gradient(135deg,#fff7e6,#ffffff)">
-      <h2 class="text-xl sm:text-2xl font-bold text-brand mb-3"><i class="fa-solid fa-gift text-gold"></i> ${esc(dx(state.design, 'combo_title'))}</h2>${grid(combos)}</div>` : ''}
-    <div class="flex items-center justify-between mb-4 gap-2">
+  const head = (t, cat) => `<div class="flex items-center justify-between mb-3 gap-2"><h2 class="text-lg sm:text-2xl font-bold text-brand border-l-4 border-gold pl-3">${esc(t)}</h2>${cat ? `<button data-action="cat" data-cat="${esc(cat)}" class="text-sm font-semibold text-cta whitespace-nowrap hover:underline">${tr('সব দেখুন')} →</button>` : ''}</div>`;
+  const sections = plain && state.design.home_sections !== false && rest.length > 3;
+  const best = (sections && state.featBest) ? rest.filter(p => p.is_best).slice(0, 8) : [];
+  let body;
+  if (sections) {
+    const known = cats().map(c => c.name), blocks = [];
+    cats().forEach(c => { const a = rest.filter(p => p.category === c.name); if (a.length) blocks.push(`<div class="mb-8">${head(catLabel(c.name), c.name)}${grid(a.slice(0, 5))}</div>`); });
+    const other = rest.filter(p => !known.includes(p.category));
+    if (other.length) blocks.push(`<div class="mb-8">${head(tr('অন্যান্য'))}${grid(other.slice(0, 5))}</div>`);
+    body = (best.length ? `<div class="mb-8">${head(dx(state.design, 'best_title'))}${grid(best)}</div>` : '') + blocks.join('');
+  } else {
+    body = `<div class="flex items-center justify-between mb-4 gap-2">
       <h2 class="text-xl sm:text-2xl font-bold text-brand border-l-4 border-gold pl-3">${esc(title)}${state.search ? ` <span class="text-sm font-normal text-gray-500">— "${esc(state.search)}"</span>` : ''}</h2>
       <span class="text-sm text-gray-500">${cnt(rest.length)}</span>
     </div>
     ${rest.length ? grid(rest)
       : (combos.length ? '' : `<div class="text-center py-16 text-gray-500"><i class="fa-regular fa-face-frown text-4xl mb-3"></i><p>${state.products.length ? 'কোনো পণ্য পাওয়া যায়নি' : 'এখনো কোনো পণ্য যোগ করা হয়নি'}</p></div>`)}`;
+  }
+  $('#products').innerHTML = `
+    ${combos.length ? `<div class="mb-8 rounded-2xl p-3 sm:p-5 border border-gold/40" style="background:linear-gradient(135deg,#fff7e6,#ffffff)">
+      <h2 class="text-xl sm:text-2xl font-bold text-brand mb-3"><i class="fa-solid fa-gift text-gold"></i> ${esc(dx(state.design, 'combo_title'))}</h2>${grid(combos)}</div>` : ''}
+    ${body}`;
 }
 
 function renderTesti() {
@@ -831,6 +860,11 @@ function renderMobileNav() {
 function updateBadges() {
   const n = bn(cartCount());
   $$('.cart-badge').forEach(b => { b.textContent = n; b.style.display = cartCount() ? 'flex' : 'none'; });
+  const pill = $('#cartPill'); if (pill) {
+    const c = cartCount(), on = c > 0 && state.design.cart_pill !== false;
+    pill.classList.toggle('hidden', !on); pill.classList.toggle('flex', on);
+    if (on) { const tot = cartLines().reduce((s2, l) => s2 + l.price * l.qty, 0); $('#cartPillTx').textContent = LANG === 'en' ? `${c} item${c > 1 ? 's' : ''} · ${money(tot)}` : `${n} আইটেম · ${money(tot)}`; }
+  }
 }
 
 /* ---------------------------- AI CHAT (storefront) ---------------------------- */
@@ -871,8 +905,17 @@ function renderChat() {
   const sb2 = $('#chatSub'); if (sb2) sb2.textContent = pick('subtitle') || '';
   const nt = $('#chatNote'); if (nt) { nt.textContent = pick('note') || ''; nt.classList.toggle('hidden', !nt.textContent); }
   if (on && chat.open) renderChatMsgs();
+  const tz = $('#chatTeaser'); if (tz) {
+    const tx = teaserText(), show = on && !chat.open && teaserReady && !teaserShut && cc.teaser_on !== false && !!tx;
+    tz.classList.toggle('hidden', !show); $('#chatTeaserTx').textContent = tx;
+  }
 }
-function toggleChat() { chat.open = !chat.open; renderChat(); if (chat.open) setTimeout(() => { const i = $('#chatInput'); if (i && window.innerWidth > 640) i.focus(); }, 50); }
+let teaserReady = false, teaserShut = false;
+try { teaserShut = sessionStorage.getItem('sh_teaser_shut') === '1'; } catch (e) {}
+setTimeout(() => { teaserReady = true; try { renderChat(); } catch (e) {} }, 5000);
+function teaserText() { const c = state.chatCfg || {}; return String((LANG === 'en' ? (c.teaser_en || c.teaser) : c.teaser) || '').trim(); }
+function closeTeaser() { teaserShut = true; try { sessionStorage.setItem('sh_teaser_shut', '1'); } catch (e) {} renderChat(); }
+function toggleChat() { chat.open = !chat.open; if (chat.open) teaserShut = true; renderChat(); if (chat.open) setTimeout(() => { const i = $('#chatInput'); if (i && window.innerWidth > 640) i.focus(); }, 50); }
 async function sendChat(text) {
   text = String(text || '').trim().slice(0, 500);
   if (!text || chat.busy || !sb) return;
@@ -930,11 +973,42 @@ function renderCart() {
           <span class="font-bold text-brand text-sm">${money(price * qty)}</span></div></div>
       <button data-action="remove" data-id="${esc(p.id)}" ${vd} class="self-start text-gray-400 hover:text-red-600 p-1" aria-label="মুছুন"><i class="fa-solid fa-trash-can text-sm"></i></button></div>`;
   }).join('');
-  renderAreaBox(); renderCouponBox();
+  if (state.design.upsell !== false) items.innerHTML += upsellHtml(lines);
+  renderAreaBox(); renderCouponBox(); renderCheckoutExtras();
   const paused = !!state.design.orders_paused, pb = $('#placeBtn');
   if (pb) pb.disabled = paused;
   const pn = $('#pauseNote'); if (pn) { pn.textContent = paused ? pauseMsg() : ''; pn.classList.toggle('hidden', !paused); }
   updateSummary();
+}
+function upsellHtml(lines) {
+  const inCart = new Set(lines.map(l => l.p.id)), cs = new Set(lines.map(l => l.p.category));
+  const pool = state.products.filter(p => !inCart.has(p.id) && p.in_stock && hasPrice(p) && !p.is_combo);
+  pool.sort((a, b) => ((cs.has(b.category) ? 2 : 0) + (b.is_best ? 1 : 0)) - ((cs.has(a.category) ? 2 : 0) + (a.is_best ? 1 : 0)));
+  const pick = pool.slice(0, 4); if (!pick.length) return '';
+  return `<div class="pt-2"><div class="font-bold text-brand text-sm mb-2">${tr('এটাও কিনতে পারেন')}</div><div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">${pick.map(p => {
+    const img = safeUrl(p.image_url), hv = hasVariants(p);
+    return `<div class="w-32 shrink-0 border rounded-xl p-2 bg-white flex flex-col"><div class="aspect-square rounded-lg bg-gray-50 overflow-hidden flex items-center justify-center">${img ? `<img src="${esc(img)}" alt="" loading="lazy" class="w-full h-full object-cover">` : '<i class="fa-solid fa-jar-wheat text-gold/50 text-2xl"></i>'}</div>
+      <div class="text-xs font-semibold mt-1 line-clamp-2 leading-snug min-h-[2rem]">${esc(pname(p))}</div>
+      <div class="text-xs font-bold text-brand">${hv ? tr('থেকে') + ' ' : ''}${money(minPrice(p))}</div>
+      <button data-action="${hv ? 'view' : 'add'}" data-id="${esc(p.id)}" class="btn btn-ghost !py-1 text-xs mt-1"><i class="fa-solid fa-plus text-[10px]"></i> ${hv ? tr('বিকল্প বেছে নিন') : tr('কার্টে যোগ করুন')}</button></div>`;
+  }).join('')}</div></div>`;
+}
+function renderCheckoutExtras() {
+  const d = state.design, lh = $('#loginHint');
+  if (lh) { lh.classList.toggle('hidden', !!state.user); lh.innerHTML = state.user ? '' : `${tr('অ্যাকাউন্ট আছে?')} <button type="button" data-action="loginFromCart" class="font-bold text-cta underline">${tr('লগইন করুন')}</button>`; }
+  const pb = $('#payBox');
+  if (pb) {
+    const opts = [['cod', dx(d, 'pay_cod_label'), 'fa-money-bill-wave']].concat(d.pay_wa !== false ? [['wa', dx(d, 'pay_wa_label'), 'fa-brands fa-whatsapp']] : []);
+    if (!opts.some(o => o[0] === state.pay)) state.pay = 'cod';
+    pb.innerHTML = `<span class="lbl">${tr('পেমেন্ট পদ্ধতি')}</span>` + opts.map(o => `<label class="flex items-center gap-2 border rounded-lg px-3 py-2 cursor-pointer has-[:checked]:border-gold has-[:checked]:bg-amber-50"><input type="radio" name="pay" value="${o[0]}" ${state.pay === o[0] ? 'checked' : ''} class="accent-[#C89B4B]"><span class="text-sm">${esc(o[1])}</span></label>`).join('');
+  }
+  const tb = $('#termsBox'), on = d.terms_on !== false;
+  if (tb) {
+    tb.classList.toggle('hidden', !on); tb.classList.toggle('flex', on);
+    const link = pageKeys().includes('policy') ? ` <button type="button" data-action="page" data-k="policy" class="text-cta underline">(${tr('শর্তাবলী দেখুন')})</button>` : '';
+    $('#termsTx').innerHTML = esc(dx(d, 'terms_text')) + link;
+    $('#c_terms').checked = !!state.terms;
+  }
 }
 function currentArea() { const r = $('input[name="area"]:checked'); return r ? r.value : (state.area || 'dhaka'); }
 function renderAreaBox() {
@@ -1036,10 +1110,14 @@ async function placeOrder() {
   const lines = cartLines();
   if (!lines.length) return toast('আপনার কার্ট খালি', 'err');
   if (state.design.orders_paused) return toast(pauseMsg(), 'err');
-  const name = $('#c_name').value.trim(), phone = normPhone($('#c_phone').value), address = $('#c_address').value.trim(), note = $('#c_note').value.trim();
+  let note = $('#c_note').value.trim(); const name = $('#c_name').value.trim(), phone = normPhone($('#c_phone').value), address = $('#c_address').value.trim();
   if (!name) return toast('অনুগ্রহ করে আপনার নাম লিখুন', 'err');
   if (!validPhone(phone)) return toast('সঠিক মোবাইল নম্বর দিন (যেমন: 01712345678)', 'err');
   if (address.length < 8) return toast('সম্পূর্ণ ঠিকানা লিখুন', 'err');
+  if (state.design.terms_on !== false && !$('#c_terms').checked) return toast(tr('অনুগ্রহ করে শর্তাবলীতে সম্মতি দিন'), 'err');
+  const pay = (state.design.pay_wa !== false && state.pay === 'wa') ? 'wa' : 'cod';
+  const payTxt = pay === 'wa' ? 'বিকাশ/নগদ — WhatsApp-এ কথা বলে' : 'ক্যাশ অন ডেলিভারি';
+  note = ('পেমেন্ট: ' + payTxt + (note ? ' | ' + note : '')).slice(0, 480);
   const area = currentArea(), btn = $('#placeBtn'); btn.disabled = true;
   const w = window.open('about:blank', '_blank');   // opened synchronously so mobile browsers don't block it
   let order = null;
@@ -1067,7 +1145,7 @@ async function placeOrder() {
   }
   const url = `https://wa.me/${digits(state.design.whatsapp)}?text=${encodeURIComponent(waMessage(order))}`;
   state.cart = []; state.couponCode = ''; state.coupon = null; state.couponKey = ''; saveCart(); btn.disabled = false;
-  $('#c_note').value = '';
+  $('#c_note').value = ''; state.terms = false; order.pay = pay;
   closeCart();
   if (sb) await loadProducts();
   refreshCartUI();
@@ -1086,6 +1164,7 @@ function openThanks(o, url) {
         <div class="flex justify-between"><span>${tr('মোট')}</span><b class="text-brand">${money(o.total)}</b></div>
         <div class="flex justify-between"><span>${tr('এলাকা')}</span><span>${esc(zoneLabel(o.area))}</span></div>
         ${eta ? `<div class="flex justify-between"><span>${tr('আনুমানিক ডেলিভারি')}</span><span>${esc(eta)}</span></div>` : ''}</div>
+      ${o.pay === 'wa' ? `<p class="text-sm bg-amber-50 border border-amber-200 rounded-lg p-2 text-amber-900">${LANG === 'en' ? 'You chose bKash/Nagad: please talk to us on WhatsApp to arrange payment. Payment is not taken on this site.' : 'আপনি বিকাশ/নগদ বেছেছেন: পেমেন্টের বিষয়ে WhatsApp-এ আমাদের সঙ্গে কথা বলুন। এই সাইটে পেমেন্ট নেওয়া হয় না।'}</p>` : ''}
       <p class="text-sm text-gray-600">${tr('অর্ডার চূড়ান্ত করতে WhatsApp-এ বার্তাটি পাঠিয়ে দিন। না খুললে নিচের বাটন চাপুন।')}</p>
       <a href="${esc(url)}" target="_blank" rel="noopener noreferrer" class="btn btn-cta w-full py-3"><i class="fa-brands fa-whatsapp text-lg"></i> ${tr('WhatsApp-এ নিশ্চিত করুন')}</a>
       <button data-action="closeModal" class="btn btn-ghost w-full">${tr('কেনাকাটা চালিয়ে যান')}</button>
@@ -1584,6 +1663,7 @@ function openProductForm(id) {
       <p class="text-xs text-gray-500 -mt-1">ফরম্যাট: <b>লেবেল | দাম | ইংরেজি লেবেল (ঐচ্ছিক) | পুরনো দাম (ঐচ্ছিক)</b>। এটা দিলে উপরের "বিক্রয় মূল্য" ও "ওজন" ব্যবহার হবে না।</p>
       <div class="grid grid-cols-2 gap-3"><label class="block"><span class="lbl">স্টক সংখ্যা (ঐচ্ছিক)</span><input name="stock_qty" type="number" min="0" step="1" class="inp" placeholder="ফাঁকা = সীমাহীন" value="${esc(p && p.stock_qty !== null && p.stock_qty !== undefined ? p.stock_qty : '')}"></label>
         <label class="flex items-center justify-between py-1 cursor-pointer self-end"><span class="text-sm font-medium">কম্বো / অফার প্যাক</span><span class="toggle"><input type="checkbox" name="is_combo" ${p && p.is_combo ? 'checked' : ''}><span></span></span></label></div>
+      ${state.featBest ? `<label class="flex items-center justify-between py-1 cursor-pointer"><span class="text-sm font-medium">"বেশি বিক্রিত" হিসেবে দেখান (হোম পেজ সেকশন ও ব্যাজ)</span><span class="toggle"><input type="checkbox" name="is_best" ${p && p.is_best ? 'checked' : ''}><span></span></span></label>` : '<p class="text-xs text-amber-700 bg-amber-50 rounded p-2">"বেশি বিক্রিত" সুইচ চালু করতে Supabase SQL Editor-এ <code>supabase-best-selling.sql</code> একবার চালান।</p>'}
       <p class="text-xs text-gray-500 -mt-1">স্টক সংখ্যা দিলে অর্ডারে নিজে থেকে কমবে, ০ হলে "স্টক শেষ" হবে এবং অর্ডার বাতিল করলে ফিরে আসবে।</p>` : ''}
       <p class="text-xs text-gray-500 -mt-1">দাম ০ রাখলে সাইটে "দাম জানতে মেসেজ করুন" দেখাবে এবং কার্টে যোগ করা যাবে না।</p>
       <label class="block"><span class="lbl">বিবরণ</span><textarea name="description" rows="3" class="inp">${esc(p ? p.description : '')}</textarea></label>
@@ -1610,6 +1690,7 @@ async function saveProduct(f) {
   if (state.feat) {
     const vr = parseVariants(fd.get('variants')); if (vr.error) return toast(vr.error, 'err');
     row.variants = vr.list; row.images = state.pfImages.slice(0, 4); row.is_combo = fd.get('is_combo') === 'on';
+    if (state.featBest) row.is_best = fd.get('is_best') === 'on';
     const sq = String(fd.get('stock_qty') ?? '').trim(); row.stock_qty = sq === '' ? null : Math.max(0, parseInt(enNum(sq), 10) || 0);
     if (row.stock_qty !== null) row.in_stock = row.stock_qty > 0;
     if (vr.list.length) { row.price = Math.min(...vr.list.map(v => v.price)); row.old_price = null; row.weight = ''; }
@@ -1807,6 +1888,7 @@ function tabShop() {
       + [0, 1, 2].map(i => `<div class="grid sm:grid-cols-3 gap-2 border rounded-lg p-3">${F.text('এলাকার নাম (বাংলা)', `design.extra_zones.${i}.name`, 'যেমন: সাভার')}${F.text('এলাকার নাম (ইংরেজি)', `design.extra_zones.${i}.name_en`)}${F.num('চার্জ (৳)', `design.extra_zones.${i}.charge`)}</div>`).join('')
       + '<p class="text-xs text-gray-500">নাম ফাঁকা রাখলে ওই এলাকা কার্টে দেখাবে না।</p>')}
     ${sect('স্টক ও কম্বো', 'fa-boxes-stacked', F.num('এর কম থাকলে "মাত্র N টি বাকি" দেখাবে ও কম স্টক সতর্কতা', 'design.low_stock') + `<div class="grid sm:grid-cols-2 gap-3">${F.text('কম্বো সেকশনের শিরোনাম (বাংলা)', 'design.combo_title')}${F.text('কম্বো সেকশনের শিরোনাম (ইংরেজি)', 'design.combo_title_en')}</div><p class="text-xs text-gray-500">পণ্য সম্পাদনায় "কম্বো/অফার প্যাক" চালু করলে সেই পণ্য সাইটের ওপরে এই সেকশনে দেখাবে।</p>`)}
+    ${sect('হোম পেজ, কার্ট ও চেকআউট', 'fa-house', F.toggle('হোম পেজে ক্যাটেগরি অনুযায়ী আলাদা সেকশন ("সব দেখুন →" সহ)', 'design.home_sections') + F.toggle('"বেশি বিক্রিত" ব্যাজ দেখান', 'design.best_badge') + `<div class="grid sm:grid-cols-2 gap-3">${F.text('"বেশি বিক্রিত" সেকশনের নাম (বাংলা)', 'design.best_title')}${F.text('ইংরেজি', 'design.best_title_en')}</div>` + F.toggle('নিচে ভাসমান কার্ট বাটন (আইটেম ও মোট টাকা)', 'design.cart_pill') + F.toggle('কার্টে "এটাও কিনতে পারেন" দেখান', 'design.upsell') + F.toggle('অর্ডারের সময় শর্তাবলীর টিক বাধ্যতামূলক', 'design.terms_on') + `<div class="grid sm:grid-cols-2 gap-3">${F.text('শর্তাবলীর লেখা (বাংলা)', 'design.terms_text')}${F.text('শর্তাবলীর লেখা (ইংরেজি)', 'design.terms_text_en')}${F.text('পেমেন্ট অপশন ১ (বাংলা)', 'design.pay_cod_label')}${F.text('পেমেন্ট অপশন ১ (ইংরেজি)', 'design.pay_cod_label_en')}</div>` + F.toggle('পেমেন্ট অপশন ২ দেখান (WhatsApp-এ কথা বলে)', 'design.pay_wa') + `<div class="grid sm:grid-cols-2 gap-3">${F.text('পেমেন্ট অপশন ২ (বাংলা)', 'design.pay_wa_label')}${F.text('পেমেন্ট অপশন ২ (ইংরেজি)', 'design.pay_wa_label_en')}</div><p class="text-xs text-gray-500">সাইটে অনলাইন পেমেন্ট নেওয়া হয় না। গ্রাহক যা বেছে নেন তা অর্ডারের নোট ও WhatsApp বার্তায় যায়। "বেশি বিক্রিত" নির্বাচন হয় পণ্য সম্পাদনার সুইচ থেকে।</p>`)}
     ${['story', 'policy'].map(k => sect(k === 'story' ? 'আমাদের গল্প পেজ' : 'ডেলিভারি ও রিটার্ন নীতি পেজ', 'fa-file-lines', `<div class="grid sm:grid-cols-2 gap-3">${F.text('শিরোনাম (বাংলা)', `design.pages.${k}.title`)}${F.text('শিরোনাম (ইংরেজি)', `design.pages.${k}.title_en`)}</div>${F.area('লেখা (বাংলা)', `design.pages.${k}.body`, 6)}${F.area('লেখা (ইংরেজি)', `design.pages.${k}.body_en`, 6)}<p class="text-xs text-gray-500">লেখা ফাঁকা থাকলে ফুটারে এই পেজের লিঙ্ক দেখাবে না। শুধু সত্য তথ্য লিখুন।</p>`)).join('')}
     ${sect('প্রশ্নোত্তর (FAQ)', 'fa-circle-question', [0, 1, 2, 3, 4, 5].map(i => `<div class="border rounded-lg p-3 space-y-2 bg-gray-50"><div class="grid sm:grid-cols-2 gap-2">${F.text('প্রশ্ন (বাংলা)', `design.faq.${i}.q`)}${F.text('প্রশ্ন (ইংরেজি)', `design.faq.${i}.q_en`)}</div><div class="grid sm:grid-cols-2 gap-2">${F.area('উত্তর (বাংলা)', `design.faq.${i}.a`, 2)}${F.area('উত্তর (ইংরেজি)', `design.faq.${i}.a_en`, 2)}</div></div>`).join('') + '<p class="text-xs text-gray-500">প্রশ্ন বা উত্তর ফাঁকা থাকলে সেটি দেখাবে না।</p>')}
     ${saveBar('a-saveDesign')}</div>`;
@@ -2042,6 +2124,8 @@ function tabChats() {
       F.area('স্বাগত বার্তা (বাংলা) — {brand} লিখলে দোকানের নাম বসবে', 'chat.welcome', 2) +
       F.area('স্বাগত বার্তা (ইংরেজি)', 'chat.welcome_en', 2) +
       `<div class="border rounded-lg p-3 space-y-2"><div class="text-sm font-semibold text-brand">৪টি কুইক বাটন <span class="text-xs font-normal text-gray-500">(৪র্থ বাটনটি সবসময় WhatsApp খোলে, বাকি তিনটি লেখা চ্যাটে পাঠায়)</span></div><div class="grid sm:grid-cols-2 gap-3">${[0, 1, 2, 3].map(k => F.text(`বাটন ${bn(k + 1)} (বাংলা)`, `chat.chips.${k}`) + F.text(`বাটন ${bn(k + 1)} (ইংরেজি)`, `chat.chips_en.${k}`)).join('')}</div></div>` +
+      F.toggle('চ্যাট আইকনের পাশে ছোট বাবল দেখান', 'chat.teaser_on') +
+      `<div class="grid sm:grid-cols-2 gap-3">${F.text('বাবলের লেখা (বাংলা)', 'chat.teaser')}${F.text('বাবলের লেখা (ইংরেজি)', 'chat.teaser_en')}</div><p class="text-xs text-gray-500 -mt-1">চ্যাটটি স্বয়ংক্রিয়, তাই "১ মিনিটে উত্তর" ধরনের সময়ের প্রতিশ্রুতি লেখা এড়িয়ে চলুন।</p>` +
       F.area('চ্যাটের নিচের ছোট লেখা (বাংলা)', 'chat.note', 2) +
       F.area('চ্যাটের নিচের ছোট লেখা (ইংরেজি)', 'chat.note_en', 2) +
       F.area('খাবারের ঐতিহ্য ও গল্প (AI গ্রাহককে বলবে; শুধু সত্য তথ্য লিখুন, যেমন: ঘি কীভাবে তৈরি হয়, মধু কোথা থেকে আসে)', 'chat.heritage', 4) +
@@ -2129,6 +2213,8 @@ document.addEventListener('click', async e => {
     case 'notify': openNotify(id); break;
     case 'page': location.hash = '#page=' + el.dataset.k; break;
     case 'openCart': openCart(); break;
+    case 'teaserClose': closeTeaser(); break;
+    case 'loginFromCart': closeCart(); openAccount(); break;
     case 'closeCart': closeCart(); break;
     case 'closeCartShop': goShop(); break;
     case 'closeModal': closeModal(); break;
@@ -2251,6 +2337,8 @@ document.addEventListener('input', e => {
 document.addEventListener('change', async e => {
   const t = e.target, d = t.dataset || {};
   if (t.name === 'area') { state.area = t.value; return updateSummary(); }
+  if (t.name === 'pay') { state.pay = t.value; return; }
+  if (t.id === 'c_terms') { state.terms = t.checked; return; }
   if (d.upload) return handleUpload(t);
   if (d.orderTrack) {
     const { error } = await sb.from('orders').update({ tracking: t.value.trim().slice(0, 200) }).eq('id', d.orderTrack);
