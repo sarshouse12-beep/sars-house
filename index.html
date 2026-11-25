@@ -486,8 +486,11 @@ const EN_PAT = [
   [/^(\d+)টি "স্টকে এলে জানান" অনুরোধ$/, m => `${m[1]} "Notify me" request(s)`],
   [/^(.*) • (\d+)টি অর্ডার • (.*) • শেষ: (.*)$/, m => `${m[1]} • ${m[2]} order(s) • ${m[3]} • Last: ${m[4]}`]
 ];
-function enPattern(k) { for (const [re, f] of EN_PAT) { const m = re.exec(k); if (m) { const v = f(m); if (v) return v; } } return undefined; }
+const EN_PAT2 = [["^(\\d+)টি পণ্যে দাম দেওয়া হয়নি$", "\\1 products have no price"], ["^(\\d+)টি পণ্যে ছবি নেই$", "\\1 products have no image"], ["^(\\d+)টি পণ্যের ইংরেজি নাম নেই$", "\\1 products have no English name"]];
+function enPattern(k) { for (const [p, r] of EN_PAT2) { const m = new RegExp(p).exec(k); if (m) return r.replace(/\\(\d)/g, (_, i) => m[i]); } for (const [re, f] of EN_PAT) { const m = re.exec(k); if (m) { const v = f(m); if (v) return v; } } return undefined; }
 Object.assign(EN, {"গ্রাহক তালিকা অর্ডার থেকে তৈরি (সর্বশেষ ১০০০টি অর্ডার)। ফোন নম্বর দিয়ে একই গ্রাহকের অর্ডার মেলানো হয়।": "The customer list is built from orders (latest 1000). Orders are matched to a customer by phone number.", "শুধু ডেলিভারি পাওয়া গ্রাহকরা রিভিউ দিতে পারেন। আপনি অনুমোদন করলে তবেই সাইটে দেখাবে।": "Only customers who received a delivery can leave a review. It shows on the site only after you approve it.", "চালু করলে কার্ট থেকে অর্ডার নেওয়া বন্ধ হবে (সার্ভারেও আটকানো থাকবে)। গ্রাহক তখনও পণ্য দেখতে ও WhatsApp-এ কথা বলতে পারবেন।": "When on, ordering from the cart is stopped (also blocked on the server). Customers can still browse and talk to you on WhatsApp.", "অতিরিক্ত ডেলিভারি এলাকা (ঢাকার ভেতর/বাইরের চার্জ \"ডিজাইন ও থিম\" ট্যাবে)": "Extra delivery areas (Inside/Outside Dhaka charges are in the \"Design & Theme\" tab)", "পণ্য সম্পাদনায় \"কম্বো/অফার প্যাক\" চালু করলে সেই পণ্য সাইটের ওপরে এই সেকশনে দেখাবে।": "Turn on \"Combo / offer pack\" when editing a product to show it in this section at the top of the site.", "পণ্যের শেয়ার/QR লিংক খুললে সেই পণ্যের পপআপ নিজে থেকে খুলুক (বন্ধ থাকলে লিংক খুললে সাধারণ হোম পেজ দেখাবে)": "Open the product popup automatically when a product share/QR link is opened (if off, the link shows the normal home page)", "সাইটে অনলাইন পেমেন্ট নেওয়া হয় না। গ্রাহক যা বেছে নেন তা অর্ডারের নোট ও WhatsApp বার্তায় যায়। \"বেশি বিক্রিত\" নির্বাচন হয় পণ্য সম্পাদনার সুইচ থেকে।": "Online payment is not taken on the site. The customer's choice goes into the order note and the WhatsApp message. \"Best Selling\" is chosen with the switch when editing a product.", "লেখা ফাঁকা থাকলে ফুটারে এই পেজের লিঙ্ক দেখাবে না। শুধু সত্য তথ্য লিখুন।": "If left empty, the footer link for this page is hidden. Write only true information.", "চ্যাটটি স্বয়ংক্রিয়, তাই \"১ মিনিটে উত্তর\" ধরনের সময়ের প্রতিশ্রুতি লেখা এড়িয়ে চলুন।": "The chat is automated, so avoid promising reply times like \"answer in 1 minute\".", "খাবারের ঐতিহ্য ও গল্প (AI গ্রাহককে বলবে; শুধু সত্য তথ্য লিখুন, যেমন: ঘি কীভাবে তৈরি হয়, মধু কোথা থেকে আসে)": "Food heritage & story (the AI tells customers; write only true facts, e.g. how ghee is made, where honey comes from)", "কথোপকথন": "Conversations"});
+Object.assign(EN, {"আজকের কাজ": "Today", "সেটিংস": "Settings", "সেটিংস খুঁজুন (যেমন: ডেলিভারি, কুপন, লোগো)": "Search settings (e.g. delivery, coupon, logo)", "কিছু পাওয়া যায়নি": "Nothing found", "সাইটের চেহারা": "Site appearance", "মার্কেটিং ও গ্রাহক": "Marketing & customers", "ইউজার": "Users", "লোগো, রঙ, হেডার, ব্যানার, ক্যাটেগরি, ফুটার": "Logo, colors, header, banner, categories, footer", "অফার ব্যানার ও বিজ্ঞাপন": "Offer banners & ads", "ডেলিভারি, ছুটির মোড, চেকআউট, গল্প ও নীতি পেজ, FAQ": "Delivery, holiday mode, checkout, story & policy pages, FAQ", "ছাড় কোড তৈরি ও বন্ধ করা": "Create and stop discount codes", "রিভিউ অনুমোদন, \"স্টকে এলে জানান\" অনুরোধ": "Approve reviews, \"Notify me\" requests", "দোকান ও পণ্যের QR কোড ডাউনলোড": "Download shop & product QR codes", "চ্যাটের নাম, বার্তা, বাবল, কথোপকথন দেখা": "Chat name, messages, bubble, view conversations", "অ্যাডমিন যোগ করা ও অনুমতি": "Add admins and permissions", "নতুন অর্ডার": "New orders", "রিভিউ অনুমোদন বাকি": "Reviews to approve", "কম স্টক পণ্য": "Low-stock products", "দাম দেওয়া হয়নি": "No price set", "\"স্টকে এলে জানান\" অনুরোধ": "\"Notify me\" requests", "এই মুহূর্তে কোনো জরুরি কাজ নেই।": "Nothing urgent right now.", "সাইট সেটআপ চেকলিস্ট": "Site setup checklist", "ঠিক করুন": "Fix", "সম্পন্ন কাজগুলো দেখুন": "Show completed items", "সব ঠিক আছে": "All good", "লোগো দেওয়া হয়েছে": "Logo added", "হিরো ব্যানার দেওয়া হয়েছে": "Hero banner added", "WhatsApp নম্বর সঠিক": "WhatsApp number is valid", "\"আমাদের গল্প\" পেজের লেখা আছে": "\"Our Story\" page has text", "\"ডেলিভারি ও রিটার্ন নীতি\" পেজের লেখা আছে": "\"Delivery & Return Policy\" page has text", "অর্ডার নেওয়া চালু আছে (ছুটির মোড বন্ধ)": "Taking orders (holiday mode off)", "নিশ্চিত করুন": "Confirm", "গ্রাহককে জানান": "Notify customer (WhatsApp)", "পণ্য খুঁজুন": "Search products", "স্টক শেষ": "Out of stock", "দাম ০": "Price 0", "ছবি নেই": "No image", "ইংরেজি নাম নেই": "No English name", "কোনো পণ্য মেলেনি": "No matching products"});
+Object.assign(EN, {"লোগো এখনো দেওয়া হয়নি": "Logo not added yet", "হিরো ব্যানার এখনো দেওয়া হয়নি": "Hero banner not added yet", "WhatsApp নম্বর ঠিক নেই": "WhatsApp number is not valid", "\"আমাদের গল্প\" পেজের লেখা নেই": "\"Our Story\" page is empty", "\"ডেলিভারি ও রিটার্ন নীতি\" পেজের লেখা নেই": "\"Delivery & Return Policy\" page is empty", "ছুটির মোড চালু — নতুন অর্ডার বন্ধ": "Holiday mode is on — new orders are paused", "সব পণ্যে দাম আছে": "All products have a price", "সব পণ্যে ছবি আছে": "All products have an image", "সব পণ্যের ইংরেজি নাম আছে": "All products have an English name", "অর্ডার নেওয়া চালু আছে": "Taking orders"});
 function xlateText(n) {
   const p = n.parentNode; if (p && SKIP_TAGS[p.nodeName]) return;
   if (n.__bn === undefined || n.data !== n.__tr) n.__bn = n.data;
@@ -546,7 +549,7 @@ const state = {
   reviews: [], wish: [], feat: true, area: 'dhaka',
   couponCode: '', coupon: null, couponKey: '',
   selV: '', galI: 0,
-  adminCoupons: [], adminRequests: [], adminReviews: [], custQ: ''
+  adminCoupons: [], adminRequests: [], adminReviews: [], custQ: '', pq: '', pf: 'all', openSects: new Set()
 };
 try { const w = JSON.parse(localStorage.getItem('sh_wish') || '[]'); state.wish = Array.isArray(w) ? w.filter(x => typeof x === 'string').slice(0, 200) : []; } catch (e) {}
 let adminDraft = null;
@@ -1153,7 +1156,7 @@ window.addEventListener('popstate', () => {
   guardOn = false;
   if (modalIsOpen()) closeModal();
   else if (cartIsOpen()) closeCart();
-  else if (adminIsDeep()) { applyTheme(); state.adminTab = 'dash'; adminDraft = { design: clone(state.design), ads: clone(state.ads), chat: clone(state.chatCfg) }; renderAdmin(); window.scrollTo(0, 0); }
+  else if (adminIsDeep()) { applyTheme(); state.adminTab = (tabGroup(state.adminTab) === 'settings' && state.adminTab !== 'settings') ? 'settings' : 'dash'; adminDraft = { design: clone(state.design), ads: clone(state.ads), chat: clone(state.chatCfg) }; renderAdmin(); window.scrollTo(0, 0); }
   guardSync();
 });
 window.addEventListener('hashchange', () => { if (guardOn && location.href !== guardHref) guardOn = false; });
@@ -1608,18 +1611,32 @@ const ADMIN_TABS = [
   { k: 'users', l: 'ইউজার ও রোল', i: 'fa-users-gear' }
 ];
 const TAB_PERM = { dash: 'orders', customers: 'orders', chats: 'orders', coupons: 'products', reviews: 'products', qr: 'products', shop: 'design' };
+const MAIN_TABS = [
+  { k: 'dash', l: 'আজকের কাজ', i: 'fa-house' }, { k: 'orders', l: 'অর্ডার', i: 'fa-receipt' },
+  { k: 'products', l: 'পণ্য', i: 'fa-box' }, { k: 'customers', l: 'গ্রাহক', i: 'fa-address-book' }, { k: 'settings', l: 'সেটিংস', i: 'fa-gear' }
+];
+const SETTINGS_GROUPS = [
+  { t: 'সাইটের চেহারা', items: [['design', 'ডিজাইন ও থিম', 'fa-palette', 'লোগো, রঙ, হেডার, ব্যানার, ক্যাটেগরি, ফুটার'], ['ads', 'বিজ্ঞাপন', 'fa-bullhorn', 'অফার ব্যানার ও বিজ্ঞাপন'], ['shop', 'দোকান সেটিংস', 'fa-sliders', 'ডেলিভারি, ছুটির মোড, চেকআউট, গল্প ও নীতি পেজ, FAQ']] },
+  { t: 'মার্কেটিং ও গ্রাহক', items: [['coupons', 'কুপন', 'fa-ticket', 'ছাড় কোড তৈরি ও বন্ধ করা'], ['reviews', 'রিভিউ ও অনুরোধ', 'fa-star', 'রিভিউ অনুমোদন, "স্টকে এলে জানান" অনুরোধ'], ['qr', 'কিউআর কোড', 'fa-qrcode', 'দোকান ও পণ্যের QR কোড ডাউনলোড']] },
+  { t: 'চ্যাট', items: [['chats', 'এআই চ্যাট', 'fa-robot', 'চ্যাটের নাম, বার্তা, বাবল, কথোপকথন দেখা']] },
+  { t: 'ইউজার', items: [['users', 'ইউজার ও রোল', 'fa-users-gear', 'অ্যাডমিন যোগ করা ও অনুমতি']] }
+];
+const tabGroup = k => MAIN_TABS.some(t => t.k === k) ? k : 'settings';
+const settingsVisible = () => SETTINGS_GROUPS.flatMap(g => g.items).filter(it => visibleTabs().some(t => t.k === it[0]));
+const mainTabs = () => MAIN_TABS.filter(t => t.k === 'settings' ? settingsVisible().length > 0 : visibleTabs().some(v => v.k === t.k));
 const visibleTabs = () => ADMIN_TABS.filter(t => t.k === 'users' ? isSuper() : can(TAB_PERM[t.k] || t.k));
 function enterAdmin() {
   const tabs = visibleTabs();
   if (!tabs.length) { toast('আপনাকে কোনো পারমিশন দেওয়া হয়নি। সুপার অ্যাডমিনের সাথে যোগাযোগ করুন।', 'err'); location.hash = ''; return; }
   if (!tabs.find(t => t.k === state.adminTab)) state.adminTab = tabs[0].k;
+  if (state.adminTab === 'settings' && !settingsVisible().length) state.adminTab = tabs[0].k;
   adminDraft = { design: clone(state.design), ads: clone(state.ads), chat: clone(state.chatCfg) };
   subscribeAdmin();
   renderAdmin();
 }
 function renderAdmin() { hKeep('#admin', 'nav.no-scrollbar', renderAdminRaw); revealActive('#admin', 'nav .border-gold'); guardSync(); }
 function renderAdminRaw() {
-  const tabs = visibleTabs(), pr = state.profile || {};
+  const tabs = mainTabs(), pr = state.profile || {};
   $('#admin').innerHTML = `
     <header class="bg-brand text-white sticky top-0 z-30 shadow">
       <div class="max-w-6xl mx-auto px-3 py-2.5 flex items-center gap-3">
@@ -1631,7 +1648,7 @@ function renderAdminRaw() {
           <button data-action="logout" class="btn btn-sm bg-white/10 text-white"><i class="fa-solid fa-right-from-bracket"></i><span class="hidden sm:inline"> লগআউট</span></button>
         </div></div>
       <nav class="max-w-6xl mx-auto px-2 flex overflow-x-auto no-scrollbar">
-        ${tabs.map(t => `<button data-action="a-tab" data-tab="${t.k}" class="whitespace-nowrap px-4 py-2.5 text-sm font-medium ${state.adminTab === t.k ? 'text-gold border-b-2 border-gold' : 'text-white/80 hover:text-white'}"><i class="fa-solid ${t.i} mr-1.5"></i>${t.l}</button>`).join('')}
+        ${tabs.map(t => `<button data-action="a-tab" data-tab="${t.k}" class="whitespace-nowrap px-4 py-2.5 text-sm font-medium ${tabGroup(state.adminTab) === t.k ? 'text-gold border-b-2 border-gold' : 'text-white/80 hover:text-white'}"><i class="fa-solid ${t.i} mr-1.5"></i>${t.l}</button>`).join('')}
       </nav></header>
     <div id="adminBody" class="max-w-6xl mx-auto p-3 sm:p-5"></div>`;
   renderAdminTab(); loadForTab();
@@ -1663,8 +1680,8 @@ function renderAdminTab() {
   const t = state.adminTab;
   // keep focus-free re-render; draft is always the source of truth
   const y = window.scrollY;
-  const TABF = { dash: tabDash, products: tabProducts, orders: tabOrders, customers: tabCustomers, coupons: tabCoupons, reviews: tabReviews, design: tabDesign, shop: tabShop, ads: tabAds, chats: tabChats, qr: tabQR };
-  body.innerHTML = (TABF[t] || tabUsers)();
+  const TABF = { settings: tabSettings, dash: tabDash, products: tabProducts, orders: tabOrders, customers: tabCustomers, coupons: tabCoupons, reviews: tabReviews, design: tabDesign, shop: tabShop, ads: tabAds, chats: tabChats, qr: tabQR };
+  body.innerHTML = (tabGroup(t) === 'settings' && t !== 'settings' ? `<button data-action="a-tab" data-tab="settings" class="btn btn-sm btn-ghost mb-3"><i class="fa-solid fa-arrow-left"></i> ${tr('সেটিংস')}</button>` : '') + (TABF[t] || tabUsers)();
   window.scrollTo(0, y); updateDirty();
 }
 
@@ -1680,7 +1697,19 @@ const FLD = {
       <div class="flex flex-col gap-1.5"><label class="btn btn-ghost btn-sm cursor-pointer"><i class="fa-solid fa-upload"></i> ছবি আপলোড<input type="file" accept="image/*" class="hidden" data-upload="${p}" data-maxw="${maxw}"></label>
       ${u ? `<button type="button" data-action="a-rmimg" data-path="${p}" class="btn btn-sm text-red-600 border border-red-200 bg-white"><i class="fa-solid fa-trash-can"></i> মুছুন</button>` : ''}</div></div></div>`; }
 };
-const sect = (title, icon, inner) => `<section class="bg-white rounded-xl shadow-sm p-4 sm:p-5"><h3 class="font-bold text-brand mb-4 flex items-center gap-2"><i class="fa-solid ${icon} text-gold"></i>${title}</h3><div class="space-y-3">${inner}</div></section>`;
+const sect = (title, icon, inner) => { const op = state.openSects.has(title); return `<section data-sect class="bg-white rounded-xl shadow-sm"><button type="button" data-action="a-sect" data-t="${esc(title)}" class="w-full text-left p-4 sm:p-5 flex items-center gap-2 font-bold text-brand"><i class="fa-solid ${icon} text-gold"></i><span class="flex-1">${tr(title)}</span><i class="fa-solid fa-chevron-down text-xs text-gray-400 transition ${op ? 'rotate-180' : ''}"></i></button><div class="space-y-3 px-4 sm:px-5 pb-4 sm:pb-5 ${op ? '' : 'hidden'}">${inner}</div></section>`; };
+
+/* ---- SETTINGS HUB ---- */
+function tabSettings() {
+  const vis = new Set(visibleTabs().map(t => t.k)), pendRev = state.adminReviews.filter(r => !r.approved).length + state.adminRequests.length;
+  return `<div class="mb-4"><input id="setSearch" data-setq class="inp" type="search" placeholder="${tr('সেটিংস খুঁজুন (যেমন: ডেলিভারি, কুপন, লোগো)')}"></div>
+  <div id="setHub" class="space-y-5">${SETTINGS_GROUPS.map(g => {
+    const items = g.items.filter(it => vis.has(it[0])); if (!items.length) return '';
+    return `<div data-g><h3 class="font-bold text-brand mb-2">${tr(g.t)}</h3><div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">${items.map(it => `<button data-action="a-tab" data-tab="${it[0]}" data-kw="${esc((it[1] + ' ' + it[3] + ' ' + (EN[it[1]] || '') + ' ' + (EN[it[3]] || '') + ' ' + it[0]).toLowerCase())}" class="text-left bg-white rounded-xl shadow-sm p-4 flex gap-3 items-start hover:shadow-md active:scale-[.98] transition">
+      <span class="w-10 h-10 rounded-full bg-brand text-gold flex items-center justify-center shrink-0"><i class="fa-solid ${it[2]}"></i></span>
+      <span class="min-w-0"><span class="font-semibold text-brand flex items-center gap-2">${tr(it[1])}${it[0] === 'reviews' && pendRev ? `<span class="bg-cta text-white text-[10px] rounded-full px-1.5">${bn(pendRev)}</span>` : ''}</span><span class="block text-xs text-gray-500 mt-0.5">${tr(it[3])}</span></span></button>`).join('')}</div></div>`;
+  }).join('')}<p id="setNone" class="hidden text-center text-gray-500 py-8">${tr('কিছু পাওয়া যায়নি')}</p></div>`;
+}
 
 /* ---- PRODUCTS TAB ---- */
 function tabProducts() {
@@ -1689,7 +1718,26 @@ function tabProducts() {
     <div class="flex gap-2 flex-wrap"><button data-action="a-bulk" class="btn btn-ghost"><i class="fa-solid fa-table-list"></i> সব দাম একসাথে</button>
     <button data-action="a-csvProducts" class="btn btn-ghost"><i class="fa-solid fa-file-csv"></i> CSV</button>
     <button data-action="a-newProduct" class="btn btn-cta"><i class="fa-solid fa-plus"></i> নতুন পণ্য</button></div></div>
-    <div class="space-y-2">${state.products.length ? state.products.map(p => `
+    <div class="mb-3"><input data-prodq class="inp" type="search" placeholder="${tr('পণ্য খুঁজুন')}" value="${esc(state.pq || '')}"></div>
+    <div class="flex gap-2 overflow-x-auto no-scrollbar mb-3 pb-1">${[['all', 'সব'], ['out', 'স্টক শেষ'], ['low', 'কম স্টক'], ['noprice', 'দাম ০'], ['noimg', 'ছবি নেই'], ['noen', 'ইংরেজি নাম নেই']].concat(state.featBest ? [['best', 'বেশি বিক্রিত']] : []).map(f => `<button data-action="a-pf" data-pf="${f[0]}" class="btn btn-sm whitespace-nowrap ${(state.pf || 'all') === f[0] ? 'btn-brand' : 'btn-ghost'}">${tr(f[1])}</button>`).join('')}</div>
+    <div id="prodList" class="space-y-2">${prodRows()}</div>`;
+}
+function prodFiltered() {
+  const q = String(state.pq || '').trim().toLowerCase(), f = state.pf || 'all', lowN = Number(state.design.low_stock) || 5;
+  return state.products.filter(p => {
+    if (q && !((p.name || '') + ' ' + (p.name_en || '') + ' ' + (p.category || '')).toLowerCase().includes(q)) return false;
+    if (f === 'out') return !p.in_stock;
+    if (f === 'low') return p.stock_qty !== null && p.stock_qty !== undefined && Number(p.stock_qty) <= lowN;
+    if (f === 'noprice') return !hasPrice(p);
+    if (f === 'noimg') return !p.image_url;
+    if (f === 'noen') return !String(p.name_en || '').trim();
+    if (f === 'best') return !!p.is_best;
+    return true;
+  });
+}
+function prodRows() {
+  const list = prodFiltered();
+  return list.length ? list.map(p => `
       <div class="bg-white rounded-xl shadow-sm p-3 flex gap-3 items-center">
         <div class="w-16 h-16 rounded-lg bg-gray-50 overflow-hidden shrink-0 flex items-center justify-center">${prevImg(p.image_url)}</div>
         <div class="flex-1 min-w-0"><div class="font-semibold truncate">${esc(p.name)}</div>
@@ -1699,7 +1747,7 @@ function tabProducts() {
           <button data-action="a-stock" data-id="${esc(p.id)}" class="btn btn-sm ${p.in_stock ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">${p.in_stock ? 'স্টকে আছে' : 'স্টক শেষ'}</button>
           <button data-action="a-editProduct" data-id="${esc(p.id)}" class="btn btn-sm btn-ghost"><i class="fa-solid fa-pen"></i></button>
           <button data-action="a-delProduct" data-id="${esc(p.id)}" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash-can"></i></button></div></div>`).join('')
-      : '<div class="bg-white rounded-xl p-10 text-center text-gray-500">কোনো পণ্য নেই। "নতুন পণ্য" বাটনে ক্লিক করুন।</div>'}</div>`;
+    : `<div class="bg-white rounded-xl p-10 text-center text-gray-500">${state.products.length ? tr('কোনো পণ্য মেলেনি') : 'কোনো পণ্য নেই। "নতুন পণ্য" বাটনে ক্লিক করুন।'}</div>`;
 }
 const noPerm = () => '<div class="bg-white rounded-xl p-10 text-center text-gray-500">এই সেকশনে প্রবেশের অনুমতি নেই।</div>';
 
@@ -1809,7 +1857,21 @@ function tabDash() {
   const reqCount = state.adminRequests.length, pendRev = state.adminReviews.filter(r => !r.approved).length;
   const card = (l, v, sub, ic, act, f) => `<button type="button" ${act ? `data-action="${act}" data-f="${f || 'all'}"` : ''} class="text-left bg-white rounded-xl shadow-sm p-3 ${act ? 'hover:shadow-md active:scale-95 transition' : 'cursor-default'}"><i class="fa-solid ${ic} text-gold"></i><div class="text-xl font-bold text-brand mt-1">${v}</div><div class="text-xs text-gray-500">${l}</div>${sub ? `<div class="text-[11px] text-gray-400">${sub}</div>` : ''}</button>`;
   const notifOk = 'Notification' in window && Notification.permission === 'granted';
-  return `${featBanner()}
+  const noPrice = state.products.filter(p => !hasPrice(p)).length, noImg = state.products.filter(p => !p.image_url).length, noEn = state.products.filter(p => !String(p.name_en || '').trim()).length;
+  const d0 = state.design, okWa = digits(d0.whatsapp).length >= 10;
+  const task = (n, l, ic, attrs) => `<button type="button" ${attrs} class="text-left rounded-xl p-3 transition active:scale-95 ${n ? 'bg-amber-50 border-2 border-amber-300 hover:shadow-md' : 'bg-white shadow-sm opacity-70'}"><i class="fa-solid ${ic} ${n ? 'text-cta' : 'text-gray-400'}"></i><div class="text-2xl font-bold ${n ? 'text-cta' : 'text-gray-400'} leading-tight">${bn(n)}</div><div class="text-xs font-semibold text-gray-700">${tr(l)}</div></button>`;
+  const tasks = [[pending, 'নতুন অর্ডার', 'fa-bell-concierge', 'data-action="a-goOrders" data-f="pending"'], [pendRev, 'রিভিউ অনুমোদন বাকি', 'fa-star', 'data-action="a-goTab" data-tab="reviews"'], [reqCount, '"স্টকে এলে জানান" অনুরোধ', 'fa-bell', 'data-action="a-goTab" data-tab="reviews"'], [low.length, 'কম স্টক পণ্য', 'fa-triangle-exclamation', 'data-action="a-goProducts" data-pf="low"'], [noPrice, 'দাম দেওয়া হয়নি', 'fa-tag', 'data-action="a-goProducts" data-pf="noprice"']];
+  const open = tasks.reduce((a, t) => a + (t[0] ? 1 : 0), 0);
+  const chk = [
+    [!!d0.logo_url, 'লোগো দেওয়া হয়েছে', 'লোগো এখনো দেওয়া হয়নি', 'design'], [!!d0.hero_image, 'হিরো ব্যানার দেওয়া হয়েছে', 'হিরো ব্যানার এখনো দেওয়া হয়নি', 'design'], [okWa, 'WhatsApp নম্বর সঠিক', 'WhatsApp নম্বর ঠিক নেই', 'design'],
+    [!noPrice, 'সব পণ্যে দাম আছে', `${bn(noPrice)}টি পণ্যে দাম দেওয়া হয়নি`, 'p:noprice'], [!noImg, 'সব পণ্যে ছবি আছে', `${bn(noImg)}টি পণ্যে ছবি নেই`, 'p:noimg'], [!noEn, 'সব পণ্যের ইংরেজি নাম আছে', `${bn(noEn)}টি পণ্যের ইংরেজি নাম নেই`, 'p:noen'],
+    [!!String(pageBody('story') || '').trim(), '"আমাদের গল্প" পেজের লেখা আছে', '"আমাদের গল্প" পেজের লেখা নেই', 'shop'], [!!String(pageBody('policy') || '').trim(), '"ডেলিভারি ও রিটার্ন নীতি" পেজের লেখা আছে', '"ডেলিভারি ও রিটার্ন নীতি" পেজের লেখা নেই', 'shop'], [!d0.orders_paused, 'অর্ডার নেওয়া চালু আছে', 'ছুটির মোড চালু — নতুন অর্ডার বন্ধ', 'shop']
+  ];
+  const chkOpen = chk.filter(c => !c[0]), chkRow = c => `<li class="flex items-center gap-2 py-1.5 border-b last:border-0 text-sm"><i class="fa-solid ${c[0] ? 'fa-circle-check text-green-600' : 'fa-circle-exclamation text-amber-500'}"></i><span class="flex-1 ${c[0] ? 'text-gray-500' : 'font-medium'}">${tr(c[0] ? c[1] : c[2])}</span>${c[0] ? '' : (String(c[3]).startsWith('p:') ? `<button data-action="a-goProducts" data-pf="${c[3].slice(2)}" class="btn btn-sm btn-ghost">${tr('ঠিক করুন')}</button>` : `<button data-action="a-goTab" data-tab="${c[3]}" class="btn btn-sm btn-ghost">${tr('ঠিক করুন')}</button>`)}</li>`;
+  const todo = `<section class="mb-4"><h3 class="font-bold text-brand mb-2">${tr('আজকের কাজ')}${open ? '' : ' ✅'}</h3>${open ? '' : `<p class="text-sm text-green-700 mb-2">${tr('এই মুহূর্তে কোনো জরুরি কাজ নেই।')}</p>`}<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">${tasks.map(t => task(t[0], t[1], t[2], t[3])).join('')}</div></section>
+    ${can('design') ? `<section class="bg-white rounded-xl shadow-sm p-4 mb-4"><h3 class="font-bold text-brand mb-2"><i class="fa-solid fa-list-check text-gold"></i> ${tr('সাইট সেটআপ চেকলিস্ট')} <span class="text-xs font-normal text-gray-500">(${bn(chk.length - chkOpen.length)}/${bn(chk.length)})</span></h3>
+      ${chkOpen.length ? `<ul>${chkOpen.map(chkRow).join('')}</ul><details class="mt-2"><summary class="text-xs text-gray-500 cursor-pointer">${tr('সম্পন্ন কাজগুলো দেখুন')}</summary><ul>${chk.filter(c => c[0]).map(chkRow).join('')}</ul></details>` : `<p class="text-sm text-green-700">✅ ${tr('সব ঠিক আছে')}</p>`}</section>` : ''}`;
+  return `${featBanner()}${todo}
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
       ${card('আজকের অর্ডার', bn(today.length), money(sum(today)), 'fa-calendar-day', 'a-goOrders', 'all')}
       ${card('গত ৭ দিন', bn(week.length), money(sum(week)), 'fa-calendar-week', 'a-goOrders', 'all')}
@@ -2027,6 +2089,23 @@ async function saveBulk(f) {
 }
 
 /* ---- ORDERS TAB ---- */
+function orderWaLink(o) {
+  const p = normPhone(o.phone), full = p.startsWith('0') ? '88' + p : p, brand = state.design.brand_name || '', no = o.order_no, tot = '৳' + Number(o.total);
+  const m = {
+    pending: `আসসালামু আলাইকুম ${o.customer_name}, ${brand}-এ আপনার অর্ডার ${no} (মোট ${tot}) আমরা পেয়েছি। ধন্যবাদ।`,
+    confirmed: `আসসালামু আলাইকুম ${o.customer_name}, আপনার অর্ডার ${no} নিশ্চিত করা হয়েছে। মোট ${tot}। ধন্যবাদ।`,
+    shipped: `আসসালামু আলাইকুম ${o.customer_name}, আপনার অর্ডার ${no} কুরিয়ারে দেওয়া হয়েছে।${o.tracking ? ' ট্র্যাকিং: ' + o.tracking : ''}`,
+    delivered: `আসসালামু আলাইকুম ${o.customer_name}, আপনার অর্ডার ${no} ডেলিভারি সম্পন্ন হয়েছে। আমাদের সাথে থাকার জন্য ধন্যবাদ।`,
+    cancelled: `আসসালামু আলাইকুম ${o.customer_name}, আপনার অর্ডার ${no} বাতিল করা হয়েছে। কোনো প্রশ্ন থাকলে জানাবেন।`
+  };
+  return 'https://wa.me/' + full + '?text=' + encodeURIComponent(m[o.status] || m.pending);
+}
+async function setOrderStatus(id, status) {
+  const { error } = await sb.from('orders').update({ status }).eq('id', id);
+  if (error) { toast('স্ট্যাটাস আপডেট ব্যর্থ', 'err'); return false; }
+  const o = state.adminOrders.find(x => x.id === id); if (o) o.status = status;
+  toast('✅ অর্ডার স্ট্যাটাস আপডেট হয়েছে'); renderAdminTab(); return true;
+}
 function tabOrders() {
   if (!can('orders')) return noPerm();
   const all = state.adminOrders, f = state.orderFilter;
@@ -2057,6 +2136,8 @@ function tabOrders() {
           <div><ul class="space-y-0.5">${(Array.isArray(o.items) ? o.items : []).map(i => `<li>• ${esc(i.name)}${i.weight ? ' (' + esc(i.weight) + ')' : ''} × ${bn(Number(i.qty) || 0)} <span class="text-gray-500">= ${money((Number(i.price) || 0) * (Number(i.qty) || 0))}</span></li>`).join('')}</ul>
             ${Number(o.discount) > 0 ? `<div class="mt-2 border-t pt-2 text-xs text-green-700">${tr('কুপন ছাড়')} (${esc(o.coupon_code)}): −${money(o.discount)}</div>` : ''}<div class="mt-2 border-t pt-2 text-xs text-gray-600">${tr('ডেলিভারি')}: ${money(o.delivery_charge)}</div><div class="font-bold text-brand">${tr('মোট')}: ${money(o.total)}</div></div></div>
         <div class="flex flex-wrap gap-2 mt-3 pt-3 border-t items-center">
+          ${o.status === 'pending' ? `<button data-action="a-quick" data-id="${esc(o.id)}" data-s="confirmed" class="btn btn-sm btn-cta"><i class="fa-solid fa-check"></i> ${tr('নিশ্চিত করুন')}</button>` : ''}
+          <a href="${esc(orderWaLink(o))}" target="_blank" rel="noopener noreferrer" class="btn btn-sm bg-green-600 text-white"><i class="fa-brands fa-whatsapp"></i> ${tr('গ্রাহককে জানান')}</a>
           <select data-order-status="${esc(o.id)}" class="inp !w-auto !py-1.5 text-sm">${Object.keys(STATUS).map(k => `<option value="${k}" ${o.status === k ? 'selected' : ''}>${esc(STATUS[k].l)}</option>`).join('')}</select>
           <input data-order-track="${esc(o.id)}" class="inp !w-auto !py-1.5 text-sm flex-1 min-w-[150px]" maxlength="200" placeholder="কুরিয়ার/ট্র্যাকিং তথ্য (গ্রাহক দেখবেন)" value="${esc(o.tracking || '')}">
           <button data-action="a-printOrder" data-id="${esc(o.id)}" class="btn btn-sm btn-ghost"><i class="fa-solid fa-print"></i> প্রিন্ট</button>
@@ -2311,6 +2392,10 @@ document.addEventListener('click', async e => {
       applyTheme(); state.adminTab = el.dataset.tab; adminDraft = { design: clone(state.design), ads: clone(state.ads), chat: clone(state.chatCfg) }; renderAdmin(); window.scrollTo(0, 0); break;
     case 'a-newProduct': openProductForm(null); break;
     case 'a-goOrders': state.orderFilter = el.dataset.f || 'all'; state.adminTab = 'orders'; renderAdmin(); window.scrollTo(0, 0); break;
+    case 'a-sect': { const t = el.dataset.t, box = el.nextElementSibling; if (state.openSects.has(t)) state.openSects.delete(t); else state.openSects.add(t); box.classList.toggle('hidden'); el.lastElementChild.classList.toggle('rotate-180'); break; }
+    case 'a-pf': state.pf = el.dataset.pf; renderAdminTab(); break;
+    case 'a-quick': setOrderStatus(el.dataset.id, el.dataset.s); break;
+    case 'a-goProducts': state.pf = el.dataset.pf || 'all'; state.pq = ''; state.adminTab = 'products'; renderAdmin(); window.scrollTo(0, 0); break;
     case 'a-goTab': state.adminTab = el.dataset.tab; renderAdmin(); window.scrollTo(0, 0); break;
     case 'a-sndToggle': try { localStorage.setItem('sh_snd', sndOn() ? '0' : '1'); } catch (e) {} if (sndOn()) beep(); renderAdminTab(); break;
     case 'a-notifPerm': if ('Notification' in window) { await Notification.requestPermission(); renderAdminTab(); } break;
@@ -2400,6 +2485,13 @@ document.addEventListener('submit', async e => {
 document.addEventListener('input', e => {
   const t = e.target;
   if (t.classList.contains('search-inp')) return setSearch(t.value, t);
+  if (t.dataset && t.dataset.prodq !== undefined) { state.pq = t.value; const l = $('#prodList'); if (l) l.innerHTML = prodRows(); return; }
+  if (t.dataset && t.dataset.setq !== undefined) {
+    const q = t.value.trim().toLowerCase(); let any = false;
+    $$('#setHub [data-kw]').forEach(b => { const ok = !q || b.dataset.kw.includes(q); b.classList.toggle('hidden', !ok); if (ok) any = true; });
+    $$('#setHub [data-g]').forEach(g => g.classList.toggle('hidden', !$$('[data-kw]', g).some(b => !b.classList.contains('hidden'))));
+    const n = $('#setNone'); if (n) n.classList.toggle('hidden', any); return;
+  }
   if (t.dataset && t.dataset.custq !== undefined) { state.custQ = t.value; const l = $('#custList'); if (l) l.innerHTML = custRows(); return; }
   if (t.dataset && t.dataset.path && adminDraft) {
     const v = t.type === 'checkbox' ? t.checked : t.type === 'number' ? (t.value === '' ? 0 : Number(t.value)) : t.value;
