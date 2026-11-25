@@ -10,3 +10,7 @@ SAR'S HOUSE
 - ক্যাটেগরি অনুযায়ী হোম সেকশন + "বেশি বিক্রিত" (পণ্য সম্পাদনায় সুইচ; `database/supabase-best-selling.sql` একবার চালাতে হবে)
 - ভাসমান কার্ট বাটন, কার্টে "এটাও কিনতে পারেন", লগইন হিন্ট, শর্তাবলীর টিক, পেমেন্ট পদ্ধতি (ক্যাশ অন ডেলিভারি / WhatsApp-এ কথা বলে বিকাশ-নগদ)
 - চ্যাট টিজার বাবল (অ্যাডমিন → চ্যাট সেটিংস থেকে সম্পাদনযোগ্য)
+
+## Security pack (v4)
+Run `database/supabase-security.sql` once in Supabase → SQL Editor. It adds: server-side enforcement of two-step login for admins who enabled it, order/stock-request spam brakes (`rate_limit`), and an admin activity log with "restore product". In the admin panel: Settings → "২-ধাপ নিরাপত্তা" and "কাজের লগ".
+If you lose your authenticator phone: Supabase Dashboard → Authentication → Users → your user → delete the factor.

@@ -122,6 +122,7 @@
       <div id="cartItems" class="p-4 space-y-3"></div>
       <form id="checkoutForm" data-form="checkout" class="px-4 pb-4 space-y-3 hidden" novalidate>
         <h3 class="font-bold text-brand border-t pt-4">ডেলিভারির তথ্য</h3>
+        <input id="c_hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
         <div id="loginHint" class="hidden text-sm bg-amber-50 border border-amber-200 rounded-lg px-3 py-2"></div>
         <label class="block"><span class="lbl">আপনার নাম *</span><input id="c_name" class="inp" autocomplete="name" placeholder="পূর্ণ নাম"></label>
         <label class="block"><span class="lbl">মোবাইল নম্বর *</span><input id="c_phone" class="inp" type="tel" inputmode="tel" autocomplete="tel" placeholder="01XXXXXXXXX"></label>
@@ -500,6 +501,7 @@ Object.assign(EN, {"গ্রাহক তালিকা অর্ডার থ
 Object.assign(EN, {"আজকের কাজ": "Today", "সেটিংস": "Settings", "সেটিংস খুঁজুন (যেমন: ডেলিভারি, কুপন, লোগো)": "Search settings (e.g. delivery, coupon, logo)", "কিছু পাওয়া যায়নি": "Nothing found", "সাইটের চেহারা": "Site appearance", "মার্কেটিং ও গ্রাহক": "Marketing & customers", "ইউজার": "Users", "লোগো, রঙ, হেডার, ব্যানার, ক্যাটেগরি, ফুটার": "Logo, colors, header, banner, categories, footer", "অফার ব্যানার ও বিজ্ঞাপন": "Offer banners & ads", "ডেলিভারি, ছুটির মোড, চেকআউট, গল্প ও নীতি পেজ, FAQ": "Delivery, holiday mode, checkout, story & policy pages, FAQ", "ছাড় কোড তৈরি ও বন্ধ করা": "Create and stop discount codes", "রিভিউ অনুমোদন, \"স্টকে এলে জানান\" অনুরোধ": "Approve reviews, \"Notify me\" requests", "দোকান ও পণ্যের QR কোড ডাউনলোড": "Download shop & product QR codes", "চ্যাটের নাম, বার্তা, বাবল, কথোপকথন দেখা": "Chat name, messages, bubble, view conversations", "অ্যাডমিন যোগ করা ও অনুমতি": "Add admins and permissions", "নতুন অর্ডার": "New orders", "রিভিউ অনুমোদন বাকি": "Reviews to approve", "কম স্টক পণ্য": "Low-stock products", "দাম দেওয়া হয়নি": "No price set", "\"স্টকে এলে জানান\" অনুরোধ": "\"Notify me\" requests", "এই মুহূর্তে কোনো জরুরি কাজ নেই।": "Nothing urgent right now.", "সাইট সেটআপ চেকলিস্ট": "Site setup checklist", "ঠিক করুন": "Fix", "সম্পন্ন কাজগুলো দেখুন": "Show completed items", "সব ঠিক আছে": "All good", "লোগো দেওয়া হয়েছে": "Logo added", "হিরো ব্যানার দেওয়া হয়েছে": "Hero banner added", "WhatsApp নম্বর সঠিক": "WhatsApp number is valid", "\"আমাদের গল্প\" পেজের লেখা আছে": "\"Our Story\" page has text", "\"ডেলিভারি ও রিটার্ন নীতি\" পেজের লেখা আছে": "\"Delivery & Return Policy\" page has text", "অর্ডার নেওয়া চালু আছে (ছুটির মোড বন্ধ)": "Taking orders (holiday mode off)", "নিশ্চিত করুন": "Confirm", "গ্রাহককে জানান": "Notify customer (WhatsApp)", "পণ্য খুঁজুন": "Search products", "স্টক শেষ": "Out of stock", "দাম ০": "Price 0", "ছবি নেই": "No image", "ইংরেজি নাম নেই": "No English name", "কোনো পণ্য মেলেনি": "No matching products"});
 Object.assign(EN, {"লোগো এখনো দেওয়া হয়নি": "Logo not added yet", "হিরো ব্যানার এখনো দেওয়া হয়নি": "Hero banner not added yet", "WhatsApp নম্বর ঠিক নেই": "WhatsApp number is not valid", "\"আমাদের গল্প\" পেজের লেখা নেই": "\"Our Story\" page is empty", "\"ডেলিভারি ও রিটার্ন নীতি\" পেজের লেখা নেই": "\"Delivery & Return Policy\" page is empty", "ছুটির মোড চালু — নতুন অর্ডার বন্ধ": "Holiday mode is on — new orders are paused", "সব পণ্যে দাম আছে": "All products have a price", "সব পণ্যে ছবি আছে": "All products have an image", "সব পণ্যের ইংরেজি নাম আছে": "All products have an English name", "অর্ডার নেওয়া চালু আছে": "Taking orders"});
 Object.assign(EN, {"এখনই কিনুন": "Buy now", "আগে ওজন/পরিমাণ বেছে নিন": "Please choose a size first", "এই মাস": "This month", "গড় অর্ডার": "Avg order", "গতকালের তুলনায়": "vs yesterday", "আগের ৭ দিনের তুলনায়": "vs previous 7 days", "অর্ডারের ধাপ": "Order pipeline", "আসসালামু আলাইকুম": "Assalamu Alaikum", "হিরো স্লাইডার (অতিরিক্ত ব্যানার)": "Hero slider (extra banners)", "একাধিক ব্যানার থাকলে নিজে নিজে স্লাইড হোক": "Slide automatically when there are several banners", "ক্লিক করলে যে ক্যাটেগরিতে যাবে": "Category opened on click", "লিংক নেই": "No link", "ব্যানার ২": "Banner 2", "ব্যানার ৩": "Banner 3", "মূল ব্যানারের পর এগুলো স্লাইডারে আসবে। ছবি না দিলে সেই স্লাইড দেখাবে না। ছবির মাপ মূল ব্যানারের মতো রাখুন।": "These follow the main banner in the slider. A slide without an image is not shown. Keep the image size similar to the main banner.", "বিশ্বাসের লাইন (ব্যানারের নিচে)": "Trust line (below the banner)", "বিশ্বাসের লাইন দেখান": "Show the trust line", "আইকন ১": "Icon 1", "আইকন ২": "Icon 2", "আইকন ৩": "Icon 3", "আইকন ৪": "Icon 4", "লেখা (বাংলা)": "Text (Bengali)", "লেখা (ইংরেজি)": "Text (English)", "টাকা": "Money", "ডেলিভারি": "Delivery", "প্রাকৃতিক": "Natural", "নিরাপদ": "Safe", "সাপোর্ট": "Support", "উপহার": "Gift", "সময়": "Time", "স্টার": "Star", "হার্ট": "Heart", "শুধু আপনি যা সত্যিই দিতে পারেন সেটাই লিখুন। লেখা ফাঁকা রাখলে সেই ঘর দেখাবে না।": "Write only what you can truly offer. An empty box is not shown.", "পণ্যের পপআপে \"এখনই কিনুন\" বাটন দেখান": "Show the \"Buy now\" button in the product popup", "হিরো ব্যানার (মূল)": "Hero banner (main)"});
+Object.assign(EN, {"২-ধাপ নিরাপত্তা": "Two-step security", "২-ধাপ ভেরিফিকেশন চালু আছে": "Two-step verification is ON", "২-ধাপ ভেরিফিকেশন বন্ধ আছে": "Two-step verification is OFF", "কাজের লগ": "Activity log", "লগইনে Authenticator কোড চালু করা": "Require an authenticator code at login", "কে কী বদলেছে দেখা ও মুছে ফেলা পণ্য ফেরত আনা": "See who changed what; restore deleted products", "পণ্যটি ফিরিয়ে আনুন": "Restore product", "আগের অবস্থায় ফেরান": "Revert to previous", "এখনো কিছু নেই": "Nothing yet", "এই পণ্যটি আগের অবস্থায় ফিরিয়ে আনবেন?": "Restore this product to its earlier state?", "২. অ্যাপে দেখানো ৬ সংখ্যার কোড": "2. 6-digit code shown in the app", "স্ক্যান না হলে এই কোড হাতে লিখুন:": "If scanning fails, type this key:", "১. Google Authenticator / Microsoft Authenticator অ্যাপ খুলে QR স্ক্যান করুন": "1. Open Google/Microsoft Authenticator and scan the QR"});
 function xlateText(n) {
   const p = n.parentNode; if (p && SKIP_TAGS[p.nodeName]) return;
   if (n.__bn === undefined || n.data !== n.__tr) n.__bn = n.data;
@@ -547,6 +549,7 @@ function setLang(l) {
 }
 
 /* ---------------------------- state ---------------------------- */
+const mfa = { need: false, has: false, fid: '', enroll: null };
 const state = {
   design: clone(DEFAULT_DESIGN), ads: clone(DEFAULT_ADS), chatCfg: clone(DEFAULT_CHAT), chatSessions: [], chatOpenId: null,
   products: [], cart: loadCart(),
@@ -661,6 +664,17 @@ async function loadProfile() {
   if (!state.user) { state.profile = null; return; }
   const { data } = await sb.from('profiles').select('*').eq('id', state.user.id).maybeSingle();
   state.profile = data || { id: state.user.id, email: state.user.email, full_name: '', phone: '', address: '', role: 'customer', permissions: [] };
+  await mfaRefresh();
+}
+async function mfaRefresh() {
+  mfa.need = false; mfa.has = false; mfa.fid = '';
+  if (!sb || !sb.auth || !sb.auth.mfa || !isStaff()) return;
+  try {
+    const a = await sb.auth.mfa.getAuthenticatorAssuranceLevel(), f = await sb.auth.mfa.listFactors();
+    const t = ((f.data && f.data.totp) || []).filter(x => x.status === 'verified');
+    mfa.has = t.length > 0; mfa.fid = t[0] ? t[0].id : '';
+    mfa.need = !!(a.data && a.data.nextLevel === 'aal2' && a.data.currentLevel !== 'aal2');
+  } catch (e) { console.warn(e); }
 }
 async function loadMyOrders() {
   if (!state.user) { state.myOrders = []; return; }
@@ -1212,6 +1226,7 @@ function orderErrMsg(m) {
   m = String(m || ''); const i = m.indexOf(':'), code = (i < 0 ? m : m.slice(0, i)).trim(), arg = i < 0 ? '' : m.slice(i + 1).trim(), en = LANG === 'en';
   switch (code) {
     case 'paused': return pauseMsg();
+    case 'rate_limit': return en ? 'Too many orders in a short time. Please wait a few minutes or message us on WhatsApp.' : 'অল্প সময়ে অনেক অর্ডার হয়েছে। কয়েক মিনিট পরে চেষ্টা করুন বা WhatsApp-এ জানান।';
     case 'stock': return en ? `Sorry, there is not enough stock of "${arg}". Please reduce the quantity.` : `দুঃখিত, "${arg}" এর পর্যাপ্ত স্টক নেই। পরিমাণ কমিয়ে দিন।`;
     case 'unavailable': return en ? `Sorry, "${arg}" is not available right now.` : `দুঃখিত, "${arg}" এখন পাওয়া যাচ্ছে না।`;
     case 'noprice': return en ? `The price of "${arg}" is not set. Please ask on WhatsApp.` : `"${arg}" এর দাম নির্ধারণ করা নেই। WhatsApp-এ জিজ্ঞাসা করুন।`;
@@ -1225,6 +1240,7 @@ async function placeOrder() {
   const lines = cartLines();
   if (!lines.length) return toast('আপনার কার্ট খালি', 'err');
   if (state.design.orders_paused) return toast(pauseMsg(), 'err');
+  if ($('#c_hp') && $('#c_hp').value) return;   // bots fill the hidden field
   let note = $('#c_note').value.trim(); const name = $('#c_name').value.trim(), phone = normPhone($('#c_phone').value), address = $('#c_address').value.trim();
   if (!name) return toast('অনুগ্রহ করে আপনার নাম লিখুন', 'err');
   if (!validPhone(phone)) return toast('সঠিক মোবাইল নম্বর দিন (যেমন: 01712345678)', 'err');
@@ -1644,7 +1660,9 @@ const ADMIN_TABS = [
   { k: 'ads', l: 'বিজ্ঞাপন', i: 'fa-bullhorn' },
   { k: 'qr', l: 'কিউআর কোড', i: 'fa-qrcode' },
   { k: 'chats', l: 'এআই চ্যাট', i: 'fa-robot' },
-  { k: 'users', l: 'ইউজার ও রোল', i: 'fa-users-gear' }
+  { k: 'users', l: 'ইউজার ও রোল', i: 'fa-users-gear' },
+  { k: 'security', l: '২-ধাপ নিরাপত্তা', i: 'fa-shield-halved' },
+  { k: 'log', l: 'কাজের লগ', i: 'fa-clock-rotate-left' }
 ];
 const TAB_PERM = { dash: 'orders', customers: 'orders', chats: 'orders', coupons: 'products', reviews: 'products', qr: 'products', shop: 'design' };
 const MAIN_TABS = [
@@ -1655,13 +1673,14 @@ const SETTINGS_GROUPS = [
   { t: 'সাইটের চেহারা', items: [['design', 'ডিজাইন ও থিম', 'fa-palette', 'লোগো, রঙ, হেডার, ব্যানার, ক্যাটেগরি, ফুটার'], ['ads', 'বিজ্ঞাপন', 'fa-bullhorn', 'অফার ব্যানার ও বিজ্ঞাপন'], ['shop', 'দোকান সেটিংস', 'fa-sliders', 'ডেলিভারি, ছুটির মোড, চেকআউট, গল্প ও নীতি পেজ, FAQ']] },
   { t: 'মার্কেটিং ও গ্রাহক', items: [['coupons', 'কুপন', 'fa-ticket', 'ছাড় কোড তৈরি ও বন্ধ করা'], ['reviews', 'রিভিউ ও অনুরোধ', 'fa-star', 'রিভিউ অনুমোদন, "স্টকে এলে জানান" অনুরোধ'], ['qr', 'কিউআর কোড', 'fa-qrcode', 'দোকান ও পণ্যের QR কোড ডাউনলোড']] },
   { t: 'চ্যাট', items: [['chats', 'এআই চ্যাট', 'fa-robot', 'চ্যাটের নাম, বার্তা, বাবল, কথোপকথন দেখা']] },
-  { t: 'ইউজার', items: [['users', 'ইউজার ও রোল', 'fa-users-gear', 'অ্যাডমিন যোগ করা ও অনুমতি']] }
+  { t: 'ইউজার', items: [['users', 'ইউজার ও রোল', 'fa-users-gear', 'অ্যাডমিন যোগ করা ও অনুমতি'], ['security', '২-ধাপ নিরাপত্তা', 'fa-shield-halved', 'লগইনে Authenticator কোড চালু করা'], ['log', 'কাজের লগ', 'fa-clock-rotate-left', 'কে কী বদলেছে দেখা ও মুছে ফেলা পণ্য ফেরত আনা']] }
 ];
 const tabGroup = k => MAIN_TABS.some(t => t.k === k) ? k : 'settings';
 const settingsVisible = () => SETTINGS_GROUPS.flatMap(g => g.items).filter(it => visibleTabs().some(t => t.k === it[0]));
 const mainTabs = () => MAIN_TABS.filter(t => t.k === 'settings' ? settingsVisible().length > 0 : visibleTabs().some(v => v.k === t.k));
-const visibleTabs = () => ADMIN_TABS.filter(t => t.k === 'users' ? isSuper() : can(TAB_PERM[t.k] || t.k));
+const visibleTabs = () => ADMIN_TABS.filter(t => (t.k === 'users' || t.k === 'log') ? isSuper() : t.k === 'security' ? isStaff() : can(TAB_PERM[t.k] || t.k));
 function enterAdmin() {
+  if (mfa.need) return renderMfaLock();
   const tabs = visibleTabs();
   if (!tabs.length) { toast('আপনাকে কোনো পারমিশন দেওয়া হয়নি। সুপার অ্যাডমিনের সাথে যোগাযোগ করুন।', 'err'); location.hash = ''; return; }
   if (!tabs.find(t => t.k === state.adminTab)) state.adminTab = tabs[0].k;
@@ -1698,6 +1717,7 @@ async function loadForTab() {
   if (t === 'coupons') { await loadCoupons(); }
   if (t === 'reviews') { await loadReviewsAdmin(); }
   if (t === 'users') { await loadAdminUsers(); }
+  if (t === 'log') { await loadLog(); }
   if (t === 'chats') { await loadChatSessions(); }
   if (state.adminTab === t) renderAdminTab();
 }
@@ -1718,7 +1738,7 @@ function renderAdminTab() {
   const t = state.adminTab;
   // keep focus-free re-render; draft is always the source of truth
   const y = window.scrollY;
-  const TABF = { settings: tabSettings, dash: tabDash, products: tabProducts, orders: tabOrders, customers: tabCustomers, coupons: tabCoupons, reviews: tabReviews, design: tabDesign, shop: tabShop, ads: tabAds, chats: tabChats, qr: tabQR };
+  const TABF = { settings: tabSettings, dash: tabDash, products: tabProducts, orders: tabOrders, customers: tabCustomers, coupons: tabCoupons, reviews: tabReviews, design: tabDesign, shop: tabShop, ads: tabAds, chats: tabChats, qr: tabQR, security: tabSecurity, log: tabLog };
   body.innerHTML = (tabGroup(t) === 'settings' && t !== 'settings' ? `<button data-action="a-tab" data-tab="settings" class="btn btn-sm btn-ghost mb-3"><i class="fa-solid fa-arrow-left"></i> ${tr('সেটিংস')}</button>` : '') + (TABF[t] || tabUsers)();
   window.scrollTo(0, y); updateDirty();
   const ob = $('#adminBottom [data-tab="orders"]'); if (ob) { const old = ob.querySelector('.abadge'); if (old) old.remove(); ob.insertAdjacentHTML('beforeend', adminBadgeHtml()); }
@@ -2387,6 +2407,107 @@ function tabUsers() {
           ${Object.keys(PERM_L).map(k => `<label class="flex items-center gap-1.5 text-sm cursor-pointer"><input type="checkbox" class="accent-[#f48721] w-4 h-4" data-user-perm="${esc(u.id)}" value="${k}" ${perms.includes(k) ? 'checked' : ''}>${PERM_L[k]}</label>`).join('')}</div>` : ''}</div>`;
     }).join('') || '<div class="bg-white rounded-xl p-10 text-center text-gray-500">কোনো ইউজার নেই</div>'}</div>`;
 }
+function renderMfaLock() {
+  showAdmin();
+  $('#admin').innerHTML = `<div class="min-h-screen flex items-center justify-center p-4 bg-gray-50"><form data-form="mfa-verify" class="bg-white rounded-2xl shadow-lg p-6 w-full max-w-sm space-y-3 text-center">
+    <div class="w-14 h-14 mx-auto rounded-full bg-brand text-gold flex items-center justify-center text-2xl"><i class="fa-solid fa-shield-halved"></i></div>
+    <h2 class="font-bold text-lg text-brand">২-ধাপ ভেরিফিকেশন</h2>
+    <p class="text-sm text-gray-600">Authenticator অ্যাপের ৬ সংখ্যার কোড দিন</p>
+    <input name="code" class="inp text-center text-2xl tracking-[.4em]" inputmode="numeric" pattern="[0-9]{6}" autocomplete="one-time-code" maxlength="6" required>
+    <button class="btn btn-gold w-full" type="submit">নিশ্চিত করুন</button>
+    <button type="button" data-action="a-home" class="btn btn-ghost w-full">দোকানে ফিরে যান</button>
+    <button type="button" data-action="logout" class="text-xs text-gray-500 underline">লগআউট</button></form></div>`;
+}
+async function mfaVerify(code, fid) {
+  const ch = await sb.auth.mfa.challenge({ factorId: fid });
+  if (ch.error) return ch.error;
+  const v = await sb.auth.mfa.verify({ factorId: fid, challengeId: ch.data.id, code: String(code).replace(/\D/g, '').slice(0, 6) });
+  return v.error || null;
+}
+async function handleMfaVerify(f) {
+  const btn = $('button[type=submit]', f); btn.disabled = true;
+  const err = await mfaVerify(new FormData(f).get('code'), mfa.fid);
+  btn.disabled = false;
+  if (err) { console.warn(err); return toast('কোড সঠিক নয়, আবার চেষ্টা করুন', 'err'); }
+  await mfaRefresh(); await loadProfile(); toast('✅ ভেরিফাই হয়েছে'); enterAdmin();
+}
+async function mfaStart() {
+  if (!sb || !sb.auth || !sb.auth.mfa) return toast('এই সংস্করণে ২-ধাপ নেই', 'err');
+  const f = await sb.auth.mfa.listFactors();
+  for (const x of ((f.data && f.data.all) || [])) if (x.factor_type === 'totp' && x.status !== 'verified') await sb.auth.mfa.unenroll({ factorId: x.id });
+  const r = await sb.auth.mfa.enroll({ factorType: 'totp', friendlyName: 'SH-' + Date.now(), issuer: state.design.brand_name || "SAR'S HOUSE" });
+  if (r.error) { console.warn(r.error); return toast('শুরু করা যায়নি: ' + r.error.message, 'err'); }
+  mfa.enroll = { id: r.data.id, qr: r.data.totp.qr_code, secret: r.data.totp.secret }; renderAdminTab();
+}
+async function handleMfaEnroll(f) {
+  if (!mfa.enroll) return;
+  const btn = $('button[type=submit]', f); btn.disabled = true;
+  const err = await mfaVerify(new FormData(f).get('code'), mfa.enroll.id);
+  btn.disabled = false;
+  if (err) { console.warn(err); return toast('কোড সঠিক নয়, আবার চেষ্টা করুন', 'err'); }
+  mfa.enroll = null; await mfaRefresh(); toast('✅ ২-ধাপ ভেরিফিকেশন চালু হয়েছে'); renderAdminTab();
+}
+async function mfaOff() {
+  if (!mfa.fid || !confirm('২-ধাপ ভেরিফিকেশন বন্ধ করবেন? অ্যাকাউন্ট কম সুরক্ষিত হবে।')) return;
+  const { error } = await sb.auth.mfa.unenroll({ factorId: mfa.fid });
+  if (error) { console.warn(error); return toast('বন্ধ করা যায়নি', 'err'); }
+  await mfaRefresh(); toast('২-ধাপ বন্ধ হয়েছে'); renderAdminTab();
+}
+function tabSecurity() {
+  const e = mfa.enroll, qr = e && /^data:image\/svg\+xml/.test(e.qr || '') ? e.qr : '';
+  let body;
+  if (mfa.has) body = `<div class="flex items-center gap-2 text-green-700 font-semibold"><i class="fa-solid fa-circle-check"></i> ${tr('২-ধাপ ভেরিফিকেশন চালু আছে')}</div>
+    <p class="text-sm text-gray-600">${tr('লগইনের পর প্রতিবার Authenticator-এর কোড দিতে হবে। ডাটাবেসও কোড ছাড়া অ্যাডমিন কাজ নেবে না (supabase-security.sql চালানো থাকলে)।')}</p>
+    <button data-action="a-mfaOff" class="btn btn-sm text-red-600 border border-red-200 bg-white">${LANG === 'en' ? 'Turn off' : 'বন্ধ করুন'}</button>`;
+  else if (e) body = `<p class="text-sm">${tr('১. Google Authenticator / Microsoft Authenticator অ্যাপ খুলে QR স্ক্যান করুন')}</p>
+    ${qr ? `<img src="${esc(qr)}" alt="QR" class="w-48 h-48 border rounded-lg bg-white p-1">` : ''}
+    <p class="text-xs text-gray-500 break-all">${tr('স্ক্যান না হলে এই কোড হাতে লিখুন:')} <b class="select-all">${esc(e.secret || '')}</b></p>
+    <form data-form="mfa-enroll" class="flex gap-2 items-end"><label class="block flex-1"><span class="lbl">${tr('২. অ্যাপে দেখানো ৬ সংখ্যার কোড')}</span><input name="code" class="inp" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" required></label><button class="btn btn-gold" type="submit">${LANG === 'en' ? 'Turn on' : 'চালু করুন'}</button></form>`;
+  else body = `<div class="flex items-center gap-2 text-amber-700 font-semibold"><i class="fa-solid fa-triangle-exclamation"></i> ${tr('২-ধাপ ভেরিফিকেশন বন্ধ আছে')}</div>
+    <p class="text-sm text-gray-600">${tr('শুধু পাসওয়ার্ড ফাঁস হলেই কেউ অ্যাডমিন প্যানেলে ঢুকতে পারবে। চালু করলে ফোনের Authenticator কোডও লাগবে।')}</p>
+    <button data-action="a-mfaStart" class="btn btn-gold btn-sm"><i class="fa-solid fa-shield-halved"></i> ${LANG === 'en' ? 'Turn on' : 'চালু করুন'}</button>`;
+  return `<h2 class="text-lg font-bold text-brand mb-3">${tr('২-ধাপ নিরাপত্তা')}</h2><div class="bg-white rounded-xl shadow-sm p-4 space-y-3 max-w-xl">${body}
+    <p class="text-xs text-gray-500 border-t pt-3">${tr('সতর্কতা: ফোন হারালে কোড পাওয়া যাবে না। তখন Supabase Dashboard → Authentication → Users → আপনার ইউজার → Factors থেকে এটি মুছে আবার ঢুকতে হবে। তাই Supabase লগইন সুরক্ষিত রাখুন।')}</p></div>`;
+}
+/* ---- activity log ---- */
+async function loadLog() {
+  if (!sb) return;
+  const { data, error } = await sb.from('admin_log').select('*').order('at', { ascending: false }).limit(150);
+  state.logErr = !!error; state.adminLog = data || [];
+}
+const LOG_T = { products: 'পণ্য', orders: 'অর্ডার', coupons: 'কুপন', store_settings: 'সেটিংস', profiles: 'ইউজার', reviews: 'রিভিউ' };
+const LOG_A = { insert: 'যোগ', update: 'বদল', delete: 'মুছেছে' };
+const LOG_TE = { products: 'Product', orders: 'Order', coupons: 'Coupon', store_settings: 'Settings', profiles: 'User', reviews: 'Review' }, LOG_AE = { insert: 'added', update: 'changed', delete: 'deleted' };
+const logT = k => LANG === 'en' ? LOG_TE[k] || k : LOG_T[k] || k, logA = k => LANG === 'en' ? LOG_AE[k] || k : LOG_A[k] || k;
+function logDiff(l) {
+  let o = l.old_data || {}, n = l.new_data || {};
+  if (o.value && n.value && typeof o.value === 'object' && typeof n.value === 'object') { o = o.value; n = n.value; }
+  const ks = [...new Set([...Object.keys(o), ...Object.keys(n)])].filter(k => k !== 'updated_at' && JSON.stringify(o[k]) !== JSON.stringify(n[k]));
+  const sh = v => { const t = typeof v === 'object' && v !== null ? JSON.stringify(v) : String(v == null ? '' : v); return t.length > 40 ? t.slice(0, 40) + '…' : t; };
+  return ks.slice(0, 5).map(k => `${k}: ${sh(o[k])} → ${sh(n[k])}`).join(' | ') + (ks.length > 5 ? ` … +${ks.length - 5}` : '');
+}
+function tabLog() {
+  if (!isSuper()) return noPerm();
+  if (state.logErr) return `<div class="bg-amber-50 border border-amber-300 rounded-xl p-4 text-sm text-amber-900">${tr('লগ লোড হয়নি। Supabase SQL Editor-এ database/supabase-security.sql একবার চালান।')}</div>`;
+  const f = state.logF || '', rows = (state.adminLog || []).filter(l => !f || l.tbl === f);
+  const fmt = d => new Date(d).toLocaleString(LANG === 'en' ? 'en-GB' : 'bn-BD', { timeZone: 'Asia/Dhaka', dateStyle: 'medium', timeStyle: 'short' });
+  return `<div class="flex items-center justify-between gap-2 mb-3"><h2 class="text-lg font-bold text-brand">${tr('কাজের লগ')}</h2>
+    <select data-logf class="inp !w-auto !py-1.5 text-sm"><option value="">${LANG === 'en' ? 'All' : 'সব'}</option>${Object.keys(LOG_T).map(k => `<option value="${k}" ${f === k ? 'selected' : ''}>${esc(logT(k))}</option>`).join('')}</select></div>
+    <div class="space-y-2">${rows.map(l => {
+      const diff = l.action === 'update' ? logDiff(l) : '';
+      return `<div class="bg-white rounded-xl shadow-sm p-3 text-sm"><div class="flex flex-wrap items-center gap-x-2 gap-y-1"><span class="text-xs text-gray-500">${esc(fmt(l.at))}</span>
+        <span class="text-xs px-1.5 rounded ${l.action === 'delete' ? 'bg-red-100 text-red-700' : l.action === 'insert' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-800'}">${esc(logT(l.tbl))} ${esc(logA(l.action))}</span>
+        <b class="truncate">${esc(l.label || '')}</b><span class="text-xs text-gray-400 ml-auto break-all">${esc(l.actor_email || '')}</span></div>
+        ${diff ? `<div class="text-xs text-gray-500 mt-1 break-all">${esc(diff)}</div>` : ''}
+        ${l.tbl === 'products' && l.action !== 'insert' && l.old_data ? `<button data-action="a-restore" data-id="${l.id}" class="btn btn-sm btn-ghost mt-2"><i class="fa-solid fa-rotate-left"></i> ${tr(l.action === 'delete' ? 'পণ্যটি ফিরিয়ে আনুন' : 'আগের অবস্থায় ফেরান')}</button>` : ''}</div>`;
+    }).join('') || `<div class="bg-white rounded-xl p-10 text-center text-gray-500">${tr('এখনো কিছু নেই')}</div>`}</div>`;
+}
+async function restoreProduct(id) {
+  if (!confirm(tr('এই পণ্যটি আগের অবস্থায় ফিরিয়ে আনবেন?'))) return;
+  const { error } = await sb.rpc('restore_product', { p_log: Number(id) });
+  if (error) { console.warn(error); return toast('ফেরানো যায়নি', 'err'); }
+  toast('✅ ফিরিয়ে আনা হয়েছে'); await loadProducts(); await loadLog(); renderAdminTab();
+}
 async function updateUser(id, upd) {
   const { error } = await sb.from('profiles').update(upd).eq('id', id);
   if (error) { console.warn(error); toast('আপডেট ব্যর্থ হয়েছে', 'err'); } else toast('✅ আপডেট হয়েছে');
@@ -2491,6 +2612,9 @@ document.addEventListener('click', async e => {
       if (error) return toast('মুছতে ব্যর্থ', 'err');
       state.adminOrders = state.adminOrders.filter(o => o.id !== id); renderAdminTab(); toast('অর্ডার মুছে ফেলা হয়েছে'); break;
     }
+    case 'a-mfaStart': mfaStart(); break;
+    case 'a-mfaOff': mfaOff(); break;
+    case 'a-restore': restoreProduct(id); break;
     case 'a-reloadUsers': await loadAdminUsers(); renderAdminTab(); break;
     case 'a-rmimg': setPath(adminDraft, el.dataset.path, ''); renderAdminTab(); break;
     case 'a-resetColors': adminDraft.design.colors = { ...DEFAULT_COLORS }; applyTheme(adminDraft.design.colors); renderAdminTab(); break;
@@ -2528,6 +2652,8 @@ document.addEventListener('submit', async e => {
     case 'notify': handleNotify(f); break;
     case 'chat': { const i = $('#chatInput'); const v = i.value; i.value = ''; sendChat(v); break; }
     case 'signin': handleSignin(f); break;
+    case 'mfa-verify': handleMfaVerify(f); break;
+    case 'mfa-enroll': handleMfaEnroll(f); break;
     case 'signup': handleSignup(f); break;
     case 'profile': handleProfile(f); break;
     case 'product': saveProduct(f); break;
@@ -2574,6 +2700,7 @@ document.addEventListener('change', async e => {
     const o = state.adminOrders.find(x => x.id === d.orderStatus); if (o) o.status = t.value;
     toast('✅ অর্ডার স্ট্যাটাস আপডেট হয়েছে'); renderAdminTab(); return;
   }
+  if (d.logf !== undefined) { state.logF = t.value; renderAdminTab(); return; }
   if (d.userRole) {
     const role = t.value;
     if (!confirm(LANG === 'en' ? `Change role to "${tr(ROLE_L[role])}"?` : `রোল পরিবর্তন করে "${ROLE_L[role]}" করবেন?`)) { await loadAdminUsers(); return renderAdminTab(); }
