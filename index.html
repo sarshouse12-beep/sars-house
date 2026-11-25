@@ -71,6 +71,7 @@
   <header id="hdr" class="sticky top-0 z-40"></header>
   <main>
     <section id="hero" class="max-w-7xl mx-auto px-3 pt-4"></section>
+    <section id="trust" class="max-w-7xl mx-auto px-3 pt-3 empty:hidden"></section>
     <section id="cats" class="max-w-7xl mx-auto px-3"></section>
     <section id="adbanner" class="max-w-7xl mx-auto px-3"></section>
     <section id="products" class="max-w-7xl mx-auto px-3 py-6 scroll-mt-28"></section>
@@ -230,6 +231,13 @@ const DEFAULT_DESIGN = {
   announcement_show: true,
   announcement_text: 'সারা বাংলাদেশে হোম ডেলিভারি • অর্ডার করতে কল/WhatsApp: +8801729470904',
   hero_image: '',
+  hero_slides: [{ image: '', cat: '' }, { image: '', cat: '' }], hero_auto: true, buy_now: true, trust_on: true,
+  trust: [
+    { icon: 'fa-money-bill-wave', text: 'ক্যাশ অন ডেলিভারি', text_en: 'Cash on Delivery' },
+    { icon: 'fa-truck-fast', text: 'সারাদেশে হোম ডেলিভারি', text_en: 'Home delivery all over Bangladesh' },
+    { icon: 'fa-brands fa-whatsapp', text: 'WhatsApp-এ সাপোর্ট', text_en: 'Support on WhatsApp' },
+    { icon: 'fa-leaf', text: 'প্রাকৃতিক ও খাঁটি পণ্য', text_en: 'Natural & pure products' }
+  ],
   hero_show_text: true,
   hero_badge: '১০০% খাঁটি ও প্রাকৃতিক',
   hero_title: 'খাঁটি মধু, ঘি ও অর্গানিক খাবার — সরাসরি আপনার দরজায়',
@@ -486,11 +494,12 @@ const EN_PAT = [
   [/^(\d+)টি "স্টকে এলে জানান" অনুরোধ$/, m => `${m[1]} "Notify me" request(s)`],
   [/^(.*) • (\d+)টি অর্ডার • (.*) • শেষ: (.*)$/, m => `${m[1]} • ${m[2]} order(s) • ${m[3]} • Last: ${m[4]}`]
 ];
-const EN_PAT2 = [["^(\\d+)টি পণ্যে দাম দেওয়া হয়নি$", "\\1 products have no price"], ["^(\\d+)টি পণ্যে ছবি নেই$", "\\1 products have no image"], ["^(\\d+)টি পণ্যের ইংরেজি নাম নেই$", "\\1 products have no English name"]];
+const EN_PAT2 = [["^ব্যানার (\\d+)$", "Banner \\1"], ["^আইকন (\\d+)$", "Icon \\1"], ["^(\\d+)টি পণ্যে দাম দেওয়া হয়নি$", "\\1 products have no price"], ["^(\\d+)টি পণ্যে ছবি নেই$", "\\1 products have no image"], ["^(\\d+)টি পণ্যের ইংরেজি নাম নেই$", "\\1 products have no English name"]];
 function enPattern(k) { for (const [p, r] of EN_PAT2) { const m = new RegExp(p).exec(k); if (m) return r.replace(/\\(\d)/g, (_, i) => m[i]); } for (const [re, f] of EN_PAT) { const m = re.exec(k); if (m) { const v = f(m); if (v) return v; } } return undefined; }
 Object.assign(EN, {"গ্রাহক তালিকা অর্ডার থেকে তৈরি (সর্বশেষ ১০০০টি অর্ডার)। ফোন নম্বর দিয়ে একই গ্রাহকের অর্ডার মেলানো হয়।": "The customer list is built from orders (latest 1000). Orders are matched to a customer by phone number.", "শুধু ডেলিভারি পাওয়া গ্রাহকরা রিভিউ দিতে পারেন। আপনি অনুমোদন করলে তবেই সাইটে দেখাবে।": "Only customers who received a delivery can leave a review. It shows on the site only after you approve it.", "চালু করলে কার্ট থেকে অর্ডার নেওয়া বন্ধ হবে (সার্ভারেও আটকানো থাকবে)। গ্রাহক তখনও পণ্য দেখতে ও WhatsApp-এ কথা বলতে পারবেন।": "When on, ordering from the cart is stopped (also blocked on the server). Customers can still browse and talk to you on WhatsApp.", "অতিরিক্ত ডেলিভারি এলাকা (ঢাকার ভেতর/বাইরের চার্জ \"ডিজাইন ও থিম\" ট্যাবে)": "Extra delivery areas (Inside/Outside Dhaka charges are in the \"Design & Theme\" tab)", "পণ্য সম্পাদনায় \"কম্বো/অফার প্যাক\" চালু করলে সেই পণ্য সাইটের ওপরে এই সেকশনে দেখাবে।": "Turn on \"Combo / offer pack\" when editing a product to show it in this section at the top of the site.", "পণ্যের শেয়ার/QR লিংক খুললে সেই পণ্যের পপআপ নিজে থেকে খুলুক (বন্ধ থাকলে লিংক খুললে সাধারণ হোম পেজ দেখাবে)": "Open the product popup automatically when a product share/QR link is opened (if off, the link shows the normal home page)", "সাইটে অনলাইন পেমেন্ট নেওয়া হয় না। গ্রাহক যা বেছে নেন তা অর্ডারের নোট ও WhatsApp বার্তায় যায়। \"বেশি বিক্রিত\" নির্বাচন হয় পণ্য সম্পাদনার সুইচ থেকে।": "Online payment is not taken on the site. The customer's choice goes into the order note and the WhatsApp message. \"Best Selling\" is chosen with the switch when editing a product.", "লেখা ফাঁকা থাকলে ফুটারে এই পেজের লিঙ্ক দেখাবে না। শুধু সত্য তথ্য লিখুন।": "If left empty, the footer link for this page is hidden. Write only true information.", "চ্যাটটি স্বয়ংক্রিয়, তাই \"১ মিনিটে উত্তর\" ধরনের সময়ের প্রতিশ্রুতি লেখা এড়িয়ে চলুন।": "The chat is automated, so avoid promising reply times like \"answer in 1 minute\".", "খাবারের ঐতিহ্য ও গল্প (AI গ্রাহককে বলবে; শুধু সত্য তথ্য লিখুন, যেমন: ঘি কীভাবে তৈরি হয়, মধু কোথা থেকে আসে)": "Food heritage & story (the AI tells customers; write only true facts, e.g. how ghee is made, where honey comes from)", "কথোপকথন": "Conversations"});
 Object.assign(EN, {"আজকের কাজ": "Today", "সেটিংস": "Settings", "সেটিংস খুঁজুন (যেমন: ডেলিভারি, কুপন, লোগো)": "Search settings (e.g. delivery, coupon, logo)", "কিছু পাওয়া যায়নি": "Nothing found", "সাইটের চেহারা": "Site appearance", "মার্কেটিং ও গ্রাহক": "Marketing & customers", "ইউজার": "Users", "লোগো, রঙ, হেডার, ব্যানার, ক্যাটেগরি, ফুটার": "Logo, colors, header, banner, categories, footer", "অফার ব্যানার ও বিজ্ঞাপন": "Offer banners & ads", "ডেলিভারি, ছুটির মোড, চেকআউট, গল্প ও নীতি পেজ, FAQ": "Delivery, holiday mode, checkout, story & policy pages, FAQ", "ছাড় কোড তৈরি ও বন্ধ করা": "Create and stop discount codes", "রিভিউ অনুমোদন, \"স্টকে এলে জানান\" অনুরোধ": "Approve reviews, \"Notify me\" requests", "দোকান ও পণ্যের QR কোড ডাউনলোড": "Download shop & product QR codes", "চ্যাটের নাম, বার্তা, বাবল, কথোপকথন দেখা": "Chat name, messages, bubble, view conversations", "অ্যাডমিন যোগ করা ও অনুমতি": "Add admins and permissions", "নতুন অর্ডার": "New orders", "রিভিউ অনুমোদন বাকি": "Reviews to approve", "কম স্টক পণ্য": "Low-stock products", "দাম দেওয়া হয়নি": "No price set", "\"স্টকে এলে জানান\" অনুরোধ": "\"Notify me\" requests", "এই মুহূর্তে কোনো জরুরি কাজ নেই।": "Nothing urgent right now.", "সাইট সেটআপ চেকলিস্ট": "Site setup checklist", "ঠিক করুন": "Fix", "সম্পন্ন কাজগুলো দেখুন": "Show completed items", "সব ঠিক আছে": "All good", "লোগো দেওয়া হয়েছে": "Logo added", "হিরো ব্যানার দেওয়া হয়েছে": "Hero banner added", "WhatsApp নম্বর সঠিক": "WhatsApp number is valid", "\"আমাদের গল্প\" পেজের লেখা আছে": "\"Our Story\" page has text", "\"ডেলিভারি ও রিটার্ন নীতি\" পেজের লেখা আছে": "\"Delivery & Return Policy\" page has text", "অর্ডার নেওয়া চালু আছে (ছুটির মোড বন্ধ)": "Taking orders (holiday mode off)", "নিশ্চিত করুন": "Confirm", "গ্রাহককে জানান": "Notify customer (WhatsApp)", "পণ্য খুঁজুন": "Search products", "স্টক শেষ": "Out of stock", "দাম ০": "Price 0", "ছবি নেই": "No image", "ইংরেজি নাম নেই": "No English name", "কোনো পণ্য মেলেনি": "No matching products"});
 Object.assign(EN, {"লোগো এখনো দেওয়া হয়নি": "Logo not added yet", "হিরো ব্যানার এখনো দেওয়া হয়নি": "Hero banner not added yet", "WhatsApp নম্বর ঠিক নেই": "WhatsApp number is not valid", "\"আমাদের গল্প\" পেজের লেখা নেই": "\"Our Story\" page is empty", "\"ডেলিভারি ও রিটার্ন নীতি\" পেজের লেখা নেই": "\"Delivery & Return Policy\" page is empty", "ছুটির মোড চালু — নতুন অর্ডার বন্ধ": "Holiday mode is on — new orders are paused", "সব পণ্যে দাম আছে": "All products have a price", "সব পণ্যে ছবি আছে": "All products have an image", "সব পণ্যের ইংরেজি নাম আছে": "All products have an English name", "অর্ডার নেওয়া চালু আছে": "Taking orders"});
+Object.assign(EN, {"এখনই কিনুন": "Buy now", "আগে ওজন/পরিমাণ বেছে নিন": "Please choose a size first", "এই মাস": "This month", "গড় অর্ডার": "Avg order", "গতকালের তুলনায়": "vs yesterday", "আগের ৭ দিনের তুলনায়": "vs previous 7 days", "অর্ডারের ধাপ": "Order pipeline", "আসসালামু আলাইকুম": "Assalamu Alaikum", "হিরো স্লাইডার (অতিরিক্ত ব্যানার)": "Hero slider (extra banners)", "একাধিক ব্যানার থাকলে নিজে নিজে স্লাইড হোক": "Slide automatically when there are several banners", "ক্লিক করলে যে ক্যাটেগরিতে যাবে": "Category opened on click", "লিংক নেই": "No link", "ব্যানার ২": "Banner 2", "ব্যানার ৩": "Banner 3", "মূল ব্যানারের পর এগুলো স্লাইডারে আসবে। ছবি না দিলে সেই স্লাইড দেখাবে না। ছবির মাপ মূল ব্যানারের মতো রাখুন।": "These follow the main banner in the slider. A slide without an image is not shown. Keep the image size similar to the main banner.", "বিশ্বাসের লাইন (ব্যানারের নিচে)": "Trust line (below the banner)", "বিশ্বাসের লাইন দেখান": "Show the trust line", "আইকন ১": "Icon 1", "আইকন ২": "Icon 2", "আইকন ৩": "Icon 3", "আইকন ৪": "Icon 4", "লেখা (বাংলা)": "Text (Bengali)", "লেখা (ইংরেজি)": "Text (English)", "টাকা": "Money", "ডেলিভারি": "Delivery", "প্রাকৃতিক": "Natural", "নিরাপদ": "Safe", "সাপোর্ট": "Support", "উপহার": "Gift", "সময়": "Time", "স্টার": "Star", "হার্ট": "Heart", "শুধু আপনি যা সত্যিই দিতে পারেন সেটাই লিখুন। লেখা ফাঁকা রাখলে সেই ঘর দেখাবে না।": "Write only what you can truly offer. An empty box is not shown.", "পণ্যের পপআপে \"এখনই কিনুন\" বাটন দেখান": "Show the \"Buy now\" button in the product popup", "হিরো ব্যানার (মূল)": "Hero banner (main)"});
 function xlateText(n) {
   const p = n.parentNode; if (p && SKIP_TAGS[p.nodeName]) return;
   if (n.__bn === undefined || n.data !== n.__tr) n.__bn = n.data;
@@ -674,7 +683,7 @@ function renderStore() {
   applyTheme();
   document.title = LANG === 'en' ? `${state.design.brand_name} — Pure Honey, Ghee & Organic Food` : `${state.design.brand_name} — খাঁটি মধু, ঘি ও অর্গানিক খাবার`;
   document.documentElement.lang = LANG;
-  renderHeader(); renderHero(); renderCats(); renderAd(); renderProducts(); renderTesti(); renderFooter(); renderMobileNav();
+  renderHeader(); renderHero(); renderTrust(); renderCats(); renderAd(); renderProducts(); renderTesti(); renderFooter(); renderMobileNav();
   updateBadges(); renderCart(); renderChat();
 }
 
@@ -728,7 +737,7 @@ function renderHero() {
   const img = safeUrl(d.hero_image);
   const sideImg = safeUrl(d.side_banner_image);
   const main = `
-    <div class="${d.side_banner_show ? 'lg:col-span-8' : 'lg:col-span-12'} relative rounded-2xl overflow-hidden min-h-[210px] sm:min-h-[300px] lg:min-h-[360px] flex items-center" style="background:linear-gradient(135deg,var(--c-primary),#0B3948)">
+    <div class="relative overflow-hidden min-h-[210px] sm:min-h-[300px] lg:min-h-[360px] h-full flex items-center" style="background:linear-gradient(135deg,var(--c-primary),#0B3948)">
       ${img ? `<img src="${esc(img)}" alt="${esc(d.brand_name)}" class="absolute inset-0 w-full h-full object-cover">` : `<div class="absolute -right-10 -bottom-10 w-72 h-72 rounded-full opacity-20" style="background:var(--c-secondary)"></div><div class="absolute right-16 top-6 text-7xl opacity-20 text-gold"><i class="fa-solid fa-jar-wheat"></i></div>`}
       ${(d.hero_show_text) ? `${img ? '<div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/35 to-transparent"></div>' : ''}
       <div class="relative p-5 sm:p-10 max-w-xl text-white">
@@ -745,7 +754,33 @@ function renderHero() {
         <h2 class="text-2xl font-bold">${esc(dx(d, 'side_title'))}</h2><p class="text-sm mt-1 text-white/90">${esc(dx(d, 'side_text'))}</p>
         <span class="inline-block mt-3 text-sm font-bold underline">দেখুন <i class="fa-solid fa-arrow-right text-xs"></i></span></div>` : ''}
     </div>` : '';
-  $('#hero').innerHTML = `<div class="grid grid-cols-1 lg:grid-cols-12 gap-3">${main}${side}</div>`;
+  const span = d.side_banner_show ? 'lg:col-span-8' : 'lg:col-span-12';
+  const extra = (Array.isArray(d.hero_slides) ? d.hero_slides : []).filter(sl => sl && safeUrl(sl.image));
+  const slides = [main].concat(extra.map(sl => `<div class="relative overflow-hidden min-h-[210px] sm:min-h-[300px] lg:min-h-[360px] h-full ${sl.cat ? 'cursor-pointer' : ''}" ${sl.cat ? `data-action="cat" data-cat="${esc(sl.cat)}"` : ''} style="background:var(--c-primary)"><img src="${esc(safeUrl(sl.image))}" alt="" loading="lazy" class="absolute inset-0 w-full h-full object-cover"></div>`));
+  const track = slides.length > 1
+    ? `<div class="${span} relative"><div id="heroTrack" class="flex overflow-x-auto snap-x snap-mandatory no-scrollbar rounded-2xl">${slides.map(h => `<div class="flex-none w-full snap-center">${h}</div>`).join('')}</div><div id="heroDots" class="absolute bottom-2 inset-x-0 flex justify-center gap-1.5">${slides.map((_, i) => `<button type="button" data-action="heroGo" data-i="${i}" aria-label="${i + 1}" class="w-2 h-2 rounded-full ${i === 0 ? 'bg-white' : 'bg-white/50'}"></button>`).join('')}</div></div>`
+    : `<div class="${span} rounded-2xl overflow-hidden">${main}</div>`;
+  $('#hero').innerHTML = `<div class="grid grid-cols-1 lg:grid-cols-12 gap-3">${track}${side}</div>`;
+  clearInterval(heroT);
+  const tk = $('#heroTrack');
+  if (tk) {
+    const n = tk.children.length; let pauseTo = 0;
+    tk.addEventListener('scroll', () => { const i = Math.round(tk.scrollLeft / Math.max(1, tk.clientWidth)); $$('#heroDots button').forEach((b, k) => { b.classList.toggle('bg-white', k === i); b.classList.toggle('bg-white/50', k !== i); }); }, { passive: true });
+    ['touchstart', 'pointerdown'].forEach(ev => tk.addEventListener(ev, () => { pauseTo = Date.now() + 9000; }, { passive: true }));
+    const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (d.hero_auto !== false && !reduce) heroT = setInterval(() => {
+      if (Date.now() < pauseTo || document.hidden || state.modal || !tk.isConnected) return;
+      const i = Math.round(tk.scrollLeft / Math.max(1, tk.clientWidth)); tk.scrollTo({ left: ((i + 1) % n) * tk.clientWidth, behavior: 'smooth' });
+    }, 5000);
+  }
+}
+let heroT = 0;
+const TRUST_ICONS = { 'fa-money-bill-wave': 'টাকা', 'fa-truck-fast': 'ডেলিভারি', 'fa-brands fa-whatsapp': 'WhatsApp', 'fa-leaf': 'প্রাকৃতিক', 'fa-shield-heart': 'নিরাপদ', 'fa-headset': 'সাপোর্ট', 'fa-gift': 'উপহার', 'fa-clock': 'সময়', 'fa-star': 'স্টার', 'fa-heart': 'হার্ট' };
+function renderTrust() {
+  const d = state.design, el = $('#trust'); if (!el) return;
+  const items = (Array.isArray(d.trust) ? d.trust : []).filter(t => t && String(dx(t, 'text')).trim());
+  el.innerHTML = (d.trust_on === false || !items.length) ? '' : `<div class="grid grid-cols-2 sm:grid-cols-4 gap-2">${items.map(t => { const ic = TRUST_ICONS[t.icon] ? t.icon : 'fa-leaf';
+    return `<div class="bg-white border rounded-xl px-2.5 py-2 flex items-center gap-2"><span class="w-8 h-8 rounded-full bg-brand text-gold flex items-center justify-center shrink-0 text-sm"><i class="${ic.startsWith('fa-brands') ? '' : 'fa-solid '}${ic}"></i></span><span class="text-xs sm:text-sm font-semibold text-brand leading-tight">${esc(dx(t, 'text'))}</span></div>`; }).join('')}</div>`;
 }
 
 function renderCats() { hKeep('#cats', '.no-scrollbar', renderCatsRaw); }
@@ -980,7 +1015,7 @@ function refreshCartUI() {
   saveCart(); updateBadges(); renderProducts(); renderCart();
   if (state.modal === 'product' && state.viewId) renderProductModal();
 }
-function addToCart(id, v) {
+function addToCart(id, v, silent) {
   const p = state.products.find(x => x.id === id); if (!p || !p.in_stock || !hasPrice(p)) return;
   if (hasVariants(p)) { if (!findVar(p, v)) { state.viewId = id; renderProductModal(); return; } } else v = '';
   const cap = Math.min(50, stockCap(p));
@@ -988,7 +1023,7 @@ function addToCart(id, v) {
   const c = state.cart.find(x => x.id === id && (x.v || '') === (v || ''));
   if (c) c.qty += 1; else state.cart.push({ id, qty: 1, v: v || '' });
   refreshCartUI();
-  showAddPop(p);
+  if (!silent) showAddPop(p);
 }
 let addPopT = 0;
 function showAddPop(p) {
@@ -1292,6 +1327,7 @@ function renderProductModal() {
       ${lowStock(p) ? `<div class="text-sm font-semibold text-red-600">${LANG === 'en' ? `Only ${p.stock_qty} left in stock` : `মাত্র ${bn(p.stock_qty)}টি স্টকে আছে`}</div>` : ''}
       ${p.description ? `<p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">${esc(pdesc(p))}</p>` : ''}
       ${cartControl(p, q, hv ? state.selV : '', true)}
+      ${(q === 0 && p.in_stock && hasPrice(p) && state.design.buy_now !== false) ? `<button data-action="buyNow" data-id="${esc(p.id)}" data-v="${esc(hv ? state.selV : '')}" class="btn btn-cta w-full text-base"><i class="fa-solid fa-bolt"></i> ${tr('এখনই কিনুন')}</button>` : ''}
       <button type="button" data-action="copyPLink" data-id="${esc(p.id)}" class="w-full text-xs text-gray-500 hover:text-brand py-1"><i class="fa-solid fa-link"></i> ${tr('পণ্যের লিঙ্ক কপি করুন')}</button>
       ${(rv.length || canReview(p.id)) ? `<div class="border-t pt-3 space-y-2"><h4 class="font-bold text-brand">${tr('গ্রাহক রিভিউ')}</h4>
         ${rv.map(r => `<div class="bg-gray-50 rounded-lg p-2.5 text-sm"><div class="flex items-center justify-between gap-2"><b>${esc(r.name)}</b>${stars(r.rating)}</div>${r.body ? `<p class="text-gray-700 mt-1 whitespace-pre-line">${esc(r.body)}</p>` : ''}</div>`).join('')}
@@ -1635,6 +1671,7 @@ function enterAdmin() {
   renderAdmin();
 }
 function renderAdmin() { hKeep('#admin', 'nav.no-scrollbar', renderAdminRaw); revealActive('#admin', 'nav .border-gold'); guardSync(); }
+function adminBadgeHtml() { const n = (state.adminOrders || []).filter(o => o.status === 'pending').length; return n ? `<span class="abadge absolute top-1 right-[20%] bg-cta text-white text-[10px] font-bold rounded-full min-w-[16px] h-4 px-1 flex items-center justify-center">${bn(n)}</span>` : ''; }
 function renderAdminRaw() {
   const tabs = mainTabs(), pr = state.profile || {};
   $('#admin').innerHTML = `
@@ -1647,10 +1684,11 @@ function renderAdminRaw() {
           <button data-action="a-home" class="btn btn-gold btn-sm"><i class="fa-solid fa-store"></i><span class="hidden sm:inline"> দোকান দেখুন</span></button>
           <button data-action="logout" class="btn btn-sm bg-white/10 text-white"><i class="fa-solid fa-right-from-bracket"></i><span class="hidden sm:inline"> লগআউট</span></button>
         </div></div>
-      <nav class="max-w-6xl mx-auto px-2 flex overflow-x-auto no-scrollbar">
+      <nav class="max-w-6xl mx-auto px-2 hidden md:flex overflow-x-auto no-scrollbar">
         ${tabs.map(t => `<button data-action="a-tab" data-tab="${t.k}" class="whitespace-nowrap px-4 py-2.5 text-sm font-medium ${tabGroup(state.adminTab) === t.k ? 'text-gold border-b-2 border-gold' : 'text-white/80 hover:text-white'}"><i class="fa-solid ${t.i} mr-1.5"></i>${t.l}</button>`).join('')}
       </nav></header>
-    <div id="adminBody" class="max-w-6xl mx-auto p-3 sm:p-5"></div>`;
+    <div id="adminBody" class="max-w-6xl mx-auto p-3 sm:p-5 pb-24 md:pb-5"></div>
+    <nav id="adminBottom" class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-brand text-white border-t border-white/10 flex">${tabs.map(t => `<button data-action="a-tab" data-tab="${t.k}" class="flex-1 py-2 flex flex-col items-center gap-0.5 relative ${tabGroup(state.adminTab) === t.k ? 'text-gold' : 'text-white/70'}"><i class="fa-solid ${t.i} text-lg"></i><span class="text-[10px] leading-none">${tr(t.l)}</span>${t.k === 'orders' ? adminBadgeHtml() : ''}</button>`).join('')}</nav>`;
   renderAdminTab(); loadForTab();
 }
 async function loadForTab() {
@@ -1683,6 +1721,7 @@ function renderAdminTab() {
   const TABF = { settings: tabSettings, dash: tabDash, products: tabProducts, orders: tabOrders, customers: tabCustomers, coupons: tabCoupons, reviews: tabReviews, design: tabDesign, shop: tabShop, ads: tabAds, chats: tabChats, qr: tabQR };
   body.innerHTML = (tabGroup(t) === 'settings' && t !== 'settings' ? `<button data-action="a-tab" data-tab="settings" class="btn btn-sm btn-ghost mb-3"><i class="fa-solid fa-arrow-left"></i> ${tr('সেটিংস')}</button>` : '') + (TABF[t] || tabUsers)();
   window.scrollTo(0, y); updateDirty();
+  const ob = $('#adminBottom [data-tab="orders"]'); if (ob) { const old = ob.querySelector('.abadge'); if (old) old.remove(); ob.insertAdjacentHTML('beforeend', adminBadgeHtml()); }
 }
 
 /* ---- form field helpers (bound to adminDraft by data-path) ---- */
@@ -1848,6 +1887,14 @@ function tabDash() {
   const since = days => live.filter(o => new Date(o.created_at).getTime() >= t0 - (days - 1) * DAY);
   const sum = a => a.reduce((x, o) => x + (Number(o.total) || 0), 0);
   const today = since(1), week = since(7), month = since(30);
+  const inR = (a, b) => live.filter(o => { const t = new Date(o.created_at).getTime(); return t >= a && t < b; });
+  const yest = inR(t0 - DAY, t0), prevWeek = inR(t0 - 13 * DAY, t0 - 6 * DAY);
+  const ms = new Date(); ms.setDate(1); ms.setHours(0, 0, 0, 0); const mtd = live.filter(o => new Date(o.created_at).getTime() >= ms.getTime());
+  const aov = mtd.length ? Math.round(sum(mtd) / mtd.length) : 0;
+  const dl = (cur, prev, lbl) => (!cur && !prev) ? '' : (() => { const x = cur - prev; return `<span class="${x >= 0 ? 'text-green-600' : 'text-red-500'} font-semibold">${x >= 0 ? '↑' : '↓'} ${bn(Math.abs(x))}${LANG === 'en' ? '' : 'টি'} ${tr(lbl)}</span>`; })();
+  const pipe = ['pending', 'confirmed', 'shipped', 'delivered'].map(k => `<button data-action="a-goOrders" data-f="${k}" class="flex-1 text-center rounded-lg py-2 px-1 active:scale-95 transition ${STATUS[k].c}"><div class="text-lg font-bold leading-none">${bn(state.adminOrders.filter(o => o.status === k).length)}</div><div class="text-[10px] mt-1 leading-tight">${esc(tr(STATUS[k].l))}</div></button>`).join('<i class="fa-solid fa-chevron-right text-gray-300 text-xs self-center"></i>');
+  const who = state.profile ? (state.profile.full_name || String(state.profile.email || '').split('@')[0]) : '';
+  const hello = `<div class="mb-3"><div class="text-lg font-bold text-brand">${tr('আসসালামু আলাইকুম')}${who ? ', ' + esc(who) : ''}</div><div class="text-xs text-gray-500">${new Date().toLocaleDateString(LANG === 'en' ? 'en-GB' : 'bn-BD', { weekday: 'long', day: 'numeric', month: 'long' })}</div></div>`;
   const pending = state.adminOrders.filter(o => o.status === 'pending').length;
   const days = [6, 5, 4, 3, 2, 1, 0].map(i => { const a = t0 - i * DAY, o = live.filter(x => { const t = new Date(x.created_at).getTime(); return t >= a && t < a + DAY; }); return { a, n: o.length, rev: sum(o) }; });
   const maxRev = Math.max(1, ...days.map(d => d.rev));
@@ -1871,13 +1918,14 @@ function tabDash() {
   const todo = `<section class="mb-4"><h3 class="font-bold text-brand mb-2">${tr('আজকের কাজ')}${open ? '' : ' ✅'}</h3>${open ? '' : `<p class="text-sm text-green-700 mb-2">${tr('এই মুহূর্তে কোনো জরুরি কাজ নেই।')}</p>`}<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">${tasks.map(t => task(t[0], t[1], t[2], t[3])).join('')}</div></section>
     ${can('design') ? `<section class="bg-white rounded-xl shadow-sm p-4 mb-4"><h3 class="font-bold text-brand mb-2"><i class="fa-solid fa-list-check text-gold"></i> ${tr('সাইট সেটআপ চেকলিস্ট')} <span class="text-xs font-normal text-gray-500">(${bn(chk.length - chkOpen.length)}/${bn(chk.length)})</span></h3>
       ${chkOpen.length ? `<ul>${chkOpen.map(chkRow).join('')}</ul><details class="mt-2"><summary class="text-xs text-gray-500 cursor-pointer">${tr('সম্পন্ন কাজগুলো দেখুন')}</summary><ul>${chk.filter(c => c[0]).map(chkRow).join('')}</ul></details>` : `<p class="text-sm text-green-700">✅ ${tr('সব ঠিক আছে')}</p>`}</section>` : ''}`;
-  return `${featBanner()}${todo}
+  return `${featBanner()}${hello}${todo}
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
-      ${card('আজকের অর্ডার', bn(today.length), money(sum(today)), 'fa-calendar-day', 'a-goOrders', 'all')}
-      ${card('গত ৭ দিন', bn(week.length), money(sum(week)), 'fa-calendar-week', 'a-goOrders', 'all')}
-      ${card('গত ৩০ দিন', bn(month.length), money(sum(month)), 'fa-calendar', 'a-goOrders', 'all')}
+      ${card('আজকের অর্ডার', bn(today.length), `${money(sum(today))}<br>${dl(today.length, yest.length, 'গতকালের তুলনায়')}`, 'fa-calendar-day', 'a-goOrders', 'all')}
+      ${card('গত ৭ দিন', bn(week.length), `${money(sum(week))}<br>${dl(week.length, prevWeek.length, 'আগের ৭ দিনের তুলনায়')}`, 'fa-calendar-week', 'a-goOrders', 'all')}
+      ${card('এই মাস', bn(mtd.length), `${money(sum(mtd))}<br>${tr('গড় অর্ডার')} ${money(aov)}`, 'fa-calendar', 'a-goOrders', 'all')}
       ${card('অপেক্ষমাণ অর্ডার', bn(pending), 'দেখতে চাপুন', 'fa-hourglass-half', 'a-goOrders', 'pending')}</div>
     <p class="text-[11px] text-gray-500 -mt-2 mb-4">বিক্রির অঙ্কে বাতিল অর্ডার ধরা হয়নি।</p>
+    <section class="bg-white rounded-xl shadow-sm p-3 mb-4"><h3 class="font-bold text-brand text-sm mb-2">${tr('অর্ডারের ধাপ')}</h3><div class="flex gap-1.5">${pipe}</div></section>
     <div class="grid lg:grid-cols-2 gap-4">
       <section class="bg-white rounded-xl shadow-sm p-4"><h3 class="font-bold text-brand mb-3"><i class="fa-solid fa-chart-column text-gold"></i> গত ৭ দিনের বিক্রি</h3>
         <div class="flex items-end gap-1.5 h-36">${days.map(d => `<div class="flex-1 flex flex-col items-center justify-end gap-1 h-full"><div class="text-[10px] text-gray-500">${d.n ? bn(d.n) : ''}</div><div class="w-full rounded-t bg-gold/80" style="height:${d.rev ? Math.max(6, Math.round(d.rev / maxRev * 85)) : 2}px" title="${esc(money(d.rev))}"></div><div class="text-[10px] text-gray-500">${esc(new Date(d.a).toLocaleDateString(LANG === 'en' ? 'en-GB' : 'bn-BD', { weekday: 'short' }))}</div></div>`).join('')}</div></section>
@@ -2028,7 +2076,7 @@ function tabShop() {
       + [0, 1, 2].map(i => `<div class="grid sm:grid-cols-3 gap-2 border rounded-lg p-3">${F.text('এলাকার নাম (বাংলা)', `design.extra_zones.${i}.name`, 'যেমন: সাভার')}${F.text('এলাকার নাম (ইংরেজি)', `design.extra_zones.${i}.name_en`)}${F.num('চার্জ (৳)', `design.extra_zones.${i}.charge`)}</div>`).join('')
       + '<p class="text-xs text-gray-500">নাম ফাঁকা রাখলে ওই এলাকা কার্টে দেখাবে না।</p>')}
     ${sect('স্টক ও কম্বো', 'fa-boxes-stacked', F.num('এর কম থাকলে "মাত্র N টি বাকি" দেখাবে ও কম স্টক সতর্কতা', 'design.low_stock') + `<div class="grid sm:grid-cols-2 gap-3">${F.text('কম্বো সেকশনের শিরোনাম (বাংলা)', 'design.combo_title')}${F.text('কম্বো সেকশনের শিরোনাম (ইংরেজি)', 'design.combo_title_en')}</div><p class="text-xs text-gray-500">পণ্য সম্পাদনায় "কম্বো/অফার প্যাক" চালু করলে সেই পণ্য সাইটের ওপরে এই সেকশনে দেখাবে।</p>`)}
-    ${sect('হোম পেজ, কার্ট ও চেকআউট', 'fa-house', F.toggle('হোম পেজে ক্যাটেগরি অনুযায়ী আলাদা সেকশন ("সব দেখুন →" সহ)', 'design.home_sections') + F.toggle('"বেশি বিক্রিত" ব্যাজ দেখান', 'design.best_badge') + `<div class="grid sm:grid-cols-2 gap-3">${F.text('"বেশি বিক্রিত" সেকশনের নাম (বাংলা)', 'design.best_title')}${F.text('ইংরেজি', 'design.best_title_en')}</div>` + F.toggle('কার্টে যোগ করলে মাঝখানে বড় কার্ট আইকনের পপআপ (বন্ধ থাকলে ছোট সবুজ বার্তা)', 'design.add_popup') + F.toggle('ডানপাশে ভাসমান বাস্কেট (আইটেম ও মোট টাকা)', 'design.cart_pill') + F.toggle('পণ্যের শেয়ার/QR লিংক খুললে সেই পণ্যের পপআপ নিজে থেকে খুলুক (বন্ধ থাকলে লিংক খুললে সাধারণ হোম পেজ দেখাবে)', 'design.open_shared_product') + F.toggle('কার্টে "এটাও কিনতে পারেন" দেখান', 'design.upsell') + F.toggle('অর্ডারের সময় শর্তাবলীর টিক বাধ্যতামূলক', 'design.terms_on') + `<div class="grid sm:grid-cols-2 gap-3">${F.text('শর্তাবলীর লেখা (বাংলা)', 'design.terms_text')}${F.text('শর্তাবলীর লেখা (ইংরেজি)', 'design.terms_text_en')}${F.text('পেমেন্ট অপশন ১ (বাংলা)', 'design.pay_cod_label')}${F.text('পেমেন্ট অপশন ১ (ইংরেজি)', 'design.pay_cod_label_en')}</div>` + F.toggle('পেমেন্ট অপশন ২ দেখান (WhatsApp-এ কথা বলে)', 'design.pay_wa') + `<div class="grid sm:grid-cols-2 gap-3">${F.text('পেমেন্ট অপশন ২ (বাংলা)', 'design.pay_wa_label')}${F.text('পেমেন্ট অপশন ২ (ইংরেজি)', 'design.pay_wa_label_en')}</div><p class="text-xs text-gray-500">সাইটে অনলাইন পেমেন্ট নেওয়া হয় না। গ্রাহক যা বেছে নেন তা অর্ডারের নোট ও WhatsApp বার্তায় যায়। "বেশি বিক্রিত" নির্বাচন হয় পণ্য সম্পাদনার সুইচ থেকে।</p>`)}
+    ${sect('হোম পেজ, কার্ট ও চেকআউট', 'fa-house', F.toggle('হোম পেজে ক্যাটেগরি অনুযায়ী আলাদা সেকশন ("সব দেখুন →" সহ)', 'design.home_sections') + F.toggle('"বেশি বিক্রিত" ব্যাজ দেখান', 'design.best_badge') + `<div class="grid sm:grid-cols-2 gap-3">${F.text('"বেশি বিক্রিত" সেকশনের নাম (বাংলা)', 'design.best_title')}${F.text('ইংরেজি', 'design.best_title_en')}</div>` + F.toggle('কার্টে যোগ করলে মাঝখানে বড় কার্ট আইকনের পপআপ (বন্ধ থাকলে ছোট সবুজ বার্তা)', 'design.add_popup') + F.toggle('ডানপাশে ভাসমান বাস্কেট (আইটেম ও মোট টাকা)', 'design.cart_pill') + F.toggle('পণ্যের শেয়ার/QR লিংক খুললে সেই পণ্যের পপআপ নিজে থেকে খুলুক (বন্ধ থাকলে লিংক খুললে সাধারণ হোম পেজ দেখাবে)', 'design.open_shared_product') + F.toggle('কার্টে "এটাও কিনতে পারেন" দেখান', 'design.upsell') + F.toggle('পণ্যের পপআপে "এখনই কিনুন" বাটন দেখান', 'design.buy_now') + F.toggle('অর্ডারের সময় শর্তাবলীর টিক বাধ্যতামূলক', 'design.terms_on') + `<div class="grid sm:grid-cols-2 gap-3">${F.text('শর্তাবলীর লেখা (বাংলা)', 'design.terms_text')}${F.text('শর্তাবলীর লেখা (ইংরেজি)', 'design.terms_text_en')}${F.text('পেমেন্ট অপশন ১ (বাংলা)', 'design.pay_cod_label')}${F.text('পেমেন্ট অপশন ১ (ইংরেজি)', 'design.pay_cod_label_en')}</div>` + F.toggle('পেমেন্ট অপশন ২ দেখান (WhatsApp-এ কথা বলে)', 'design.pay_wa') + `<div class="grid sm:grid-cols-2 gap-3">${F.text('পেমেন্ট অপশন ২ (বাংলা)', 'design.pay_wa_label')}${F.text('পেমেন্ট অপশন ২ (ইংরেজি)', 'design.pay_wa_label_en')}</div><p class="text-xs text-gray-500">সাইটে অনলাইন পেমেন্ট নেওয়া হয় না। গ্রাহক যা বেছে নেন তা অর্ডারের নোট ও WhatsApp বার্তায় যায়। "বেশি বিক্রিত" নির্বাচন হয় পণ্য সম্পাদনার সুইচ থেকে।</p>`)}
     ${['story', 'policy'].map(k => sect(k === 'story' ? 'আমাদের গল্প পেজ' : 'ডেলিভারি ও রিটার্ন নীতি পেজ', 'fa-file-lines', `<div class="grid sm:grid-cols-2 gap-3">${F.text('শিরোনাম (বাংলা)', `design.pages.${k}.title`)}${F.text('শিরোনাম (ইংরেজি)', `design.pages.${k}.title_en`)}</div>${F.area('লেখা (বাংলা)', `design.pages.${k}.body`, 6)}${F.area('লেখা (ইংরেজি)', `design.pages.${k}.body_en`, 6)}<p class="text-xs text-gray-500">লেখা ফাঁকা থাকলে ফুটারে এই পেজের লিঙ্ক দেখাবে না। শুধু সত্য তথ্য লিখুন।</p>`)).join('')}
     ${sect('প্রশ্নোত্তর (FAQ)', 'fa-circle-question', [0, 1, 2, 3, 4, 5].map(i => `<div class="border rounded-lg p-3 space-y-2 bg-gray-50"><div class="grid sm:grid-cols-2 gap-2">${F.text('প্রশ্ন (বাংলা)', `design.faq.${i}.q`)}${F.text('প্রশ্ন (ইংরেজি)', `design.faq.${i}.q_en`)}</div><div class="grid sm:grid-cols-2 gap-2">${F.area('উত্তর (বাংলা)', `design.faq.${i}.a`, 2)}${F.area('উত্তর (ইংরেজি)', `design.faq.${i}.a_en`, 2)}</div></div>`).join('') + '<p class="text-xs text-gray-500">প্রশ্ন বা উত্তর ফাঁকা থাকলে সেটি দেখাবে না।</p>')}
     ${saveBar('a-saveDesign')}</div>`;
@@ -2169,6 +2217,8 @@ function tabDesign() {
     ${sect('থিম রঙ (লাইভ প্রিভিউ)', 'fa-palette', `<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">${F.color('প্রাইমারি', 'design.colors.primary')}${F.color('সেকেন্ডারি (গোল্ড)', 'design.colors.secondary')}${F.color('ব্যাকগ্রাউন্ড', 'design.colors.background')}${F.color('অ্যাকসেন্ট (CTA)', 'design.colors.accent')}</div>
       <button type="button" data-action="a-resetColors" class="btn btn-ghost btn-sm"><i class="fa-solid fa-rotate-left"></i> ডিফল্ট রঙে ফিরুন</button>`)}
     ${sect('ঘোষণা বার', 'fa-bullhorn', F.toggle('দেখান', 'design.announcement_show') + F.text('ঘোষণার লেখা', 'design.announcement_text') + F.text('ঘোষণার লেখা (ইংরেজি)', 'design.announcement_text_en'))}
+    ${sect('হিরো স্লাইডার (অতিরিক্ত ব্যানার)', 'fa-images', F.toggle('একাধিক ব্যানার থাকলে নিজে নিজে স্লাইড হোক', 'design.hero_auto') + [0, 1].map(i => `<div class="border rounded-xl p-3 space-y-3 bg-gray-50">${F.img('ব্যানার ' + (i + 2), `design.hero_slides.${i}.image`, 1400)}<label class="block"><span class="lbl">ক্লিক করলে যে ক্যাটেগরিতে যাবে</span><select class="inp" data-path="design.hero_slides.${i}.cat"><option value="">লিংক নেই</option>${(adminDraft.design.categories || []).map(c => `<option value="${esc(c.name)}" ${getPath(adminDraft, `design.hero_slides.${i}.cat`) === c.name ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select></label></div>`).join('') + '<p class="text-xs text-gray-500">মূল ব্যানারের পর এগুলো স্লাইডারে আসবে। ছবি না দিলে সেই স্লাইড দেখাবে না। ছবির মাপ মূল ব্যানারের মতো রাখুন।</p>')}
+    ${sect('বিশ্বাসের লাইন (ব্যানারের নিচে)', 'fa-shield-halved', F.toggle('বিশ্বাসের লাইন দেখান', 'design.trust_on') + [0, 1, 2, 3].map(i => `<div class="border rounded-xl p-3 grid sm:grid-cols-3 gap-3 bg-gray-50"><label class="block"><span class="lbl">আইকন ${bn(i + 1)}</span><select class="inp" data-path="design.trust.${i}.icon">${Object.keys(TRUST_ICONS).map(k => `<option value="${k}" ${getPath(adminDraft, `design.trust.${i}.icon`) === k ? 'selected' : ''}>${TRUST_ICONS[k]}</option>`).join('')}</select></label>${F.text('লেখা (বাংলা)', `design.trust.${i}.text`)}${F.text('লেখা (ইংরেজি)', `design.trust.${i}.text_en`)}</div>`).join('') + '<p class="text-xs text-gray-500">শুধু আপনি যা সত্যিই দিতে পারেন সেটাই লিখুন। লেখা ফাঁকা রাখলে সেই ঘর দেখাবে না।</p>')}
     ${sect('হিরো ব্যানার (মূল)', 'fa-image', F.img('ব্যানার ছবি', 'design.hero_image', 1600) + F.toggle('ছবির ওপর লেখা দেখান (ছবিতে নিজস্ব লেখা থাকলে বন্ধ করুন)', 'design.hero_show_text') + F.text('ব্যাজ', 'design.hero_badge') + F.text('ব্যাজ (ইংরেজি)', 'design.hero_badge_en') + F.text('হেডলাইন', 'design.hero_title') + F.text('হেডলাইন (ইংরেজি)', 'design.hero_title_en') + F.text('সাবটাইটেল', 'design.hero_subtitle') + F.text('সাবটাইটেল (ইংরেজি)', 'design.hero_subtitle_en') + F.text('বাটনের লেখা', 'design.hero_cta') + F.text('বাটনের লেখা (ইংরেজি)', 'design.hero_cta_en'))}
     ${sect('সাইড প্রোমো ব্যানার', 'fa-rectangle-ad', F.toggle('দেখান', 'design.side_banner_show') + F.img('সাইড ব্যানার ছবি', 'design.side_banner_image', 900) + F.text('শিরোনাম', 'design.side_title') + F.text('শিরোনাম (ইংরেজি)', 'design.side_title_en') + F.text('ছোট লেখা', 'design.side_text') + F.text('ছোট লেখা (ইংরেজি)', 'design.side_text_en'))}
     ${sect('ডেলিভারি চার্জ', 'fa-truck', `<div class="grid grid-cols-2 gap-3">${F.num('ঢাকার ভেতরে (৳)', 'design.delivery_dhaka')}${F.num('ঢাকার বাইরে (৳)', 'design.delivery_outside')}</div>`)}
@@ -2219,7 +2269,7 @@ function setSaving(on) {
 const saveBtns = act => `<span id="saveState" class="mr-auto text-xs sm:text-sm font-semibold"></span>
       <button data-save-ui data-action="a-discard" class="btn btn-ghost">বাতিল করুন</button>
       <button data-save-ui id="saveBtn" data-action="${act}" class="btn btn-cta px-8"><i class="fa-solid fa-floppy-disk"></i> <span>সংরক্ষণ করুন</span></button>`;
-const saveBar = act => `<div class="fixed bottom-0 inset-x-0 bg-white border-t p-3 z-20"><div class="max-w-6xl mx-auto flex gap-2 items-center justify-end">${saveBtns(act)}</div></div>`;
+const saveBar = act => `<div class="fixed bottom-14 md:bottom-0 inset-x-0 bg-white border-t p-3 z-30"><div class="max-w-6xl mx-auto flex gap-2 items-center justify-end">${saveBtns(act)}</div></div>`;
 
 async function applyCategoryChanges() {
   if (!can('products')) return true;
@@ -2361,6 +2411,8 @@ document.addEventListener('click', async e => {
     case 'home': e.preventDefault(); state.cat = 'all'; state.search = ''; if (location.hash === '#admin') location.hash = ''; showStore(); renderStore(); window.scrollTo({ top: 0, behavior: 'smooth' }); break;
     case 'shop': goShop(); break;
     case 'cat': setCat(el.dataset.cat); break;
+    case 'heroGo': { const tk = $('#heroTrack'); if (tk) tk.scrollTo({ left: Number(el.dataset.i) * tk.clientWidth, behavior: 'smooth' }); break; }
+    case 'buyNow': { const p = state.products.find(x => x.id === id), v = el.dataset.v || ''; if (!p) break; if (hasVariants(p) && !findVar(p, v)) { toast(tr('আগে ওজন/পরিমাণ বেছে নিন'), 'err'); break; } addToCart(id, v, true); if (cartQty(id, hasVariants(p) ? v : '') > 0) { closeModal(); openCart(); } break; }
     case 'add': case 'inc': addToCart(id, el.dataset.v); break;
     case 'dec': decCart(id, el.dataset.v); break;
     case 'remove': removeCart(id, el.dataset.v); break;
