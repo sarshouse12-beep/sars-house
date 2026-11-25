@@ -60,7 +60,7 @@
 #addPop.show .addbox{animation:addpop 1.5s ease forwards}#addPop.show .addcart{animation:addcart .55s ease-out}#addPop.show .addchk{animation:addchk .8s ease-out}
 #addPop.show .addpulse{animation:addring .9s ease-out}#addPop.show .addpulse.p2{animation-delay:.25s}
 @keyframes spin{to{transform:rotate(360deg)}}
-</style>
+.hdr-compact .msrow{display:none}</style>
 </head>
 <body>
 <div id="splash" style="position:fixed;inset:0;z-index:100;background:#fff;display:flex;align-items:center;justify-content:center"><div style="width:42px;height:42px;border:4px solid #eee;border-top-color:#C89B4B;border-radius:50%;animation:spin .8s linear infinite"></div></div>
@@ -80,16 +80,16 @@
   <footer id="footer"></footer>
   <nav id="mnav" class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t shadow-[0_-2px_10px_rgba(0,0,0,.08)]"></nav>
   <a id="waFloat" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"
-     class="fixed right-4 bottom-20 md:bottom-6 z-40 w-14 h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center text-3xl shadow-xl hover:scale-105 transition">
+     class="fixed right-3 bottom-20 md:bottom-6 z-40 w-12 h-12 rounded-full bg-[#25D366] text-white flex items-center justify-center text-2xl shadow-lg hover:scale-105 transition">
     <i class="fa-brands fa-whatsapp"></i>
   </a>
   <button id="chatFab" data-action="chatToggle" aria-label="AI Chat"
-     class="hidden fixed left-4 bottom-20 md:bottom-6 z-40 w-14 h-14 rounded-full bg-brand text-gold items-center justify-center text-2xl shadow-xl hover:scale-105 transition border-2 border-gold">
+     class="hidden fixed right-3 bottom-[8.25rem] md:bottom-[5.25rem] z-40 w-12 h-12 rounded-full bg-brand text-gold items-center justify-center text-xl shadow-lg hover:scale-105 transition border-2 border-gold">
     <i class="fa-solid fa-comment-dots"></i>
   </button>
   <div id="addPop" class="hidden fixed inset-0 z-[80] items-center justify-center pointer-events-none"><div class="addbox bg-white rounded-3xl shadow-2xl border border-gold/40 px-7 py-5 flex flex-col items-center gap-1 min-w-[210px] max-w-[260px]"><span class="relative inline-flex w-20 h-20 mb-1"><span class="addpulse"></span><span class="addpulse p2"></span><span class="relative w-20 h-20 rounded-full bg-brand flex items-center justify-center shadow-lg border-2 border-gold"><i class="addcart fa-solid fa-cart-shopping text-3xl text-white"></i></span><span class="addchk absolute -top-1 -right-1 w-7 h-7 rounded-full bg-green-500 text-white flex items-center justify-center text-sm border-2 border-white"><i class="fa-solid fa-check"></i></span></span><span id="addPopName" class="text-xs text-gray-500 text-center line-clamp-2 leading-snug"></span><span id="addPopTx" class="font-bold text-lg text-brand leading-tight"></span><span id="addPopSub" class="text-xs font-semibold text-cta"></span></div></div>
   <button id="cartPill" data-action="openCart" aria-label="কার্ট" class="hidden fixed right-0 top-[42%] z-40 flex-col items-center justify-center gap-0.5 bg-cta text-white font-bold rounded-l-xl w-[58px] py-2 shadow-xl"><i class="fa-solid fa-basket-shopping text-xl"></i><span id="cartPillN" class="text-[11px] leading-tight"></span><span id="cartPillTx" class="text-[11px] leading-tight bg-white/20 rounded px-1"></span></button>
-  <div id="chatTeaser" class="hidden fixed left-4 bottom-[8.25rem] md:bottom-24 z-40 max-w-[230px] bg-white border border-gold rounded-2xl rounded-bl-sm shadow-xl pl-3 pr-7 py-2 text-sm text-gray-800 cursor-pointer" data-action="chatToggle"><span id="chatTeaserTx"></span><button type="button" data-action="teaserClose" class="absolute top-1 right-1 w-6 h-6 text-gray-400 hover:text-gray-700" aria-label="বন্ধ করুন"><i class="fa-solid fa-xmark text-xs"></i></button></div>
+  <div id="chatTeaser" class="hidden fixed right-3 bottom-[11.25rem] md:bottom-[8.25rem] z-40 max-w-[230px] bg-white border border-gold rounded-2xl rounded-br-sm shadow-xl pl-3 pr-7 py-2 text-sm text-gray-800 cursor-pointer" data-action="chatToggle"><span id="chatTeaserTx"></span><button type="button" data-action="teaserClose" class="absolute top-1 right-1 w-6 h-6 text-gray-400 hover:text-gray-700" aria-label="বন্ধ করুন"><i class="fa-solid fa-xmark text-xs"></i></button></div>
   <div id="chatPanel" class="hidden fixed z-50 left-2 right-2 bottom-2 sm:left-4 sm:right-auto sm:bottom-4 sm:w-[370px] h-[78vh] max-h-[580px] bg-white rounded-2xl shadow-2xl flex-col overflow-hidden border border-gray-200">
     <div class="bg-brand text-white px-4 py-3 flex items-center gap-2">
       <span class="w-9 h-9 rounded-full bg-gold text-brand flex items-center justify-center shrink-0"><i id="chatIcon" class="fa-solid fa-headset"></i></span>
@@ -724,7 +724,7 @@ function renderHeaderRaw() {
             <span class="cart-badge absolute -top-0.5 right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-cta text-white text-[11px] font-bold flex items-center justify-center">0</span></button>
         </div>
       </div>
-      <div class="md:hidden px-3 pb-2">${search('searchM')}</div>
+      <div class="msrow md:hidden px-3 pb-2">${search('searchM')}</div>
     </div>
     <nav class="bg-brand"><div class="max-w-7xl mx-auto px-2 flex overflow-x-auto no-scrollbar">
       ${navBtn('all', dx(state.design, 'all_label'))}${cats().map(c => navBtn(c.name, catLabel(c.name))).join('')}${state.wish.length ? navBtn('wish', '♥ ' + tr('পছন্দের') + ' (' + bn(state.wish.length) + ')') : ''}
@@ -732,6 +732,7 @@ function renderHeaderRaw() {
   const w = $('#waFloat'); w.href = wa + '?text=' + encodeURIComponent(LANG === 'en' ? 'Hello, I would like to know about ' + d.brand_name + '.' : 'আসসালামু আলাইকুম, আমি ' + d.brand_name + ' সম্পর্কে জানতে চাই।');
 }
 
+(function () { let c = false; addEventListener('scroll', () => { const y = scrollY, h = document.getElementById('hdr'); if (!h) return; if (!c && y > 160) { c = true; h.classList.add('hdr-compact'); } else if (c && y < 60) { c = false; h.classList.remove('hdr-compact'); } }, { passive: true }); })();
 function renderHero() {
   const d = state.design;
   const img = safeUrl(d.hero_image);
@@ -779,18 +780,17 @@ const TRUST_ICONS = { 'fa-money-bill-wave': 'টাকা', 'fa-truck-fast': '�
 function renderTrust() {
   const d = state.design, el = $('#trust'); if (!el) return;
   const items = (Array.isArray(d.trust) ? d.trust : []).filter(t => t && String(dx(t, 'text')).trim());
-  el.innerHTML = (d.trust_on === false || !items.length) ? '' : `<div class="grid grid-cols-2 sm:grid-cols-4 gap-2">${items.map(t => { const ic = TRUST_ICONS[t.icon] ? t.icon : 'fa-leaf';
-    return `<div class="bg-white border rounded-xl px-2.5 py-2 flex items-center gap-2"><span class="w-8 h-8 rounded-full bg-brand text-gold flex items-center justify-center shrink-0 text-sm"><i class="${ic.startsWith('fa-brands') ? '' : 'fa-solid '}${ic}"></i></span><span class="text-xs sm:text-sm font-semibold text-brand leading-tight">${esc(dx(t, 'text'))}</span></div>`; }).join('')}</div>`;
+  el.innerHTML = (d.trust_on === false || !items.length) ? '' : `<div class="flex gap-2 overflow-x-auto no-scrollbar sm:justify-center">${items.map(t => { const ic = TRUST_ICONS[t.icon] ? t.icon : 'fa-leaf';
+    return `<span class="shrink-0 inline-flex items-center gap-1.5 bg-white border border-gray-200 rounded-full pl-2.5 pr-3 py-1.5 text-xs sm:text-sm font-semibold text-brand whitespace-nowrap"><i class="${ic.startsWith('fa-brands') ? '' : 'fa-solid '}${ic} text-gold text-sm"></i>${esc(dx(t, 'text'))}</span>`; }).join('')}</div>`;
 }
-
 function renderCats() { hKeep('#cats', '.no-scrollbar', renderCatsRaw); }
 function renderCatsRaw() {
   const el = $('#cats');
   if (!state.design.show_categories) { el.innerHTML = ''; return; }
-  el.innerHTML = `<div class="pt-6"><h2 class="text-lg sm:text-xl font-bold text-brand text-center mb-4">${esc(dx(state.design, 'cats_title'))}</h2>
-    <div class="flex justify-center gap-4 sm:gap-8 overflow-x-auto no-scrollbar pb-1">
-    ${cats().map(c => { const ci = safeUrl(c.image); return `<button data-action="cat" data-cat="${esc(c.name)}" class="group flex flex-col items-center gap-2 shrink-0 w-20 sm:w-24">
-      <span class="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden flex items-center justify-center text-2xl sm:text-3xl border-2 transition group-hover:scale-105 ${state.cat === c.name ? 'bg-brand text-gold border-gold' : 'bg-white text-brand border-gray-200 group-hover:border-gold'}">${ci ? `<img src="${esc(ci)}" alt="${esc(catLabel(c.name))}" loading="lazy" class="w-full h-full object-cover">` : `<i class="fa-solid ${esc(c.icon)}"></i>`}</span>
+  el.innerHTML = `<div class="pt-4"><h2 class="text-base sm:text-lg font-bold text-brand text-center mb-2.5">${esc(dx(state.design, 'cats_title'))}</h2>
+    <div class="flex gap-3 sm:gap-6 overflow-x-auto no-scrollbar pb-1 px-3 [&>*:first-child]:ml-auto [&>*:last-child]:mr-auto">
+    ${cats().map(c => { const ci = safeUrl(c.image); return `<button data-action="cat" data-cat="${esc(c.name)}" class="group flex flex-col items-center gap-2 shrink-0 w-16 sm:w-20">
+      <span class="w-14 h-14 sm:w-[4.5rem] sm:h-[4.5rem] rounded-full overflow-hidden flex items-center justify-center text-2xl sm:text-3xl border-2 transition group-hover:scale-105 ${state.cat === c.name ? 'bg-brand text-gold border-gold' : 'bg-white text-brand border-gray-200 group-hover:border-gold'}">${ci ? `<img src="${esc(ci)}" alt="${esc(catLabel(c.name))}" loading="lazy" class="w-full h-full object-cover">` : `<i class="fa-solid ${esc(c.icon)}"></i>`}</span>
       <span class="text-xs sm:text-sm font-medium text-center leading-tight">${esc(catLabel(c.name))}</span></button>`; }).join('')}
     </div></div>`;
 }
@@ -818,10 +818,10 @@ function productCard(p) {
   const img = safeUrl(p.image_url), rt = ratingOf(p.id), w = wished(p.id);
   return `<div class="card bg-white rounded-xl overflow-hidden border border-gray-100 flex flex-col">
     <div class="relative aspect-square bg-gray-50 cursor-pointer" data-action="view" data-id="${esc(p.id)}">
-      ${img ? `<img src="${esc(img)}" alt="${esc(pname(p))}" loading="lazy" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-5xl text-gold/50"><i class="fa-solid fa-jar-wheat"></i></div>`}
+      ${img ? `<img src="${esc(img)}" alt="${esc(pname(p))}" loading="lazy" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center">${safeUrl(state.design.logo_url) ? `<img src="${esc(safeUrl(state.design.logo_url))}" alt="" class="w-1/2 h-1/2 object-contain opacity-25">` : '<i class="fa-solid fa-jar-wheat text-5xl text-gold/50"></i>'}</div>`}
       <div class="absolute top-2 left-2 flex flex-col items-start gap-1">${disc ? `<span class="bg-cta text-white text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded">Save ${money(disc)}</span>` : (p.is_combo ? `<span class="bg-cta text-white text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded">${tr('কম্বো')}</span>` : '')}${p.is_best && state.design.best_badge !== false ? `<span class="bg-gold text-brand text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded"><i class="fa-solid fa-fire text-[10px]"></i> ${esc(dx(state.design, 'best_title'))}</span>` : ''}</div>
       <button type="button" data-action="wish" data-id="${esc(p.id)}" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 shadow flex items-center justify-center" aria-label="${tr('পছন্দের তালিকা')}"><i class="${w ? 'fa-solid text-red-500' : 'fa-regular text-gray-500'} fa-heart"></i></button>
-      ${p.tag ? `<span class="absolute bottom-2 left-2 bg-brand text-gold text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded">${esc(p.tag)}</span>` : ''}
+      ${(p.tag && !p.is_best) ? `<span class="absolute bottom-2 left-2 bg-brand text-gold text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded">${esc(p.tag)}</span>` : ''}
       ${lowStock(p) ? `<span class="absolute bottom-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">${LANG === 'en' ? `Only ${p.stock_qty} left` : `মাত্র ${bn(p.stock_qty)}টি বাকি`}</span>` : ''}
       ${!p.in_stock ? `<div class="absolute inset-0 bg-white/70 flex items-center justify-center"><span class="bg-gray-800 text-white px-3 py-1 rounded-full text-sm font-semibold">স্টক শেষ</span></div>` : ''}
     </div>
