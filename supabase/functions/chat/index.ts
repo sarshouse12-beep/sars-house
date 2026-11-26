@@ -150,13 +150,16 @@ Deno.serve(async (req) => {
 
   // newer columns exist only after supabase-features.sql has been run; fall back gracefully
   let pr = await db.from("products")
+    .select("name,name_en,category,price,old_price,weight,in_stock,variants,is_combo,stock_qty,is_hidden")
+    .order("sort_order", { ascending: true }).limit(120);
+  if (pr.error) pr = await db.from("products")
     .select("name,name_en,category,price,old_price,weight,in_stock,variants,is_combo,stock_qty")
     .order("sort_order", { ascending: true }).limit(120);
   if (pr.error) {
     pr = await db.from("products").select("name,name_en,category,price,old_price,weight,in_stock")
       .order("sort_order", { ascending: true }).limit(120);
   }
-  const products = pr.data;
+  const products = (pr.data || []).filter((p: any) => !p.is_hidden);
 
   const system = buildSystem(lang, design, String(chatCfg.knowledge || "").slice(0, 4000), products || [], String(chatCfg.heritage || "").slice(0, 3000));
 
