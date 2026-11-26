@@ -14,3 +14,6 @@ SAR'S HOUSE
 ## Security pack (v4)
 Run `database/supabase-security.sql` once in Supabase → SQL Editor. It adds: server-side enforcement of two-step login for admins who enabled it, order/stock-request spam brakes (`rate_limit`), and an admin activity log with "restore product". In the admin panel: Settings → "২-ধাপ নিরাপত্তা" and "কাজের লগ".
 If you lose your authenticator phone: Supabase Dashboard → Authentication → Users → your user → delete the factor.
+
+## Panel entry lock (v5)
+Settings → "২-ধাপ নিরাপত্তা" → "প্যানেলে ঢোকার তালা": set a 4–6 digit PIN, optionally enable fingerprint (WebAuthn platform authenticator). Stored per device in localStorage; locks on reload / idle. Client-side gate only — real protection stays Supabase login + 2-step.
