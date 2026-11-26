@@ -17,3 +17,6 @@ If you lose your authenticator phone: Supabase Dashboard → Authentication → 
 
 ## Panel entry lock (v5)
 Settings → "২-ধাপ নিরাপত্তা" → "প্যানেলে ঢোকার তালা": set a 4–6 digit PIN, optionally enable fingerprint (WebAuthn platform authenticator). Stored per device in localStorage; locks on reload / idle. Client-side gate only — real protection stays Supabase login + 2-step.
+
+## Hide products (v6)
+Run `database/supabase-hide-products.sql` once (after `supabase-security.sql`), then redeploy the `chat` Edge Function. In Admin → Products, the eye button hides/shows a product; only hidden products show the permanent-delete button.

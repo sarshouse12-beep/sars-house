@@ -68,6 +68,12 @@ begin
   -- whole shop flood brake: 60 orders / 10 min
   if (select count(*) from public.orders where created_at > now() - interval '10 minutes') >= 60 then
     raise exception 'rate_limit'; end if;
+  -- hidden products can never be ordered (only checked once supabase-hide-products.sql added the column)
+  if exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'products' and column_name = 'is_hidden') then
+    if exists (select 1 from public.products pr where pr.is_hidden
+               and pr.id::text in (select e->>'id' from jsonb_array_elements(case when jsonb_typeof(p_items) = 'array' then p_items else '[]'::jsonb end) e)) then
+      raise exception 'unavailable:'; end if;
+  end if;
   return public._place_order_core(p_name, p_phone, p_address, p_area, p_items, p_coupon, p_note);
 end $$;
 grant execute on function public.place_order(text,text,text,text,jsonb,text,text) to anon, authenticated;
