@@ -6,13 +6,17 @@
 <title>SAR'S HOUSE — খাঁটি মধু, ঘি ও অর্গানিক খাবার</title>
 <meta name="description" content="SAR'S HOUSE — নিরাপদ ও সুস্বাদু খাদ্য সরবরাহের অঙ্গীকার। খাঁটি মধু, ঘি, তেল, খেজুর, বাদাম ও মসলা।">
 <meta name="theme-color" content="#041f1e">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://gfiebfhfqfusxoxgcpln.supabase.co" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 <style>
   :root{--c-primary:#041f1e;--c-secondary:#C89B4B;--c-bg:#FBF9F5;--c-accent:#f48721}
   html{scroll-behavior:smooth}
@@ -764,7 +768,7 @@ function renderHero() {
   const sideImg = safeUrl(d.side_banner_image);
   const main = `
     <div class="relative overflow-hidden min-h-[210px] sm:min-h-[300px] lg:min-h-[360px] h-full flex items-center" style="background:linear-gradient(135deg,var(--c-primary),#0B3948)">
-      ${img ? `<img src="${esc(img)}" alt="${esc(d.brand_name)}" class="absolute inset-0 w-full h-full object-cover">` : `<div class="absolute -right-10 -bottom-10 w-72 h-72 rounded-full opacity-20" style="background:var(--c-secondary)"></div><div class="absolute right-16 top-6 text-7xl opacity-20 text-gold"><i class="fa-solid fa-jar-wheat"></i></div>`}
+      ${img ? `<img src="${esc(img)}" alt="${esc(d.brand_name)}" fetchpriority="high" decoding="async" class="absolute inset-0 w-full h-full object-cover">` : `<div class="absolute -right-10 -bottom-10 w-72 h-72 rounded-full opacity-20" style="background:var(--c-secondary)"></div><div class="absolute right-16 top-6 text-7xl opacity-20 text-gold"><i class="fa-solid fa-jar-wheat"></i></div>`}
       ${(d.hero_show_text) ? `${img ? '<div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/35 to-transparent"></div>' : ''}
       <div class="relative p-5 sm:p-10 max-w-xl text-white">
         ${d.hero_badge ? `<span class="inline-block bg-gold text-brand text-xs sm:text-sm font-bold px-3 py-1 rounded-full mb-3">${esc(dx(d, 'hero_badge'))}</span>` : ''}
@@ -1609,7 +1613,13 @@ const prevImg = u => safeUrl(u) ? `<img src="${esc(safeUrl(u))}" alt="" class="w
 /* ---------------------------- QR CODES ---------------------------- */
 const siteUrl = () => location.origin + location.pathname;
 const productUrl = id => siteUrl() + '#p=' + encodeURIComponent(id);
+let qrLoading = null;
+function ensureQR() {
+  if (typeof qrcode !== 'undefined') return Promise.resolve();
+  return qrLoading || (qrLoading = new Promise((res, rej) => { const el = document.createElement('script'); el.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js'; el.onload = res; el.onerror = () => { qrLoading = null; rej(new Error('qr')); }; document.head.appendChild(el); }));
+}
 function qrPng(url, label, sub) {
+  if (typeof qrcode === 'undefined') return '';
   if (typeof qrcode === 'undefined') return '';
   const q = qrcode(0, 'M'); q.addData(url); q.make();
   const n = q.getModuleCount(), cell = Math.max(4, Math.floor(420 / n)), qs = cell * n, pad = 30, W = qs + pad * 2, H = W + 70;
@@ -1730,6 +1740,7 @@ async function loadForTab() {
   if (t === 'dash') { await Promise.all([loadAdminOrders(), loadReviewsAdmin()]); }
   if (t === 'coupons') { await loadCoupons(); }
   if (t === 'reviews') { await loadReviewsAdmin(); }
+  if (t === 'qr') { await ensureQR().catch(() => toast('QR লাইব্রেরি লোড হয়নি, ইন্টারনেট দেখুন', 'err')); }
   if (t === 'users') { await loadAdminUsers(); }
   if (t === 'log') { await loadLog(); }
   if (t === 'chats') { await loadChatSessions(); }
