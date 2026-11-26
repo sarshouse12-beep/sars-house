@@ -20,3 +20,6 @@ Settings → "২-ধাপ নিরাপত্তা" → "প্যানে
 
 ## Hide products (v6)
 Run `database/supabase-hide-products.sql` once (after `supabase-security.sql`), then redeploy the `chat` Edge Function. In Admin → Products, the eye button hides/shows a product; only hidden products show the permanent-delete button.
+
+## Fast page (v7)
+`fast.html` is `index.html` with Tailwind pre-compiled (no `cdn.tailwindcss.com` at runtime). Rebuild after editing `index.html`: `node tools/build-fast.mjs` (needs Tailwind v4 core + esbuild; set `TW_DIR` / `ESBUILD` to their paths). Open `/sars-house/fast.html` to compare with the normal page. When approved it replaces `index.html`'s Tailwind CDN tag.
