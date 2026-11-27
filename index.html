@@ -847,23 +847,24 @@ function productCard(p) {
   const hv = hasVariants(p), q = cartQty(p.id), price = minPrice(p), old = hv ? 0 : unitOld(p, ''), disc = old ? old - price : 0;
   const img = safeUrl(p.image_url), rt = ratingOf(p.id), w = wished(p.id);
   return `<div class="card bg-white rounded-xl overflow-hidden border border-gray-100 flex flex-col">
-    <div class="relative aspect-square bg-gray-50 cursor-pointer" data-action="view" data-id="${esc(p.id)}">
-      ${img ? `<img src="${esc(img)}" alt="${esc(pname(p))}" loading="lazy" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center">${safeUrl(state.design.logo_url) ? `<img src="${esc(safeUrl(state.design.logo_url))}" alt="" class="w-1/2 h-1/2 object-contain opacity-25">` : '<i class="fa-solid fa-jar-wheat text-5xl text-gold/50"></i>'}</div>`}
-      <div class="absolute top-2 left-2 flex flex-col items-start gap-1">${disc ? `<span class="bg-cta text-white text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded">Save ${money(disc)}</span>` : (p.is_combo ? `<span class="bg-cta text-white text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded">${tr('কম্বো')}</span>` : '')}${p.is_best && state.design.best_badge !== false ? `<span class="bg-gold text-brand text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded"><i class="fa-solid fa-fire text-[10px]"></i> ${esc(dx(state.design, 'best_title'))}</span>` : ''}</div>
+    <div class="relative aspect-[5/4] bg-gray-50 cursor-pointer" data-action="view" data-id="${esc(p.id)}">
+      ${img ? `<img src="${esc(img)}" alt="${esc(pname(p))}" loading="lazy" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center">${safeUrl(state.design.logo_url) ? `<img src="${esc(safeUrl(state.design.logo_url))}" alt="" class="w-2/5 h-2/5 object-contain opacity-25">` : '<i class="fa-solid fa-jar-wheat text-4xl text-gold/50"></i>'}</div>`}
+      <div class="absolute top-2 left-2 flex flex-col items-start gap-1">${disc && !p.is_best ? `<span class="bg-cta text-white text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded">Save ${money(disc)}</span>` : (!disc && p.is_combo ? `<span class="bg-cta text-white text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded">${tr('কম্বো')}</span>` : '')}${p.is_best && state.design.best_badge !== false ? `<span class="bg-brand text-gold text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded shadow"><i class="fa-solid fa-fire text-[10px]"></i> ${esc(dx(state.design, 'best_title'))}</span>` : ''}</div>
       <button type="button" data-action="wish" data-id="${esc(p.id)}" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 shadow flex items-center justify-center" aria-label="${tr('পছন্দের তালিকা')}"><i class="${w ? 'fa-solid text-red-500' : 'fa-regular text-gray-500'} fa-heart"></i></button>
       ${(p.tag && !p.is_best) ? `<span class="absolute bottom-2 left-2 bg-brand text-gold text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded">${esc(p.tag)}</span>` : ''}
       ${lowStock(p) ? `<span class="absolute bottom-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">${LANG === 'en' ? `Only ${p.stock_qty} left` : `মাত্র ${bn(p.stock_qty)}টি বাকি`}</span>` : ''}
       ${!p.in_stock ? `<div class="absolute inset-0 bg-white/70 flex items-center justify-center"><span class="bg-gray-800 text-white px-3 py-1 rounded-full text-sm font-semibold">স্টক শেষ</span></div>` : ''}
     </div>
-    <div class="p-3 flex flex-col flex-1">
-      <h3 class="font-semibold text-sm sm:text-base leading-snug line-clamp-2 cursor-pointer min-h-[2.5rem]" data-action="view" data-id="${esc(p.id)}">${esc(pname(p))}</h3>
+    <div class="p-2.5 flex flex-col flex-1">
+      <h3 class="font-semibold text-[13px] sm:text-sm leading-snug line-clamp-2 cursor-pointer min-h-[2.25rem]" data-action="view" data-id="${esc(p.id)}">${esc(pname(p))}</h3>
       ${hv ? `<div class="text-xs text-gray-500 mt-0.5 truncate">${esc(variantsOf(p).map(vlabel).join(' • '))}</div>` : (p.weight ? `<div class="text-xs text-gray-500 mt-0.5">${esc(pweight(p))}</div>` : '')}
       ${rt.n ? `<div class="text-xs mt-0.5">${stars(rt.avg)} <span class="text-gray-400">(${bn(rt.n)})</span></div>` : ''}
-      <div class="mt-1.5 flex items-baseline gap-2 flex-wrap">
-        ${hasPrice(p) ? `<span class="text-base sm:text-lg font-bold text-brand">${hv ? tr('থেকে') + ' ' : ''}${money(price)}</span>` : '<span class="text-sm font-semibold text-cta">দাম জানতে মেসেজ করুন</span>'}
+      <div class="mt-1 flex items-baseline gap-x-2 gap-y-0.5 flex-wrap">
+        ${hasPrice(p) ? `<span class="text-[15px] sm:text-base font-bold text-brand">${hv ? tr('থেকে') + ' ' : ''}${money(price)}</span>` : '<span class="text-sm font-semibold text-cta">দাম জানতে মেসেজ করুন</span>'}
         ${disc ? `<span class="text-xs text-gray-400 line-through">${money(old)}</span>` : ''}
+        ${disc && p.is_best ? `<span class="bg-cta text-white text-[10px] font-bold px-1.5 py-0.5 rounded">Save ${money(disc)}</span>` : ''}
       </div>
-      <div class="mt-auto pt-3">${cartControl(p, q)}</div>
+      <div class="mt-auto pt-2">${cartControl(p, q)}</div>
     </div></div>`;
 }
 
@@ -873,10 +874,10 @@ function cartControl(p, q, v, inModal) {
   if (!hasPrice(p)) return `<a href="${esc(waAsk(p))}" target="_blank" rel="noopener noreferrer" class="btn btn-cta w-full text-sm"><i class="fa-brands fa-whatsapp"></i> দাম জানতে WhatsApp</a>`;
   if (hasVariants(p) && !inModal) return `<button data-action="view" data-id="${esc(p.id)}" class="btn btn-cta w-full text-sm">${tr('বিকল্প বেছে নিন')}</button>`;
   if (q > 0) return `<div class="flex items-center justify-between border-2 border-gold rounded-lg overflow-hidden">
-    <button data-action="dec" data-id="${esc(p.id)}"${vd} class="w-10 h-9 text-brand font-bold hover:bg-amber-50" aria-label="কমান"><i class="fa-solid fa-minus"></i></button>
+    <button data-action="dec" data-id="${esc(p.id)}"${vd} class="w-10 ${inModal ? 'h-9' : 'h-8'} text-brand font-bold hover:bg-amber-50" aria-label="কমান"><i class="fa-solid fa-minus"></i></button>
     <span class="font-bold">${bn(q)}</span>
-    <button data-action="inc" data-id="${esc(p.id)}"${vd} class="w-10 h-9 text-brand font-bold hover:bg-amber-50" aria-label="বাড়ান"><i class="fa-solid fa-plus"></i></button></div>`;
-  return `<button data-action="add" data-id="${esc(p.id)}"${vd} class="w-full text-sm font-bold rounded-lg border-2 border-cta text-cta bg-white hover:bg-cta hover:text-white transition py-1.5 flex items-center justify-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-basket-shopping"></i> কার্টে যোগ করুন</button>`;
+    <button data-action="inc" data-id="${esc(p.id)}"${vd} class="w-10 ${inModal ? 'h-9' : 'h-8'} text-brand font-bold hover:bg-amber-50" aria-label="বাড়ান"><i class="fa-solid fa-plus"></i></button></div>`;
+  return `<button data-action="add" data-id="${esc(p.id)}"${vd} class="w-full ${inModal ? 'text-sm py-1.5' : 'text-[13px] py-1'} font-bold rounded-lg border-2 border-cta text-cta bg-white hover:bg-cta hover:text-white transition flex items-center justify-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-basket-shopping"></i> কার্টে যোগ করুন</button>`;
 }
 
 function renderProducts() {
