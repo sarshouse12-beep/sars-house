@@ -23,3 +23,6 @@ Run `database/supabase-hide-products.sql` once (after `supabase-security.sql`), 
 
 ## Fast page (v7)
 `fast.html` is `index.html` with Tailwind pre-compiled (no `cdn.tailwindcss.com` at runtime). Rebuild after editing `index.html`: `node tools/build-fast.mjs` (needs Tailwind v4 core + esbuild; set `TW_DIR` / `ESBUILD` to their paths). Open `/sars-house/fast.html` to compare with the normal page. When approved it replaces `index.html`'s Tailwind CDN tag.
+
+## Backup & restore (v8)
+Admin → Settings → "ব্যাকআপ ও ফেরত আনা" (Super Admin). Downloads one JSON file (settings, products, coupons, orders, reviews, stock requests) and an orders CSV; a dashboard card reminds after 30 days. Restore: pick the file, choose tables and mode (only-missing, or overwrite for settings/products/coupons); a "pre-restore" backup is downloaded first. Orders/reviews/stock requests are restored through `database/supabase-backup.sql` (`restore_missing`, add-only). Images and user accounts are not part of the file.
